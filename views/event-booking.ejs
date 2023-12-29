@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+
+        body {
+            background: #fdfdfd;
+        }
+        @font-face {
+            font-family: Segoe-UI;
+            src: url(SEGOEUI.TTF);
+        }
+
+        .main-section {
+            background-color: #FCFCFC;
+        }
+
+        .bnr-img {
+            width: -webkit-fill-available;
+            height: auto;
+        }
+
+        .footer {
+            background-color: #363636;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        .edit-text {
+            color: #016fd0;
+            display: block;
+            text-align: right;
+        }
+
+        .form-control {
+            background: transparent;
+        }
+
+        .next-btn {
+            background: #C94F6E;
+            border: none;
+            padding: 10px 40px;
+            color: #FDFCED;
+        }
+
+        .next-btn a {
+            color: #FDFCED;
+        }
+
+        .main-content .wizard-form .progressbar-list::before {
+            content: " ";
+            background-color: rgb(155, 155, 155);
+            border: 10px solid #fff;
+            border-radius: 50%;
+            display: block;
+            width: 30px;
+            height: 30px;
+            margin: 9px auto;
+            box-shadow: 1px 1px 3px #606060;
+            transition: all;
+        }
+
+        .main-content .wizard-form .progressbar-list::after {
+            content: "";
+            background-color: rgb(155, 155, 155);
+            padding: 0px 0px;
+            position: absolute;
+            top: 14px;
+            left: -50%;
+            width: 100%;
+            height: 2px;
+            margin: 9px auto;
+            z-index: -1;
+            transition: all 0.8s;
+        }
+
+        .main-content .wizard-form .progressbar-list.active::after {
+            background-color: #C94F6E;
+        }
+
+        .main-content .wizard-form .progressbar-list:first-child::after {
+            content: none;
+        }
+
+        .main-content .wizard-form .progressbar-list.active::before {
+            content: "";
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            padding: 6px;
+            background-color: white;
+            border: 10px solid #C94F6E;
+            box-shadow: 0 0 0 7.5px #C94F6E3b;
+        }
+
+        .w-16 {
+            width: 16%;
+        }
+
+        .progressbar-list {
+            color: #6f787d;
+        }
+
+        .active {
+            color: #000;
+        }
+
+        /* card */
+        .card img {
+            width: 40px;
+        }
+
+        .card {
+            border: 3px solid rgb(145 145 145);
+            cursor: pointer;
+        }
+
+        .active-card {
+            color: #C94F6E;
+            font-weight: bold;
+            border: 3px solid #C94F6E;
+        }
+
+        .form-check-input:focus {
+            box-shadow: none;
+        }
+
+        .bg-color-info {
+            background-color: #C94F6E !important;
+        }
+
+        .border-color {
+            border-color: #ececec;
+        }
+
+        .btn {
+            padding: 16px 30px;
+        }
+
+        .back-to-wizard {
+            transform: translate(-50%, -139%) !important;
+        }
+
+        .bg-success-color {
+            background-color: #87D185;
+        }
+
+        .bg-success-color:focus {
+            box-shadow: 0 0 0 0.25rem rgb(55 197 20 / 25%);
+        }
+
+        .content-text {
+            font-size: 14px;
+            color: #6e727d;        
+        }
+
+        .discount-price {
+            font-size: 30px;
+            color: #C94F6E;
+        }
+
+        .early-bid-text {
+            font-size: 12px;
+        }
+
+        .original-price {
+            color: #545454;
+            font-size: 20px;
+            text-decoration: line-through;
+        }
+
+        .quantity {
+            display: flex;
+            align-items: center;    
+            padding: 0;
+            background: #f5f5f5;
+            padding: 5px;
+            width: 130px;
+          }
+          .quantity__minus,
+          .quantity__plus {
+            display: block;
+            width: 45px;
+            font-size: 25px;
+            height: 35px;
+            margin: 0;
+            background: #C94F6E;
+            text-decoration: none;
+            text-align: center;
+            line-height: 28px;
+          }
+          .quantity__minus:hover,
+          .quantity__plus:hover {
+            background: #575b71;
+            color: #fff;
+          } 
+          .quantity__minus {
+            border-radius: 3px 0 0 3px;
+          }
+          .quantity__plus {
+            border-radius: 0 3px 3px 0;
+          }
+          .quantity__input {
+            width: 45px;
+            height: 35px;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            border: none;
+            background: #f5f5f5;
+            color: black;
+            font-weight: 600;
+          }
+          .quantity__minus:link,
+          .quantity__plus:link {
+            color: #FDFCED;
+          } 
+          .quantity__minus:visited,
+          .quantity__plus:visited {
+            color: #FDFCED;
+            font-weight: 900;
+          }
+
+          .fs-18 {
+            font-size: 18px;
+          }
+
+          .fs-20 {
+            font-size: 20px;
+          }
+
+          .text-disable {
+            color: #9c9c9c;
+          }
+
+          .text-dark {
+            color: black;
+          }
+
+          .bg-lightgray {
+            background-color: #fdfdfd;
+            border: 1px solid #c3c3c3;
+            border-radius: 10px;
+          }
+
+          select {
+            padding: 5px 10px;
+            background: #eeeeee;
+            border-radius: 5px;
+            border: 1px solid #c8c7c7;
+          }
+
+          .form-check-input {
+            background: white;
+            border: 1px solid #c8c7c7;
+          }
+
+          .form-check-input:checked {
+            background-color: #c94f6e;
+            border-color: #ffffffc9;
+        }
+
+        .form-check-input {
+            background: white;
+            border: 3px solid #c8c7c7;
+        }
+
+        .fs-12 {
+            font-size: 12px;
+        }
+
+        .required {
+            color: red;
+        }
+
+        .logo-img {
+            width: 100px;
+            height: auto;
+        }
+
+        .payment-card {
+            background: white;
+            box-shadow: 0 0 8px #0000000a;
+            border-radius: 10px;
+            width: 500px;
+            margin: auto;
+            display: none;
+        }
+
+        .link-txt a {
+            color: #987bf1;
+            text-decoration: none;
+        }
+
+        .credit-title img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .pay-btn {
+            width: -webkit-fill-available;
+            background: #c94f6e;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .pay-btn a {
+            color: #fdfced;
+        }
+
+        .back-pay-btn {
+                background: transparent;
+                border: none;
+                font-size: 20px;
+                color: #065ba9;
+        }
+
+        @media only screen and (max-width:768px) {
+            .copyright-text {
+                grid-row: 2;
+            }
+
+            .d-grid {
+                display: grid;
+            }
+
+            li {
+                font-size: 12px;
+            }
+
+            .discount-price {
+                font-size: 24px;
+            }
+
+            .original-price {
+                font-size: 18px;
+            }
+
+            .quantity {
+                width: 120px;
+            }
+        }
+
+        @media only screen and (max-width:515px) {
+            .payment-card {
+                width: auto;
+            }
+        }
+
+        @media only screen and (max-width:450px) {
+            .btn {
+                padding: 10px;
+            }
+
+            li {
+                font-size: 10px;
+            }
+
+            .content-text {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section class="main-section">
+        <div class="container p-4">
+            <div class="logo-main-div mb-3">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <img class="logo-img" src="images/Asset 4.png" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="bnr-main-div">
+                <div class="row">
+                    <div class="col-12">
+                        <img class="bnr-img" src="images/Form_Cover_for_Chanukah_Registration_4 1.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- section -->
+    <section>
+        <!-- container -->
+        <div class="container">
+            <!-- main content -->
+            <div class="main-content">
+                <!-- alert box -->
+                <div class="row justify-content-center">
+                    <div class="col-lg-7 col-md-8">
+                        <!-- svg -->
+                        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                            <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+                                <path
+                                    d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                            </symbol>
+                        </svg>
+                        <!-- /svg -->
+                        <div class="alert alert-danger d-flex align-items-center mt-3 d-none mb-0" id="alertBox"
+                            role="alert">
+                            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                                <use xlink:href="#exclamation-triangle-fill" />
+                            </svg>
+                            <div>
+                                Please complete required fields
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- alert box -->
+                <!-- row -->
+                <div class="row justify-content-center pt-0" id="wizardRow">
+                    <!-- col -->
+                    <div class="col-md-12 text-center">
+                        <!-- wizard -->
+                        <div class="wizard-form py-4 my-2">
+                            <!-- ul -->
+                            <ul id="progressBar" class="progressbar px-lg-5 px-0">
+                                <li id="progressList-1"
+                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list active">
+                                    Select Event Package</li>
+                                <li id="progressList-2"
+                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list">
+                                    Select Room</li>
+                                <li id="progressList-3"
+                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list">
+                                    Package Tickets</li>
+                                <li id="progressList-4"
+                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list">
+                                    Dining Information</li>
+                                <li id="progressList-5"
+                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list">
+                                    Booking Summary</li>
+                                <li id="progressList-6"
+                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list">
+                                    Payment</li>
+                            </ul>
+                            <!-- /ul -->
+                        </div>
+                        <!-- /wizard -->
+                    </div>
+                    <!-- /col -->
+                </div>
+                <!-- /row -->
+                <!-- row -->
+                <form action="">
+                    <!-- Select Event Package  -->
+                    <div class="row justify-content-center my-4" id="cardSection">
+                        <!-- col -->
+                        <div class="col-md-11">
+                            <h3 class="fw-bold pt-5">Select Event Package</h3>
+                            <!-- cards -->
+                            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4 pb-5 mt-4 border-bottom" id="packages">
+                                <% for (let i = 0; i < data.package_data.length; i++) { %>
+                                    <% const startDate = new Date(data.package_data[i].package_start_date); %>
+                                    <% const endDate = new Date(data.package_data[i].package_end_date); %>
+                                    <% const package_id = data.package_data[i].package_id %>
+                                    <div class="col" >
+                                        <div class="card text-center h-100 py-5 shadow-sm" id=<%= package_id %>>
+                                            <div class="card-body px-0">
+                                                <h5 class="card-title title-binding"><%= data.package_data[i].package_name %></h5>
+                                                <p class="card-text"><%= startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %> 
+                                                    - <%= endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                                <div class="col" >
+                                    <div class="card text-center h-100 py-5 shadow-sm" id="dining">
+                                        <div class="card-body px-0">
+                                            <h5 class="card-title title-binding"><%= data.dining_data[0].dining_name %></h5>
+                                            <p class="card-text">
+                                                <% const createdDate = new Date(data.dining_data[0].created_date); %>
+                                                <%= createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /cards -->
+                            <!-- NEXT BUTTON-->
+                            <div class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3">
+                                <button type="button"
+                                class="btn btn-dark fw-bold text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-4 back-btn">
+                                <a href="booking-info" class="text-decoration-none text-light">Back to Booking Information</a></button>
+                                <button type="button"
+                                class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-4 next-btn">Next</button>
+                            </div>
+                            <!-- /NEXT BUTTON-->
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                    <!-- Select Room  -->
+                    <!-- row -->
+                    <div class="row justify-content-center form-business">
+                        <!-- col -->
+                        <div class="col-md-11">
+                            <h3 class="fw-bold pt-5 mb-4">All Days (April 22nd - May 1st)</h3>
+                            <!-- cards -->
+                            <div class="row row-cols-1 g-4 pb-5">
+                                <div class="col">
+                                    <div class="d-flex justify-content-between align-items-center border-bottom pb-4">
+                                        <div class="title-content w-75 pe-5">
+                                            <h5 class="fw-bold">
+                                                VIP junior suite
+                                            </h5>
+                                            <p class="mb-0 content-text fw-semibold">
+                                                Max capacity per room is 4 people Each room is priced at double occupancy
+                                                and includes
+                                                catering for two guests. If you will have more then 2 people in your room,
+                                                add your
+                                                quantity to the applicable age below. Up to 2 additional guests per room. If
+                                                you need
+                                                more beds/cribs, select the applicable bed type below.
+                                            </p>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <p class="discount-price fw-bold mb-0">
+                                                <span>
+                                                    $
+                                                </span>
+                                                <span>
+                                                    11,000,00
+                                                </span>
+                                            </p>
+                                            <p class="fw-semibold early-bid-text mb-1">
+                                                Early bid special offer before January 1st
+                                            </p>
+                                            <p class="original-price fw-bold">
+                                                <span>
+                                                    $
+                                                </span>
+                                                <span>
+                                                    11,000,00
+                                                </span>
+                                            </p>
+                                            <div class="quantity">
+                                                <a href="#" class="quantity__minus"><span>-</span></a>
+                                                <input name="quantity" type="text" class="quantity__input" value="0" readonly>
+                                                <a href="#" class="quantity__plus"><span>+</span></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between align-items-center border-bottom pb-4">
+                                        <div class="title-content w-75 pe-5">
+                                            <h5 class="fw-bold">
+                                                Single Occupancy
+                                            </h5>
+                                            <p class="mb-0 content-text fw-semibold">
+                                                Max capacity per room is 4 people Each room is priced at double occupancy
+                                                and includes
+                                                catering for two guests. If you will have more then 2 people in your room,
+                                                add your
+                                                quantity to the applicable age below. Up to 2 additional guests per room. If
+                                                you need
+                                                more beds/cribs, select the applicable bed type below.
+                                            </p>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <p class="discount-price fw-bold mb-0">
+                                                <span>
+                                                    $
+                                                </span>
+                                                <span>
+                                                    11,000,00
+                                                </span>
+                                            </p>
+                                            <p class="fw-semibold early-bid-text mb-1">
+                                                Early bid special offer before January 1st
+                                            </p>
+                                            <p class="original-price fw-bold">
+                                                <span>
+                                                    $
+                                                </span>
+                                                <span>
+                                                    11,000,00
+                                                </span>
+                                            </p>
+                                            <div class="quantity">
+                                                <a href="#" class="quantity__minus"><span>-</span></a>
+                                                <input name="quantity" type="text" class="quantity__input" value="0" readonly>
+                                                <a href="#" class="quantity__plus"><span>+</span></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex justify-content-between align-items-center border-bottom pb-4">
+                                        <div class="title-content w-75 pe-5">
+                                            <h5 class="fw-bold">
+                                                Smallest Jr Suite
+                                            </h5>
+                                            <p class="mb-0 content-text fw-semibold">
+                                                Max capacity per room is 4 people Each room is priced at double occupancy
+                                                and includes
+                                                catering for two guests. If you will have more then 2 people in your room,
+                                                add your
+                                                quantity to the applicable age below. Up to 2 additional guests per room. If
+                                                you need
+                                                more beds/cribs, select the applicable bed type below.
+                                            </p>
+                                        </div>
+                                        <div class="ms-auto">
+                                            <p class="discount-price fw-bold mb-0">
+                                                <span>
+                                                    $
+                                                </span>
+                                                <span>
+                                                    11,000,00
+                                                </span>
+                                            </p>
+                                            <p class="fw-semibold early-bid-text mb-1">
+                                                Early bid special offer before January 1st
+                                            </p>
+                                            <p class="original-price fw-bold">
+                                                <span>
+                                                    $
+                                                </span>
+                                                <span>
+                                                    11,000,00
+                                                </span>
+                                            </p>
+                                            <div class="quantity">
+                                                <a href="#" class="quantity__minus"><span>-</span></a>
+                                                <input name="quantity" type="text" class="quantity__input" value="0" readonly>
+                                                <a href="#" class="quantity__plus"><span>+</span></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /cards -->
+                            <!-- NEXT BUTTON-->
+                            <div class="row d-flex mx-md-0 mx-3 align-items-center">
+                                <button type="button"
+                                class="btn btn-dark fw-bold text-white back rounded-3 col-12 mb-3 mb-md-0 col-md-3 order-2 order-md-1">Previous</button>
+                                <div class="col-12 col-md-6 d-flex justify-content-center mb-3 mb-md-0 order-1 order-md-2">
+                                    <div class="total-quantity me-3">
+                                        <p class="fw-semibold mb-0 fs-20">
+                                            Quantity :
+                                            <span>
+                                                3
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div class="total-price">
+                                        <p class="fw-semibold mb-0 fs-20">
+                                            Total :
+                                            <span>
+                                                $ 29,450.00
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <button type="button"
+                                    class="btn fw-bold next next-btn rounded-3 bg-color-info col-12 col-md-3 mb-3 mb-md-0 order-3 order-md-3">Next</button>
+                            </div>
+                            <!-- /NEXT BUTTON-->
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                    <!-- Package Tickets  -->
+                    <!-- row -->
+                    <div class="row justify-content-center form-business">
+                        <!-- col -->
+                        <div class="col-md-11">
+                            <h3 class="fw-bold pt-5 mb-4">Package Tickets</h3>
+                            <div class="my-4 bg-light p-4">
+                                <div class="d-md-flex justify-content-between border-bottom align-items-center pb-3 mb-3">
+                                    <h5 class="fw-bold">
+                                        VIP Junior suite
+                                    </h5>
+                                    <div class="d-flex justify-content-between fs-18">
+                                        <p class="fw-semibold mb-0 me-3">
+                                            $ 11,000.00
+                                        </p>
+                                        <span class="fw-semibold">
+                                            X
+                                        </span>
+                                        <p class="fw-semibold mb-0 me-3">
+                                            2
+                                        </p>
+                                        <p class="fw-bold mb-0">
+                                            $ 22,000.00
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="d-md-flex justify-content-between border-bottom align-items-center pb-3 mb-3">
+                                    <h5 class="fw-bold">
+                                        Single occupancy
+                                    </h5>
+                                    <div class="d-flex justify-content-between fs-18">
+                                        <p class="fw-semibold mb-0 me-3">
+                                            $ 11,000.00
+                                        </p>
+                                        <span class="fw-semibold">
+                                            X
+                                        </span>
+                                        <p class="fw-semibold mb-0 me-3">
+                                            2
+                                        </p>
+                                        <p class="fw-bold mb-0">
+                                            $ 22,000.00
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <p class="fw-bold mb-0 text-disable me-3 fs-20">
+                                            Quantity : 
+                                            <span class="text-dark">
+                                                3
+                                            </span>
+                                        </p>
+                                        <p class="fw-bold mb-0 text-disable fs-20">
+                                            Total : 
+                                            <span class="text-dark">
+                                                $ 29,450.00
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="fw-bold mb-2">
+                                VIP junior suite #1
+                            </h4>
+                            <div class="bg-lightgray p-4 my-3">
+                                <div class="row fs-18">
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">
+                                                    Additional adult in room
+                                                </p>
+                                                <p class="mb-0 fw-bold">
+                                                    $2000
+                                                </p>
+                                            </div>
+                                            <select name="" id="">
+                                                <option value="">0</option>
+                                                <option value="">1</option>
+                                                <option value="">2</option>
+                                                <option value="">3</option>
+                                                <option value="">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">
+                                                    Kids ages 11-18
+                                                </p>
+                                                <p class="mb-0 fw-bold">
+                                                    $1750
+                                                    <span class="text-disable fw-semibold">
+                                                        per child
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <select name="" id="">
+                                                <option value="">0</option>
+                                                <option value="">1</option>
+                                                <option value="">2</option>
+                                                <option value="">3</option>
+                                                <option value="">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">
+                                                    Kids ages 6-10
+                                                </p>
+                                                <p class="mb-0 fw-bold">
+                                                    $1200
+                                                    <span class="text-disable fw-semibold">
+                                                        per child
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <select name="" id="">
+                                                <option value="">0</option>
+                                                <option value="">1</option>
+                                                <option value="">2</option>
+                                                <option value="">3</option>
+                                                <option value="">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">
+                                                    kids-ages 3-5
+                                                </p>
+                                                <p class="mb-0 fw-bold">
+                                                    $900
+                                                    <span class="text-disable fw-semibold">
+                                                        per child
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <select name="" id="">
+                                                <option value="">0</option>
+                                                <option value="">1</option>
+                                                <option value="">2</option>
+                                                <option value="">3</option>
+                                                <option value="">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">
+                                                    Kids ages 1-2
+                                                </p>
+                                                <p class="mb-0 fw-bold">
+                                                    $650
+                                                    <span class="text-disable fw-semibold">
+                                                        per child
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <select name="" id="">
+                                                <option value="">0</option>
+                                                <option value="">1</option>
+                                                <option value="">2</option>
+                                                <option value="">3</option>
+                                                <option value="">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row fs-18">
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold me-3">
+                                                    Additional
+                                                </p>
+                                            </div>
+                                            <div class="fw-semibold">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                    <label class="form-check-label" for="flexCheckDefault">
+                                                        Cribe $50 OR bring your own
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1">
+                                                    <label class="form-check-label" for="flexCheckDefault1">
+                                                        Cot $100
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="fw-bold mb-2">
+                                VIP junior suite #2
+                            </h4>
+                            <div class="bg-lightgray p-4">
+                                <div class="row fs-18">
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">
+                                                    Additional adult in room
+                                                </p>
+                                                <p class="mb-0 fw-bold">
+                                                    $2000
+                                                </p>
+                                            </div>
+                                            <select name="" id="">
+                                                <option value="">0</option>
+                                                <option value="">1</option>
+                                                <option value="">2</option>
+                                                <option value="">3</option>
+                                                <option value="">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">
+                                                    Kids ages 11-18
+                                                </p>
+                                                <p class="mb-0 fw-bold">
+                                                    $1750
+                                                    <span class="text-disable fw-semibold">
+                                                        per child
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <select name="" id="">
+                                                <option value="">0</option>
+                                                <option value="">1</option>
+                                                <option value="">2</option>
+                                                <option value="">3</option>
+                                                <option value="">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">
+                                                    Kids ages 6-10
+                                                </p>
+                                                <p class="mb-0 fw-bold">
+                                                    $1200
+                                                    <span class="text-disable fw-semibold">
+                                                        per child
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <select name="" id="">
+                                                <option value="">0</option>
+                                                <option value="">1</option>
+                                                <option value="">2</option>
+                                                <option value="">3</option>
+                                                <option value="">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">
+                                                    kids-ages 3-5
+                                                </p>
+                                                <p class="mb-0 fw-bold">
+                                                    $900
+                                                    <span class="text-disable fw-semibold">
+                                                        per child
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <select name="" id="">
+                                                <option value="">0</option>
+                                                <option value="">1</option>
+                                                <option value="">2</option>
+                                                <option value="">3</option>
+                                                <option value="">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold">
+                                                    Kids ages 1-2
+                                                </p>
+                                                <p class="mb-0 fw-bold">
+                                                    $650
+                                                    <span class="text-disable fw-semibold">
+                                                        per child
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <select name="" id="">
+                                                <option value="">0</option>
+                                                <option value="">1</option>
+                                                <option value="">2</option>
+                                                <option value="">3</option>
+                                                <option value="">4</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row fs-18">
+                                    <div class="col-12 col-lg-6">
+                                        <div class="d-flex justify-content-between mb-3">
+                                            <div>
+                                                <p class="mb-0 fw-semibold me-3">
+                                                    Additional
+                                                </p>
+                                            </div>
+                                            <div class="fw-semibold">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault2">
+                                                    <label class="form-check-label" for="flexCheckDefault2">
+                                                        Cribe $50 OR bring your own
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault3">
+                                                    <label class="form-check-label" for="flexCheckDefault3">
+                                                        Cot $100
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /cards -->
+                            <!-- NEXT BUTTON-->
+                            <div class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3">
+                                <button type="button"
+                                class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn">
+                                <a href="booking-info" class="text-decoration-none text-light">Previous</a></button>
+                                <button type="button"
+                                class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Next</button>
+                            </div>
+                            <!-- /NEXT BUTTON-->
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                    <!-- Dining Information  -->
+                    <!-- row -->
+                    <div class="row justify-content-center form-business">
+                        <!-- col -->
+                        <div class="col-md-11">
+                            <h3 class="fw-bold pt-5 mb-4">Dining Information</h3>
+                            <div class="row fs-18 fw-semibold border-bottom pb-4 mb-3">
+                                <div class="col-12 col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault4">
+                                        <label class="form-check-label" for="flexCheckDefault4">
+                                            Full Pesach 
+                                            <span class="fw-bold">
+                                                $5500
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault5">
+                                        <label class="form-check-label" for="flexCheckDefault5">
+                                            Entire 1st days 
+                                            <span class="fw-bold">
+                                                $3500
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault6">
+                                        <label class="form-check-label" for="flexCheckDefault6">
+                                            Private just sedarim 
+                                            <span class="fw-bold">
+                                                $3000
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault7">
+                                        <label class="form-check-label" for="flexCheckDefault7">
+                                            Shared private just for sedarim only 
+                                            <span class="fw-bold">
+                                                $1000
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="fw-bold pt-4 mb-4">Reserve a dinner and concert for April 25th</h3>
+                            <h5  class="fw-bold pt-4 mb-4">
+                                Additional Dining Information
+                            </h5>
+                            <div class="row fs-18 fw-semibold">
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">
+                                                12+ years Age
+                                            </p>
+                                            <p class="mb-0 fw-bold">
+                                                $395 
+                                                <span class="fw-semibold text-disable">
+                                                    per person
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <select name="" id="">
+                                            <option value="">0</option>
+                                            <option value="">1</option>
+                                            <option value="">2</option>
+                                            <option value="">3</option>
+                                            <option value="">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">
+                                                3-11 years Age
+                                            </p>
+                                            <p class="mb-0 fw-bold">
+                                                $395 
+                                                <span class="fw-semibold text-disable">
+                                                    per person
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <select name="" id="">
+                                            <option value="">0</option>
+                                            <option value="">1</option>
+                                            <option value="">2</option>
+                                            <option value="">3</option>
+                                            <option value="">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">
+                                                1-2 years Age
+                                            </p>
+                                            <p class="mb-0 fw-bold">
+                                                Free
+                                            </p>
+                                        </div>
+                                        <select name="" id="">
+                                            <option value="">0</option>
+                                            <option value="">1</option>
+                                            <option value="">2</option>
+                                            <option value="">3</option>
+                                            <option value="">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5  class="fw-bold pt-4 mb-4">
+                               Seating arrangements
+                            </h5>
+                            <div class="row fs-18 fw-semibold">
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">
+                                                Highchairs (optional)
+                                            </p>
+                                        </div>
+                                        <select name="" id="">
+                                            <option value="">0</option>
+                                            <option value="">1</option>
+                                            <option value="">2</option>
+                                            <option value="">3</option>
+                                            <option value="">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <p class="mb-0 fw-semibold text-wrap">
+                                                Total number of seats at your table (optional)
+                                            </p>
+                                        </div>
+                                        <select name="" id="">
+                                            <option value="">0</option>
+                                            <option value="">1</option>
+                                            <option value="">2</option>
+                                            <option value="">3</option>
+                                            <option value="">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="fw-bold pt-4 mb-4">Reserve a dinner and concert for April 27th</h3>
+                            <h5  class="fw-bold pt-4 mb-4">
+                                Additional Dining Information
+                            </h5>
+                            <div class="row fs-18 fw-semibold">
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">
+                                                12+ years Age
+                                            </p>
+                                            <p class="mb-0 fw-bold">
+                                                $395 
+                                                <span class="fw-semibold text-disable">
+                                                    per person
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <select name="" id="">
+                                            <option value="">0</option>
+                                            <option value="">1</option>
+                                            <option value="">2</option>
+                                            <option value="">3</option>
+                                            <option value="">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">
+                                                3-11 years Age
+                                            </p>
+                                            <p class="mb-0 fw-bold">
+                                                $395 
+                                                <span class="fw-semibold text-disable">
+                                                    per person
+                                                </span>
+                                            </p>
+                                        </div>
+                                        <select name="" id="">
+                                            <option value="">0</option>
+                                            <option value="">1</option>
+                                            <option value="">2</option>
+                                            <option value="">3</option>
+                                            <option value="">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">
+                                                1-2 years Age
+                                            </p>
+                                            <p class="mb-0 fw-bold">
+                                                Free
+                                            </p>
+                                        </div>
+                                        <select name="" id="">
+                                            <option value="">0</option>
+                                            <option value="">1</option>
+                                            <option value="">2</option>
+                                            <option value="">3</option>
+                                            <option value="">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <h5  class="fw-bold pt-4 mb-4">
+                               Seating arrangements
+                            </h5>
+                            <div class="row fs-18 fw-semibold">
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <p class="mb-0 fw-semibold">
+                                                Highchairs (optional)
+                                            </p>
+                                        </div>
+                                        <select name="" id="">
+                                            <option value="">0</option>
+                                            <option value="">1</option>
+                                            <option value="">2</option>
+                                            <option value="">3</option>
+                                            <option value="">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-6">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <p class="mb-0 fw-semibold text-wrap">
+                                                Total number of seats at your table (optional)
+                                            </p>
+                                        </div>
+                                        <select name="" id="">
+                                            <option value="">0</option>
+                                            <option value="">1</option>
+                                            <option value="">2</option>
+                                            <option value="">3</option>
+                                            <option value="">4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /cards -->
+                            <!-- NEXT BUTTON-->
+                            <div class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3 border-top">
+                                <button type="button"
+                                class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn">
+                                <a href="booking-info" class="text-decoration-none text-light">Previous</a></button>
+                                <button type="button"
+                                class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Checkout Now</button>
+                            </div>
+                            <!-- /NEXT BUTTON-->
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                    <!-- Booking Summary  -->
+                    <!-- row -->
+                    <div class="row justify-content-center form-business">
+                        <!-- col -->
+                        <div class="col-md-11">
+                            <h3 class="fw-bold pt-5 mb-0 text-center">Billing Summary Of</h3>
+                            <h3 class="fw-bold pt-0 mb-0 text-center">All Days Event</h3>
+                            <p class="fw-bold text-center">
+                                6 December,2023
+                            </p>
+                            <table class="table-responsive" width="100%">
+                                <thead>
+                                    <tr class="fw-bold pb-3 border-bottom">
+                                        <th width="50%" class="pb-2">
+                                            Room
+                                        </th>
+                                        <th class="text-center pb-2">
+                                            Person
+                                        </th>
+                                        <th class="text-end pb-2">
+                                            Price
+                                        </th>
+                                        <th class="text-end pb-2">
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="pb-3 border-bottom">
+                                        <td class="text-disable fw-semibold py-2">
+                                            VIP junior suite
+                                        </td>
+                                        <td class="fw-semibold text-center py-2">
+                                            2
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            $ 11,000.00
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            $ 22,000.00
+                                        </td>
+                                    </tr>
+                                    <tr class="pb-3 border-bottom">
+                                        <td class="text-disable fw-semibold py-2">
+                                            Single occupancy
+                                        </td>
+                                        <td class="fw-semibold text-center py-2">
+                                            1
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            $ 7,450.00
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            $ 7,450.00
+                                        </td>
+                                    </tr>
+                                    <tr class="pb-3 border-bottom">
+                                        <td class="fw-semibold py-2">
+                                            Subtotal
+                                        </td>
+                                        <td class="fw-semibold text-center py-2">
+                                            3
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            
+                                        </td>
+                                        <td class="fw-semibold text-end py-2">
+                                            $ 29,450.00
+                                        </td>
+                                    </tr>
+                                    <tr class="pb-3 border-bottom">
+                                        <td class="text-disable fw-semibold py-2">
+                                            VIP junior suite 11-18 Age Child
+                                        </td>
+                                        <td class="fw-semibold text-center py-2">
+                                            1
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            $ 1,750.00
+                                        </td>
+                                    </tr>
+                                    <tr class="pb-3 border-bottom">
+                                        <td class="text-disable fw-semibold py-2">
+                                            VIP junior suite: Cribs
+                                        </td>
+                                        <td class="fw-semibold text-center py-2">
+                                            1
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            $ 50.00
+                                        </td>
+                                    </tr>
+                                    <tr class="pb-3 border-bottom">
+                                        <td class="text-disable fw-semibold py-2">
+                                            VIP junior suite: Cot
+                                        </td>
+                                        <td class="fw-semibold text-center py-2">
+                                            2
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            $ 200.00
+                                        </td>
+                                    </tr>
+                                    <tr class="pb-3 border-bottom">
+                                        <td class="text-disable fw-semibold py-2">
+                                            All Event: Private just sedarim
+                                        </td>
+                                        <td class="fw-semibold text-center py-2">
+                                            1
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            $ 3,000.00
+                                        </td>
+                                    </tr>
+                                    <tr class="pb-3 border-bottom">
+                                        <td class="text-disable fw-semibold py-2">
+                                            April 25th Dinner & Concert: 12+ Years Age Person
+                                        </td>
+                                        <td class="fw-semibold text-center py-2">
+                                            2
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            
+                                        </td>
+                                        <td class="text-disable fw-semibold text-end py-2">
+                                            $ 790.00
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table-responsive ms-auto" width="30%">
+                                <tbody>
+                                    <tr class="pb-3 border-bottom">
+                                        <td class="fw-bold py-2">
+                                            Subtotal
+                                        </td>
+                                        <td class="fw-bold text-end py-2">
+                                            $35,240.00
+                                        </td>
+                                    </tr>
+                                    <tr class="pb-3 border-bottom">
+                                        <td class="fw-semibold py-2">
+                                            Total excluding tax
+                                        </td>
+                                        <td class="fw-semibold text-end py-2">
+                                            $95.00
+                                        </td>
+                                    </tr>
+                                    <tr class="pb-3 border-bottom">
+                                        <td class="fw-semibold py-2">
+                                            Total
+                                        </td>
+                                        <td class="fw-semibold text-end py-2">
+                                            $35,335.00
+                                        </td>
+                                    </tr>
+                                    <tr class="pb-3">
+                                        <td class="fw-bold py-2">
+                                            Total Amount
+                                        </td>
+                                        <td class="fw-semibold text-end py-2">
+                                            $35,335.00
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <h3 class="my-3 fw-bold">
+                                Payment methods
+                            </h3>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input radio" type="radio" name="payment-mode" id="ach" value="ach" onclick="ach();">
+                                <label class="form-check-label" for="ach">
+                                  ACH
+                                </label>
+                                <p class="text-disable mb-0 fs-12">
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores molestias placeat deleniti eaque quis ipsum nostrum sint cumque porro facere! Aliquid rerum quod libero fugiat animi nisi odit, ad blanditiis.
+                                </p>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input radio" type="radio" name="payment-mode" id="credit-card" value="credit-card" onclick="creditCard();">
+                                <label class="form-check-label" for="credit-card">
+                                  Credit Card
+                                </label>
+                                <p class="text-disable mb-0 fs-12">
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores molestias placeat deleniti eaque quis ipsum nostrum sint cumque porro facere! Aliquid rerum quod libero fugiat animi nisi odit, ad blanditiis.
+                                </p>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault8">
+                                <label class="form-check-label" for="flexCheckDefault8">
+                                    Please be aware that the hotel charges $100 for each LOST hard key. We strongly advise our guests to be careful with them.<span class="required">*</span>
+                                </label>
+                                
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault9">
+                                <label class="form-check-label" for="flexCheckDefault9">
+                                    Please note: there is absolutely NO CANDLES allowed in the rooms. There is only ONE designated area in the hotel lobby where
+                                    Menorah and Shabbos Candles are allowed to be lit. This is for the safety of everyone in the buildings. <span class="required">*</span>
+                                </label>
+                                
+                            </div>
+                            <!-- /cards -->
+                            <!-- NEXT BUTTON-->
+                            <div class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3 border-top">
+                                <button type="button"
+                                class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn">
+                                <a href="booking-info" class="text-decoration-none text-light">Previous</a></button>
+                                <button type="button"
+                                class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Pay Now</button>
+                            </div>
+                            <!-- /NEXT BUTTON-->
+                        </div>
+                        <!-- /col -->
+                    </div>
+                    <!-- /row -->
+                    <!-- ACH payment  -->
+                    <!-- row -->
+                    <div class="row justify-content-center form-business">
+                        <!-- col -->
+                        <div class="col-md-11">
+                            <h3 class="fw-bold text-disable pt-5 mb-0 text-center">Total Billing Amount Of All Days Event : </h3>
+                            <h3 class="fw-bold pt-0 mb-0 text-center">$35,335</h3>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="ach payment-card p-3 my-3" id="ach-card">
+                                        <h3 class="fw-bold">
+                                            ACH
+                                        </h3>
+                                        <p class="fw-semibold fs-20">
+                                            Customer Information
+                                        </p>
+                                        <div class="row mb-3">
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <input type="text" class="form-control" placeholder="Name" aria-label="Name">
+                                            </div>
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <input type="email" class="form-control" placeholder="Email" aria-label="Email">
+                                            </div>
+                                            <div class="col-12 col-md-12 mb-3">
+                                                <input type="text" class="form-control" placeholder="Address" aria-label="Address">
+                                            </div>
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <input class="form-control" list="datalistOptions" id="state" placeholder="City">
+                                                <datalist id="datalistOptions">
+                                                    <option value="San Francisco">
+                                                    <option value="New York">
+                                                    <option value="Seattle">
+                                                    <option value="Los Angeles">
+                                                    <option value="Chicago">
+                                                </datalist>
+                                            </div>
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <input class="form-control" list="datalistOptions" id="state" placeholder="State">
+                                                    <datalist id="datalistOptions">
+                                                        <option value="San Francisco">
+                                                        <option value="New York">
+                                                        <option value="Seattle">
+                                                        <option value="Los Angeles">
+                                                        <option value="Chicago">
+                                                    </datalist>
+                                            </div>
+                                        </div>
+                                        <p class="fw-semibold fs-20">
+                                            Authorization
+                                        </p>
+                                        <div class="row">
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <input type="text" class="form-control" placeholder="Routing Number" aria-label="routing-number">
+                                            </div>
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <input type="text" class="form-control" placeholder="Account Number" aria-label="accont-number">
+                                            </div>
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <input type="date" class="form-control" placeholder="Date" aria-label="date">
+                                            </div>
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <div class="d-flex">
+                                                    <div class="form-check me-4">
+                                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                          Checking
+                                                        </label>
+                                                      </div>
+                                                      <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                          Saving
+                                                        </label>
+                                                      </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ms-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                  I agree to the 
+                                                  <span class="link-txt"><a href="#">Terms & conditions,</a></span>
+                                                  <span class="link-txt"><a href="#">Privacy policy</a></span> & 
+                                                  <span class="link-txt"><a href="#">Return policy</a></span>
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                  Update Booking Information and Confirmation on email
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-4">
+                                            <button type="submit" class="pay-btn fw-bold">
+                                                <a href="#" class="text-decoration-none">
+                                                    Pay Now
+                                                </a>
+                                            </button>   
+                                        </div>
+                                    </div>
+                                    <div class="payment-card credit-card p-3 my-3" id="credit-card">
+                                        <div class="d-flex align-items-center credit-title">
+                                            <h3 class="fw-bold me-3">
+                                                Credit Card
+                                            </h3>
+                                            <img class="me-2" src="images/image 3.png" alt="">
+                                            <img class="me-2" src="images/image 4.png" alt="">
+                                            <img class="me-2" src="images/image 5.png" alt="">
+                                        </div>
+                                        <p class="text-disable">
+                                            Pay with your Visa, American Express or Mastercard
+                                        </p>
+                                        <div class="row mb-3">
+                                            <div class="col-12 mb-3">
+                                                <label for="card-number" class="form-label text-disable">Credit Card Number</label>
+                                                <input type="text" class="form-control" id="card-number" placeholder="" aria-label="">
+                                            </div>
+                                            <div class="col-12 mb-3">
+                                                <label for="card-name" class="form-label text-disable">Card Holder Name</label>
+                                                <input type="text" class="form-control" id="card-name" placeholder="" aria-label="">
+                                            </div>
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <label for="expiry" class="form-label text-disable">Expires MM/YYYY</label>
+                                                <input type="text" class="form-control" id="expiry" placeholder="" aria-label="">
+                                            </div>
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <label for="cvc" class="form-label text-disable">CVC</label>
+                                                <input type="text" class="form-control" id="cvc" placeholder="" aria-label="">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <p class="fw-semibold fs-18 mb-0">
+                                                Review & Place Booking  
+                                            </p>
+                                            <p class="text-disable">
+                                                Please review the booking details and payment details before proceeding to confirm your Booking.   
+                                            </p>
+                                        </div>
+                                        <div class="">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                  I agree to the 
+                                                  <span class="link-txt"><a href="#">Terms & conditions,</a></span>
+                                                  <span class="link-txt"><a href="#">Privacy policy</a></span> & 
+                                                  <span class="link-txt"><a href="#">Return policy</a></span>
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                  Update Booking Information and Confirmation on email
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-4">
+                                            <button type="submit" class="pay-btn fw-bold">
+                                                <a href="#" class="text-decoration-none">
+                                                    Pay Now
+                                                </a>
+                                            </button>   
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn back back-pay-btn fw-bold">
+                                    Back
+                                </button>   
+                            </div>
+                            <!-- /cards -->
+                        </div>
+                        <!-- /col -->
+                    </div>
+                </form>
+            </div>
+            <!-- /main content -->
+        </div>
+        <!-- /container -->
+    </section>
+    <!-- /section -->
+    <section class="footer mt-3">
+        <div class="container p-4">
+            <div class="d-md-flex d-grid justify-content-between align-items-center">
+                <p class="mb-0 mt-md-0 mt-3 text-white copyright-text">
+                    Copyright <span>&copy</span> 2023 THe All Inclusive Pesach Retreat - All Rights Reserved.
+                </p>
+                <a href="" class="text-decoration-none text-white">
+                    terms & conditions
+                </a>
+            </div>
+        </div>
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            var selectedPackageId = null;
+
+            // hidden things
+            $(".form-business").hide();
+            $("#successMessage").hide();
+            // next button
+            $(".next").on({
+                click: function () {
+                    $("#progressBar").find(".active").next().addClass("active");
+                    $(this).parents(".row").fadeOut("slow", function () {
+                        $(this).next(".row").fadeIn("slow");
+                    });
+                }
+            });
+            // back button
+            $(".back").on({
+                click: function () {
+                    $("#progressBar .active").last().removeClass("active");
+                    $(this).parents(".row").fadeOut("slow", function () {
+                        $(this).prev(".row").fadeIn("slow");
+                    });
+                }
+            });
+            //Active card on click function
+            $(".card").on({
+                click: function () {
+                    $(this).toggleClass("active-card");
+                    selectedPackageId = $(this).data("package_id");
+                }
+            });
+            $(".next-btn").on({
+                click: function () {
+                    let ids = [];
+                    $('#packages div.active-card').each(function (i) {
+                        if ($(this).is('.active-card')) {
+                            ids.push($(this).attr('id'));
+                        }
+                    });
+
+                    fetch('/getPackageInfo', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ ids: ids }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Handle the API response
+                            console.log("data", data.data);
+
+                            // Now, you can use the data to update your EJS page
+                            // Example: Assuming you have a div with id 'apiResponse' on your EJS page
+                            document.getElementById('apiResponse').innerText = JSON.stringify(data.data);
+                        } else {
+                            console.error('Error:', data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+            });
+
+            //back to wizard
+            $(".back-to-wizard").on({
+                click: function () {
+                    location.reload(true);
+                }
+            });
+        });
+        $(document).ready(function() {
+            const minus = $('.quantity__minus');
+            const plus = $('.quantity__plus');
+            const input = $('.quantity__input');
+            minus.click(function(e) {
+              e.preventDefault();
+              var value = input.val();
+              if (value > 0) {
+                value--;
+              }
+              input.val(value);
+            });
+            
+            plus.click(function(e) {
+              e.preventDefault();
+              var value = input.val();
+              value++;
+              input.val(value);
+            })
+          });
+          $(document).ready(function(){
+            $('input[type="radio"]').click(function(){
+                var inputValue = $(this).attr("value");
+                var targetBox = $("." + inputValue);
+                $(".payment-card").not(targetBox).hide();
+                $(targetBox).show();
+            });
+        });
+    </script>
+</body>
+
+</html>
