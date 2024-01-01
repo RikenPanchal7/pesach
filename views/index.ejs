@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
         @font-face {
@@ -35,11 +37,13 @@
             flex-shrink: 0;
             position: absolute;
             border-radius: 619px;
-            background: rgba(201, 79, 110, 0.72);;
+            background: rgba(201, 79, 110, 0.72);
+            ;
             filter: blur(317.3999938964844px);
         }
 
-        .date-time p, .location{
+        .date-time p,
+        .location {
             color: white;
             font-size: 20px;
             font-weight: 600;
@@ -86,13 +90,11 @@
         }
 
         .map-col-div {
-            background: linear-gradient(
-                to right,
-                white 0%,
-                white 50%,
-                #C94F6E 50%,
-                #C94F6E 100%
-            );
+            background: linear-gradient(to right,
+                    white 0%,
+                    white 50%,
+                    #C94F6E 50%,
+                    #C94F6E 100%);
             border-radius: 0 50px 50px 0;
         }
 
@@ -104,67 +106,70 @@
             color: #C94F6E;
         }
 
-        .input-group{
+        .input-group {
             position: relative;
-          }
+        }
 
-          .input-group::after {
+        .input-group::after {
             content: '*';
-            position: absolute; 
-            top: 5px;      
+            position: absolute;
+            top: 5px;
             color: #f00
-          }
+        }
 
-          .input-group.name::after{
-            left: 60px;        
-          }
+        .input-group.name::after {
+            left: 60px;
+        }
 
-          .input-group.number::after{
-            left: 125px;        
-          }
+        .input-group.number::after {
+            left: 125px;
+        }
 
-          .send-btn {
+        .send-btn {
             background: #C94F6E;
             width: -webkit-fill-available;
             border: none;
             padding: 10px;
-          }
+        }
 
-          .send-btn a {
+        .send-btn a {
             color: #FDFCED;
-          }
+        }
 
-          .contact-footer {
+        .contact-footer {
             font-size: 12px;
-          }
+        }
 
-          .footer {
+        .footer {
             background-color: #363636;
-          }
+        }
 
-          .text-white {
+        .text-white {
             color: white;
-          }
+        }
 
-          .map iframe {
+        .map iframe {
             width: -webkit-fill-available;
             height: 500px;
-          }
+        }
 
-          .logoimg-div img {
+        .logoimg-div img {
             width: 150px;
             height: 150px;
-          }
+        }
 
-          @media only screen and (max-width:1201px)
-          {
+        @media only screen and (max-width:1201px) {
             h1 {
                 font-size: 50px;
             }
-            .date-time p, .location {
+
+            .date-time p,
+            .location {
                 font-size: 14px;
             }
-            .date-time img, .location img {
+
+            .date-time img,
+            .location img {
                 width: 25px;
                 height: 25px;
             }
@@ -172,18 +177,19 @@
             .book-btn {
                 font-size: 18px;
             }
-          }
+        }
 
-          @media only screen and (max-width:993px) {
+        @media only screen and (max-width:993px) {
             .map-col-div {
                 border-radius: 50px 50px 0 0;
             }
-          }
+        }
 
-          @media only screen and (max-width:768px) {
+        @media only screen and (max-width:768px) {
             .copyright-text {
                 grid-row: 2;
             }
+
             .d-grid {
                 display: grid;
             }
@@ -193,9 +199,10 @@
                 height: 200px;
             }
 
-          }
+        }
     </style>
 </head>
+
 <body>
     <section class="main-section">
         <div class="container p-4">
@@ -206,7 +213,7 @@
                             <div class="logoimg-div text-center">
                                 <img src="images/Asset 1.png" alt="">
                             </div>
-                            <div>   
+                            <div>
                                 <div class="eclipse"></div>
                                 <h1>
                                     <%= data.event_name %>
@@ -244,7 +251,7 @@
                         </div>
                     </div>
                     <div class="col-12 col-lg-7">
-                        <img class="bnr-img" src="images/preview 1.png" alt="">
+                        <img class="bnr-img" src="images/preview 1.jpeg" alt="">
                     </div>
                 </div>
             </div>
@@ -262,19 +269,20 @@
                 When reserving a room, they should be able to
             </h3>
             <ul class="fw-semibold content-list">
-                <% for (let i = 0; i < data.package_data.length; i++) { %>
-                    <% const startDate = new Date(data.package_data[i].package_start_date); %>
-                    <% const endDate = new Date(data.package_data[i].package_end_date); %>
-                
-                    <li>
-                        <%= data.package_data[i].package_name %>  
-                        (<%= startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %> 
-                        - <%= endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %>)
-                    </li>
-                <% } %>
-                
+                <% for (let i=0; i < data.package_data.length; i++) { %>
+                    <% const startDate=new Date(data.package_data[i].package_start_date); %>
+                        <% const endDate=new Date(data.package_data[i].package_end_date); %>
+
+                            <li>
+                                <%= data.package_data[i].package_name %>
+                                    (<%= startDate.toLocaleDateString('en-US', { month: 'short' , day: 'numeric' }) %>
+                                        - <%= endDate.toLocaleDateString('en-US', { month: 'short' , day: 'numeric' })
+                                            %>)
+                            </li>
+                            <% } %>
+
             </ul>
-            <button class="book-btn content mt-3">Book Now</button>
+            <button class="book-btn content mt-3" id="bookNowBtn1">Book Now</button>
         </div>
     </section>
     <section class="main-section">
@@ -301,12 +309,14 @@
                             </div>
                             <div class="mb-4">
                                 <span class="input-group number">
-                                    <input type="tel" class="form-control" placeholder="Phone Number" aria-label="Phone Number">
+                                    <input type="tel" class="form-control" placeholder="Phone Number"
+                                        aria-label="Phone Number">
                                 </span>
                             </div>
                             <div class="mb-4">
                                 <span class="">
-                                    <input type="text" class="form-control" placeholder="Type message" aria-label="message">
+                                    <input type="text" class="form-control" placeholder="Type message"
+                                        aria-label="message">
                                 </span>
                             </div>
                             <button type="submit" class="send-btn fw-bold">
@@ -339,7 +349,10 @@
                 </div>
                 <div class="col-12 col-lg-6 map-col-div order-1 order-lg-2">
                     <div class="map p-5">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d8634.800783189756!2d-74.21710272913575!3d40.07846582674454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c18262e977ef65%3A0x6b799c76a9a0368a!2sLakewood%2C%20NJ%2008701%2C%20USA!5e0!3m2!1sen!2sin!4v1703235833432!5m2!1sen!2sin" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d8634.800783189756!2d-74.21710272913575!3d40.07846582674454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c18262e977ef65%3A0x6b799c76a9a0368a!2sLakewood%2C%20NJ%2008701%2C%20USA!5e0!3m2!1sen!2sin!4v1703235833432!5m2!1sen!2sin"
+                            style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                 </div>
             </div>
@@ -360,12 +373,21 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
     <script>
-        document.getElementById('bookNowBtn').addEventListener('click', function(event) {
-        event.preventDefault();
+        document.getElementById('bookNowBtn').addEventListener('click', function (event) {
+            event.preventDefault();
 
-        // Redirect to the desired URL
-        window.location.href = '/booking-info';
-    });
+            // Redirect to the desired URL
+            window.location.href = '/booking-info';
+        });
+    </script>
+    <script>
+        document.getElementById('bookNowBtn1').addEventListener('click', function (event) {
+            event.preventDefault();
+
+            // Redirect to the desired URL
+            window.location.href = '/booking-info';
+        });
     </script>
 </body>
+
 </html>

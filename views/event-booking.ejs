@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
-
         body {
             background: #fdfdfd;
         }
+
         @font-face {
             font-family: Segoe-UI;
             src: url(SEGOEUI.TTF);
@@ -159,7 +160,7 @@
 
         .content-text {
             font-size: 14px;
-            color: #6e727d;        
+            color: #6e727d;
         }
 
         .discount-price {
@@ -179,14 +180,15 @@
 
         .quantity {
             display: flex;
-            align-items: center;    
+            align-items: center;
             padding: 0;
             background: #f5f5f5;
             padding: 5px;
             width: 130px;
-          }
-          .quantity__minus,
-          .quantity__plus {
+        }
+
+        .quantity__minus,
+        .quantity__plus {
             display: block;
             width: 45px;
             font-size: 25px;
@@ -196,19 +198,23 @@
             text-decoration: none;
             text-align: center;
             line-height: 28px;
-          }
-          .quantity__minus:hover,
-          .quantity__plus:hover {
+        }
+
+        .quantity__minus:hover,
+        .quantity__plus:hover {
             background: #575b71;
             color: #fff;
-          } 
-          .quantity__minus {
+        }
+
+        .quantity__minus {
             border-radius: 3px 0 0 3px;
-          }
-          .quantity__plus {
+        }
+
+        .quantity__plus {
             border-radius: 0 3px 3px 0;
-          }
-          .quantity__input {
+        }
+
+        .quantity__input {
             width: 45px;
             height: 35px;
             margin: 0;
@@ -218,52 +224,54 @@
             background: #f5f5f5;
             color: black;
             font-weight: 600;
-          }
-          .quantity__minus:link,
-          .quantity__plus:link {
+        }
+
+        .quantity__minus:link,
+        .quantity__plus:link {
             color: #FDFCED;
-          } 
-          .quantity__minus:visited,
-          .quantity__plus:visited {
+        }
+
+        .quantity__minus:visited,
+        .quantity__plus:visited {
             color: #FDFCED;
             font-weight: 900;
-          }
+        }
 
-          .fs-18 {
+        .fs-18 {
             font-size: 18px;
-          }
+        }
 
-          .fs-20 {
+        .fs-20 {
             font-size: 20px;
-          }
+        }
 
-          .text-disable {
+        .text-disable {
             color: #9c9c9c;
-          }
+        }
 
-          .text-dark {
+        .text-dark {
             color: black;
-          }
+        }
 
-          .bg-lightgray {
+        .bg-lightgray {
             background-color: #fdfdfd;
             border: 1px solid #c3c3c3;
             border-radius: 10px;
-          }
+        }
 
-          select {
+        select {
             padding: 5px 10px;
             background: #eeeeee;
             border-radius: 5px;
             border: 1px solid #c8c7c7;
-          }
+        }
 
-          .form-check-input {
+        .form-check-input {
             background: white;
             border: 1px solid #c8c7c7;
-          }
+        }
 
-          .form-check-input:checked {
+        .form-check-input:checked {
             background-color: #c94f6e;
             border-color: #ffffffc9;
         }
@@ -318,10 +326,10 @@
         }
 
         .back-pay-btn {
-                background: transparent;
-                border: none;
-                font-size: 20px;
-                color: #065ba9;
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            color: #065ba9;
         }
 
         @media only screen and (max-width:768px) {
@@ -462,41 +470,54 @@
                         <div class="col-md-11">
                             <h3 class="fw-bold pt-5">Select Event Package</h3>
                             <!-- cards -->
-                            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4 pb-5 mt-4 border-bottom" id="packages">
-                                <% for (let i = 0; i < data.package_data.length; i++) { %>
-                                    <% const startDate = new Date(data.package_data[i].package_start_date); %>
-                                    <% const endDate = new Date(data.package_data[i].package_end_date); %>
-                                    <% const package_id = data.package_data[i].package_id %>
-                                    <div class="col" >
-                                        <div class="card text-center h-100 py-5 shadow-sm" id=<%= package_id %>>
-                                            <div class="card-body px-0">
-                                                <h5 class="card-title title-binding"><%= data.package_data[i].package_name %></h5>
-                                                <p class="card-text"><%= startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %> 
-                                                    - <%= endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <% } %>
-                                <div class="col" >
-                                    <div class="card text-center h-100 py-5 shadow-sm" id="dining">
-                                        <div class="card-body px-0">
-                                            <h5 class="card-title title-binding"><%= data.dining_data[0].dining_name %></h5>
-                                            <p class="card-text">
-                                                <% const createdDate = new Date(data.dining_data[0].created_date); %>
-                                                <%= createdDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4 pb-5 mt-4 border-bottom"
+                                id="packages">
+                                <% for (let i=0; i < data.package_data.length; i++) { %>
+                                    <% const startDate=new Date(data.package_data[i].package_start_date); %>
+                                        <% const endDate=new Date(data.package_data[i].package_end_date); %>
+                                            <% const package_id=data.package_data[i].package_id %>
+                                                <div class="col">
+                                                    <div class="card text-center h-100 py-5 shadow-sm" id=<%=package_id
+                                                        %>>
+                                                        <div class="card-body px-0">
+                                                            <h5 class="card-title title-binding">
+                                                                <%= data.package_data[i].package_name %>
+                                                            </h5>
+                                                            <p class="card-text">
+                                                                <%= startDate.toLocaleDateString('en-US', {
+                                                                    month: 'short' , day: 'numeric' }) %>
+                                                                    - <%= endDate.toLocaleDateString('en-US', {
+                                                                        month: 'short' , day: 'numeric' }) %>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <% } %>
+                                                    <div class="col">
+                                                        <div class="card text-center h-100 py-5 shadow-sm" id="dining">
+                                                            <div class="card-body px-0">
+                                                                <h5 class="card-title title-binding">
+                                                                    <%= data.dining_data[0].dining_name %>
+                                                                </h5>
+                                                                <p class="card-text">
+                                                                    <% const createdDate=new
+                                                                        Date(data.dining_data[0].created_date); %>
+                                                                        <%= createdDate.toLocaleDateString('en-US', {
+                                                                            month: 'short' , day: 'numeric' }) %>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                             </div>
                             <!-- /cards -->
                             <!-- NEXT BUTTON-->
                             <div class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3">
                                 <button type="button"
-                                class="btn btn-dark fw-bold text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-4 back-btn">
-                                <a href="booking-info" class="text-decoration-none text-light">Back to Booking Information</a></button>
+                                    class="btn btn-dark fw-bold text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-4 back-btn">
+                                    <a href="booking-info" class="text-decoration-none text-light">Back to Booking
+                                        Information</a></button>
                                 <button type="button"
-                                class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-4 next-btn">Next</button>
+                                    class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-4 next-btn">Next</button>
                             </div>
                             <!-- /NEXT BUTTON-->
                         </div>
@@ -518,11 +539,14 @@
                                                 VIP junior suite
                                             </h5>
                                             <p class="mb-0 content-text fw-semibold">
-                                                Max capacity per room is 4 people Each room is priced at double occupancy
+                                                Max capacity per room is 4 people Each room is priced at double
+                                                occupancy
                                                 and includes
-                                                catering for two guests. If you will have more then 2 people in your room,
+                                                catering for two guests. If you will have more then 2 people in your
+                                                room,
                                                 add your
-                                                quantity to the applicable age below. Up to 2 additional guests per room. If
+                                                quantity to the applicable age below. Up to 2 additional guests per
+                                                room. If
                                                 you need
                                                 more beds/cribs, select the applicable bed type below.
                                             </p>
@@ -549,7 +573,8 @@
                                             </p>
                                             <div class="quantity">
                                                 <a href="#" class="quantity__minus"><span>-</span></a>
-                                                <input name="quantity" type="text" class="quantity__input" value="0" readonly>
+                                                <input name="quantity" type="text" class="quantity__input" value="0"
+                                                    readonly>
                                                 <a href="#" class="quantity__plus"><span>+</span></a>
                                             </div>
                                         </div>
@@ -562,11 +587,14 @@
                                                 Single Occupancy
                                             </h5>
                                             <p class="mb-0 content-text fw-semibold">
-                                                Max capacity per room is 4 people Each room is priced at double occupancy
+                                                Max capacity per room is 4 people Each room is priced at double
+                                                occupancy
                                                 and includes
-                                                catering for two guests. If you will have more then 2 people in your room,
+                                                catering for two guests. If you will have more then 2 people in your
+                                                room,
                                                 add your
-                                                quantity to the applicable age below. Up to 2 additional guests per room. If
+                                                quantity to the applicable age below. Up to 2 additional guests per
+                                                room. If
                                                 you need
                                                 more beds/cribs, select the applicable bed type below.
                                             </p>
@@ -593,7 +621,8 @@
                                             </p>
                                             <div class="quantity">
                                                 <a href="#" class="quantity__minus"><span>-</span></a>
-                                                <input name="quantity" type="text" class="quantity__input" value="0" readonly>
+                                                <input name="quantity" type="text" class="quantity__input" value="0"
+                                                    readonly>
                                                 <a href="#" class="quantity__plus"><span>+</span></a>
                                             </div>
                                         </div>
@@ -606,11 +635,14 @@
                                                 Smallest Jr Suite
                                             </h5>
                                             <p class="mb-0 content-text fw-semibold">
-                                                Max capacity per room is 4 people Each room is priced at double occupancy
+                                                Max capacity per room is 4 people Each room is priced at double
+                                                occupancy
                                                 and includes
-                                                catering for two guests. If you will have more then 2 people in your room,
+                                                catering for two guests. If you will have more then 2 people in your
+                                                room,
                                                 add your
-                                                quantity to the applicable age below. Up to 2 additional guests per room. If
+                                                quantity to the applicable age below. Up to 2 additional guests per
+                                                room. If
                                                 you need
                                                 more beds/cribs, select the applicable bed type below.
                                             </p>
@@ -637,7 +669,8 @@
                                             </p>
                                             <div class="quantity">
                                                 <a href="#" class="quantity__minus"><span>-</span></a>
-                                                <input name="quantity" type="text" class="quantity__input" value="0" readonly>
+                                                <input name="quantity" type="text" class="quantity__input" value="0"
+                                                    readonly>
                                                 <a href="#" class="quantity__plus"><span>+</span></a>
                                             </div>
                                         </div>
@@ -648,8 +681,9 @@
                             <!-- NEXT BUTTON-->
                             <div class="row d-flex mx-md-0 mx-3 align-items-center">
                                 <button type="button"
-                                class="btn btn-dark fw-bold text-white back rounded-3 col-12 mb-3 mb-md-0 col-md-3 order-2 order-md-1">Previous</button>
-                                <div class="col-12 col-md-6 d-flex justify-content-center mb-3 mb-md-0 order-1 order-md-2">
+                                    class="btn btn-dark fw-bold text-white back rounded-3 col-12 mb-3 mb-md-0 col-md-3 order-2 order-md-1">Previous</button>
+                                <div
+                                    class="col-12 col-md-6 d-flex justify-content-center mb-3 mb-md-0 order-1 order-md-2">
                                     <div class="total-quantity me-3">
                                         <p class="fw-semibold mb-0 fs-20">
                                             Quantity :
@@ -682,7 +716,8 @@
                         <div class="col-md-11">
                             <h3 class="fw-bold pt-5 mb-4">Package Tickets</h3>
                             <div class="my-4 bg-light p-4">
-                                <div class="d-md-flex justify-content-between border-bottom align-items-center pb-3 mb-3">
+                                <div
+                                    class="d-md-flex justify-content-between border-bottom align-items-center pb-3 mb-3">
                                     <h5 class="fw-bold">
                                         VIP Junior suite
                                     </h5>
@@ -701,7 +736,8 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="d-md-flex justify-content-between border-bottom align-items-center pb-3 mb-3">
+                                <div
+                                    class="d-md-flex justify-content-between border-bottom align-items-center pb-3 mb-3">
                                     <h5 class="fw-bold">
                                         Single occupancy
                                     </h5>
@@ -723,13 +759,13 @@
                                 <div class="d-flex justify-content-end align-items-center">
                                     <div class="d-flex align-items-center">
                                         <p class="fw-bold mb-0 text-disable me-3 fs-20">
-                                            Quantity : 
+                                            Quantity :
                                             <span class="text-dark">
                                                 3
                                             </span>
                                         </p>
                                         <p class="fw-bold mb-0 text-disable fs-20">
-                                            Total : 
+                                            Total :
                                             <span class="text-dark">
                                                 $ 29,450.00
                                             </span>
@@ -860,13 +896,15 @@
                                             </div>
                                             <div class="fw-semibold">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                    <input class="form-check-input" type="checkbox" value=""
+                                                        id="flexCheckDefault">
                                                     <label class="form-check-label" for="flexCheckDefault">
                                                         Cribe $50 OR bring your own
                                                     </label>
                                                 </div>
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault1">
+                                                    <input class="form-check-input" type="checkbox" value=""
+                                                        id="flexCheckDefault1">
                                                     <label class="form-check-label" for="flexCheckDefault1">
                                                         Cot $100
                                                     </label>
@@ -999,13 +1037,15 @@
                                             </div>
                                             <div class="fw-semibold">
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault2">
+                                                    <input class="form-check-input" type="checkbox" value=""
+                                                        id="flexCheckDefault2">
                                                     <label class="form-check-label" for="flexCheckDefault2">
                                                         Cribe $50 OR bring your own
                                                     </label>
                                                 </div>
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault3">
+                                                    <input class="form-check-input" type="checkbox" value=""
+                                                        id="flexCheckDefault3">
                                                     <label class="form-check-label" for="flexCheckDefault3">
                                                         Cot $100
                                                     </label>
@@ -1019,10 +1059,10 @@
                             <!-- NEXT BUTTON-->
                             <div class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3">
                                 <button type="button"
-                                class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn">
-                                <a href="booking-info" class="text-decoration-none text-light">Previous</a></button>
+                                    class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn">
+                                    <a href="booking-info" class="text-decoration-none text-light">Previous</a></button>
                                 <button type="button"
-                                class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Next</button>
+                                    class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Next</button>
                             </div>
                             <!-- /NEXT BUTTON-->
                         </div>
@@ -1040,7 +1080,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault4">
                                         <label class="form-check-label" for="flexCheckDefault4">
-                                            Full Pesach 
+                                            Full Pesach
                                             <span class="fw-bold">
                                                 $5500
                                             </span>
@@ -1051,7 +1091,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault5">
                                         <label class="form-check-label" for="flexCheckDefault5">
-                                            Entire 1st days 
+                                            Entire 1st days
                                             <span class="fw-bold">
                                                 $3500
                                             </span>
@@ -1062,7 +1102,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault6">
                                         <label class="form-check-label" for="flexCheckDefault6">
-                                            Private just sedarim 
+                                            Private just sedarim
                                             <span class="fw-bold">
                                                 $3000
                                             </span>
@@ -1073,7 +1113,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault7">
                                         <label class="form-check-label" for="flexCheckDefault7">
-                                            Shared private just for sedarim only 
+                                            Shared private just for sedarim only
                                             <span class="fw-bold">
                                                 $1000
                                             </span>
@@ -1082,7 +1122,7 @@
                                 </div>
                             </div>
                             <h3 class="fw-bold pt-4 mb-4">Reserve a dinner and concert for April 25th</h3>
-                            <h5  class="fw-bold pt-4 mb-4">
+                            <h5 class="fw-bold pt-4 mb-4">
                                 Additional Dining Information
                             </h5>
                             <div class="row fs-18 fw-semibold">
@@ -1093,7 +1133,7 @@
                                                 12+ years Age
                                             </p>
                                             <p class="mb-0 fw-bold">
-                                                $395 
+                                                $395
                                                 <span class="fw-semibold text-disable">
                                                     per person
                                                 </span>
@@ -1115,7 +1155,7 @@
                                                 3-11 years Age
                                             </p>
                                             <p class="mb-0 fw-bold">
-                                                $395 
+                                                $395
                                                 <span class="fw-semibold text-disable">
                                                     per person
                                                 </span>
@@ -1150,8 +1190,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <h5  class="fw-bold pt-4 mb-4">
-                               Seating arrangements
+                            <h5 class="fw-bold pt-4 mb-4">
+                                Seating arrangements
                             </h5>
                             <div class="row fs-18 fw-semibold">
                                 <div class="col-12 col-lg-6">
@@ -1188,7 +1228,7 @@
                                 </div>
                             </div>
                             <h3 class="fw-bold pt-4 mb-4">Reserve a dinner and concert for April 27th</h3>
-                            <h5  class="fw-bold pt-4 mb-4">
+                            <h5 class="fw-bold pt-4 mb-4">
                                 Additional Dining Information
                             </h5>
                             <div class="row fs-18 fw-semibold">
@@ -1199,7 +1239,7 @@
                                                 12+ years Age
                                             </p>
                                             <p class="mb-0 fw-bold">
-                                                $395 
+                                                $395
                                                 <span class="fw-semibold text-disable">
                                                     per person
                                                 </span>
@@ -1221,7 +1261,7 @@
                                                 3-11 years Age
                                             </p>
                                             <p class="mb-0 fw-bold">
-                                                $395 
+                                                $395
                                                 <span class="fw-semibold text-disable">
                                                     per person
                                                 </span>
@@ -1256,8 +1296,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <h5  class="fw-bold pt-4 mb-4">
-                               Seating arrangements
+                            <h5 class="fw-bold pt-4 mb-4">
+                                Seating arrangements
                             </h5>
                             <div class="row fs-18 fw-semibold">
                                 <div class="col-12 col-lg-6">
@@ -1295,12 +1335,14 @@
                             </div>
                             <!-- /cards -->
                             <!-- NEXT BUTTON-->
-                            <div class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3 border-top">
+                            <div
+                                class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3 border-top">
                                 <button type="button"
-                                class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn">
-                                <a href="booking-info" class="text-decoration-none text-light">Previous</a></button>
+                                    class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn">
+                                    <a href="booking-info" class="text-decoration-none text-light">Previous</a></button>
                                 <button type="button"
-                                class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Checkout Now</button>
+                                    class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Checkout
+                                    Now</button>
                             </div>
                             <!-- /NEXT BUTTON-->
                         </div>
@@ -1371,7 +1413,7 @@
                                             3
                                         </td>
                                         <td class="text-disable fw-semibold text-end py-2">
-                                            
+
                                         </td>
                                         <td class="fw-semibold text-end py-2">
                                             $ 29,450.00
@@ -1385,7 +1427,7 @@
                                             1
                                         </td>
                                         <td class="text-disable fw-semibold text-end py-2">
-                                            
+
                                         </td>
                                         <td class="text-disable fw-semibold text-end py-2">
                                             $ 1,750.00
@@ -1399,7 +1441,7 @@
                                             1
                                         </td>
                                         <td class="text-disable fw-semibold text-end py-2">
-                                            
+
                                         </td>
                                         <td class="text-disable fw-semibold text-end py-2">
                                             $ 50.00
@@ -1413,7 +1455,7 @@
                                             2
                                         </td>
                                         <td class="text-disable fw-semibold text-end py-2">
-                                            
+
                                         </td>
                                         <td class="text-disable fw-semibold text-end py-2">
                                             $ 200.00
@@ -1427,7 +1469,7 @@
                                             1
                                         </td>
                                         <td class="text-disable fw-semibold text-end py-2">
-                                            
+
                                         </td>
                                         <td class="text-disable fw-semibold text-end py-2">
                                             $ 3,000.00
@@ -1441,7 +1483,7 @@
                                             2
                                         </td>
                                         <td class="text-disable fw-semibold text-end py-2">
-                                            
+
                                         </td>
                                         <td class="text-disable fw-semibold text-end py-2">
                                             $ 790.00
@@ -1489,46 +1531,57 @@
                                 Payment methods
                             </h3>
                             <div class="form-check mb-3">
-                                <input class="form-check-input radio" type="radio" name="payment-mode" id="ach" value="ach" onclick="ach();">
+                                <input class="form-check-input radio" type="radio" name="payment-mode" id="ach"
+                                    value="ach" onclick="ach();">
                                 <label class="form-check-label" for="ach">
-                                  ACH
+                                    ACH
                                 </label>
                                 <p class="text-disable mb-0 fs-12">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores molestias placeat deleniti eaque quis ipsum nostrum sint cumque porro facere! Aliquid rerum quod libero fugiat animi nisi odit, ad blanditiis.
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores molestias placeat
+                                    deleniti eaque quis ipsum nostrum sint cumque porro facere! Aliquid rerum quod
+                                    libero fugiat animi nisi odit, ad blanditiis.
                                 </p>
                             </div>
                             <div class="form-check mb-3">
-                                <input class="form-check-input radio" type="radio" name="payment-mode" id="credit-card" value="credit-card" onclick="creditCard();">
+                                <input class="form-check-input radio" type="radio" name="payment-mode" id="credit-card"
+                                    value="credit-card" onclick="creditCard();">
                                 <label class="form-check-label" for="credit-card">
-                                  Credit Card
+                                    Credit Card
                                 </label>
                                 <p class="text-disable mb-0 fs-12">
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores molestias placeat deleniti eaque quis ipsum nostrum sint cumque porro facere! Aliquid rerum quod libero fugiat animi nisi odit, ad blanditiis.
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores molestias placeat
+                                    deleniti eaque quis ipsum nostrum sint cumque porro facere! Aliquid rerum quod
+                                    libero fugiat animi nisi odit, ad blanditiis.
                                 </p>
                             </div>
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault8">
                                 <label class="form-check-label" for="flexCheckDefault8">
-                                    Please be aware that the hotel charges $100 for each LOST hard key. We strongly advise our guests to be careful with them.<span class="required">*</span>
+                                    Please be aware that the hotel charges $100 for each LOST hard key. We strongly
+                                    advise our guests to be careful with them.<span class="required">*</span>
                                 </label>
-                                
+
                             </div>
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault9">
                                 <label class="form-check-label" for="flexCheckDefault9">
-                                    Please note: there is absolutely NO CANDLES allowed in the rooms. There is only ONE designated area in the hotel lobby where
-                                    Menorah and Shabbos Candles are allowed to be lit. This is for the safety of everyone in the buildings. <span class="required">*</span>
+                                    Please note: there is absolutely NO CANDLES allowed in the rooms. There is only ONE
+                                    designated area in the hotel lobby where
+                                    Menorah and Shabbos Candles are allowed to be lit. This is for the safety of
+                                    everyone in the buildings. <span class="required">*</span>
                                 </label>
-                                
+
                             </div>
                             <!-- /cards -->
                             <!-- NEXT BUTTON-->
-                            <div class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3 border-top">
+                            <div
+                                class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3 border-top">
                                 <button type="button"
-                                class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn">
-                                <a href="booking-info" class="text-decoration-none text-light">Previous</a></button>
+                                    class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn">
+                                    <a href="booking-info" class="text-decoration-none text-light">Previous</a></button>
                                 <button type="button"
-                                class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Pay Now</button>
+                                    class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Pay
+                                    Now</button>
                             </div>
                             <!-- /NEXT BUTTON-->
                         </div>
@@ -1540,7 +1593,8 @@
                     <div class="row justify-content-center form-business">
                         <!-- col -->
                         <div class="col-md-11">
-                            <h3 class="fw-bold text-disable pt-5 mb-0 text-center">Total Billing Amount Of All Days Event : </h3>
+                            <h3 class="fw-bold text-disable pt-5 mb-0 text-center">Total Billing Amount Of All Days
+                                Event : </h3>
                             <h3 class="fw-bold pt-0 mb-0 text-center">$35,335</h3>
                             <div class="row">
                                 <div class="col-12">
@@ -1553,16 +1607,20 @@
                                         </p>
                                         <div class="row mb-3">
                                             <div class="col-12 col-md-6 mb-3">
-                                                <input type="text" class="form-control" placeholder="Name" aria-label="Name">
+                                                <input type="text" class="form-control" placeholder="Name"
+                                                    aria-label="Name">
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
-                                                <input type="email" class="form-control" placeholder="Email" aria-label="Email">
+                                                <input type="email" class="form-control" placeholder="Email"
+                                                    aria-label="Email">
                                             </div>
                                             <div class="col-12 col-md-12 mb-3">
-                                                <input type="text" class="form-control" placeholder="Address" aria-label="Address">
+                                                <input type="text" class="form-control" placeholder="Address"
+                                                    aria-label="Address">
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
-                                                <input class="form-control" list="datalistOptions" id="state" placeholder="City">
+                                                <input class="form-control" list="datalistOptions" id="state"
+                                                    placeholder="City">
                                                 <datalist id="datalistOptions">
                                                     <option value="San Francisco">
                                                     <option value="New York">
@@ -1572,14 +1630,15 @@
                                                 </datalist>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
-                                                <input class="form-control" list="datalistOptions" id="state" placeholder="State">
-                                                    <datalist id="datalistOptions">
-                                                        <option value="San Francisco">
-                                                        <option value="New York">
-                                                        <option value="Seattle">
-                                                        <option value="Los Angeles">
-                                                        <option value="Chicago">
-                                                    </datalist>
+                                                <input class="form-control" list="datalistOptions" id="state"
+                                                    placeholder="State">
+                                                <datalist id="datalistOptions">
+                                                    <option value="San Francisco">
+                                                    <option value="New York">
+                                                    <option value="Seattle">
+                                                    <option value="Los Angeles">
+                                                    <option value="Chicago">
+                                                </datalist>
                                             </div>
                                         </div>
                                         <p class="fw-semibold fs-20">
@@ -1587,45 +1646,52 @@
                                         </p>
                                         <div class="row">
                                             <div class="col-12 col-md-6 mb-3">
-                                                <input type="text" class="form-control" placeholder="Routing Number" aria-label="routing-number">
+                                                <input type="text" class="form-control" placeholder="Routing Number"
+                                                    aria-label="routing-number">
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
-                                                <input type="text" class="form-control" placeholder="Account Number" aria-label="accont-number">
+                                                <input type="text" class="form-control" placeholder="Account Number"
+                                                    aria-label="accont-number">
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
-                                                <input type="date" class="form-control" placeholder="Date" aria-label="date">
+                                                <input type="date" class="form-control" placeholder="Date"
+                                                    aria-label="date">
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="d-flex">
                                                     <div class="form-check me-4">
-                                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                        <input class="form-check-input" type="checkbox" value=""
+                                                            id="flexCheckDefault">
                                                         <label class="form-check-label" for="flexCheckDefault">
-                                                          Checking
+                                                            Checking
                                                         </label>
-                                                      </div>
-                                                      <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value=""
+                                                            id="flexCheckDefault">
                                                         <label class="form-check-label" for="flexCheckDefault">
-                                                          Saving
+                                                            Saving
                                                         </label>
-                                                      </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="ms-2">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault">
                                                 <label class="form-check-label" for="flexCheckDefault">
-                                                  I agree to the 
-                                                  <span class="link-txt"><a href="#">Terms & conditions,</a></span>
-                                                  <span class="link-txt"><a href="#">Privacy policy</a></span> & 
-                                                  <span class="link-txt"><a href="#">Return policy</a></span>
+                                                    I agree to the
+                                                    <span class="link-txt"><a href="#">Terms & conditions,</a></span>
+                                                    <span class="link-txt"><a href="#">Privacy policy</a></span> &
+                                                    <span class="link-txt"><a href="#">Return policy</a></span>
                                                 </label>
                                             </div>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault">
                                                 <label class="form-check-label" for="flexCheckDefault">
-                                                  Update Booking Information and Confirmation on email
+                                                    Update Booking Information and Confirmation on email
                                                 </label>
                                             </div>
                                         </div>
@@ -1634,7 +1700,7 @@
                                                 <a href="#" class="text-decoration-none">
                                                     Pay Now
                                                 </a>
-                                            </button>   
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="payment-card credit-card p-3 my-3" id="credit-card">
@@ -1651,44 +1717,54 @@
                                         </p>
                                         <div class="row mb-3">
                                             <div class="col-12 mb-3">
-                                                <label for="card-number" class="form-label text-disable">Credit Card Number</label>
-                                                <input type="text" class="form-control" id="card-number" placeholder="" aria-label="">
+                                                <label for="card-number" class="form-label text-disable">Credit Card
+                                                    Number</label>
+                                                <input type="text" class="form-control" id="card-number" placeholder=""
+                                                    aria-label="">
                                             </div>
                                             <div class="col-12 mb-3">
-                                                <label for="card-name" class="form-label text-disable">Card Holder Name</label>
-                                                <input type="text" class="form-control" id="card-name" placeholder="" aria-label="">
+                                                <label for="card-name" class="form-label text-disable">Card Holder
+                                                    Name</label>
+                                                <input type="text" class="form-control" id="card-name" placeholder=""
+                                                    aria-label="">
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
-                                                <label for="expiry" class="form-label text-disable">Expires MM/YYYY</label>
-                                                <input type="text" class="form-control" id="expiry" placeholder="" aria-label="">
+                                                <label for="expiry" class="form-label text-disable">Expires
+                                                    MM/YYYY</label>
+                                                <input type="text" class="form-control" id="expiry" placeholder=""
+                                                    aria-label="">
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <label for="cvc" class="form-label text-disable">CVC</label>
-                                                <input type="text" class="form-control" id="cvc" placeholder="" aria-label="">
+                                                <input type="text" class="form-control" id="cvc" placeholder=""
+                                                    aria-label="">
                                             </div>
                                         </div>
                                         <div class="mb-3">
                                             <p class="fw-semibold fs-18 mb-0">
-                                                Review & Place Booking  
+                                                Review & Place Booking
                                             </p>
                                             <p class="text-disable">
-                                                Please review the booking details and payment details before proceeding to confirm your Booking.   
+                                                Please review the booking details and payment details before proceeding
+                                                to confirm your Booking.
                                             </p>
                                         </div>
                                         <div class="">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault">
                                                 <label class="form-check-label" for="flexCheckDefault">
-                                                  I agree to the 
-                                                  <span class="link-txt"><a href="#">Terms & conditions,</a></span>
-                                                  <span class="link-txt"><a href="#">Privacy policy</a></span> & 
-                                                  <span class="link-txt"><a href="#">Return policy</a></span>
+                                                    I agree to the
+                                                    <span class="link-txt"><a href="#">Terms & conditions,</a></span>
+                                                    <span class="link-txt"><a href="#">Privacy policy</a></span> &
+                                                    <span class="link-txt"><a href="#">Return policy</a></span>
                                                 </label>
                                             </div>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault">
                                                 <label class="form-check-label" for="flexCheckDefault">
-                                                  Update Booking Information and Confirmation on email
+                                                    Update Booking Information and Confirmation on email
                                                 </label>
                                             </div>
                                         </div>
@@ -1697,7 +1773,7 @@
                                                 <a href="#" class="text-decoration-none">
                                                     Pay Now
                                                 </a>
-                                            </button>   
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -1705,7 +1781,7 @@
                             <div class="text-center mt-3">
                                 <button type="button" class="btn back back-pay-btn fw-bold">
                                     Back
-                                </button>   
+                                </button>
                             </div>
                             <!-- /cards -->
                         </div>
@@ -1780,22 +1856,19 @@
                         },
                         body: JSON.stringify({ ids: ids }),
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Handle the API response
-                            console.log("data", data.data);
-
-                            // Now, you can use the data to update your EJS page
-                            // Example: Assuming you have a div with id 'apiResponse' on your EJS page
-                            document.getElementById('apiResponse').innerText = JSON.stringify(data.data);
-                        } else {
-                            console.error('Error:', data.error);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Handle the API response
+                                console.log("data", data.data);
+                                document.getElementById('apiResponse').innerText = JSON.stringify(data.data);
+                            } else {
+                                console.error('Error:', data.error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 }
             });
 
@@ -1806,28 +1879,28 @@
                 }
             });
         });
-        $(document).ready(function() {
+        $(document).ready(function () {
             const minus = $('.quantity__minus');
             const plus = $('.quantity__plus');
             const input = $('.quantity__input');
-            minus.click(function(e) {
-              e.preventDefault();
-              var value = input.val();
-              if (value > 0) {
-                value--;
-              }
-              input.val(value);
+            minus.click(function (e) {
+                e.preventDefault();
+                var value = input.val();
+                if (value > 0) {
+                    value--;
+                }
+                input.val(value);
             });
-            
-            plus.click(function(e) {
-              e.preventDefault();
-              var value = input.val();
-              value++;
-              input.val(value);
+
+            plus.click(function (e) {
+                e.preventDefault();
+                var value = input.val();
+                value++;
+                input.val(value);
             })
-          });
-          $(document).ready(function(){
-            $('input[type="radio"]').click(function(){
+        });
+        $(document).ready(function () {
+            $('input[type="radio"]').click(function () {
                 var inputValue = $(this).attr("value");
                 var targetBox = $("." + inputValue);
                 $(".payment-card").not(targetBox).hide();

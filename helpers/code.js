@@ -19,7 +19,7 @@ const ErrorCode = {
     BAD_REQUEST_STATUS_CODE: 2005,
 }
 
-module.exports = { 
-    HttpStatus : HttpStatus, 
-    ErrorCode : ErrorCode
- }
+module.exports = {
+    HttpStatus: HttpStatus,
+    ErrorCode: ErrorCode
+}
