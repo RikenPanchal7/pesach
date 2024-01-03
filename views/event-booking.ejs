@@ -1859,8 +1859,6 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // Handle the API response
-                                console.log("data", data.data);
                                 document.getElementById('apiResponse').innerText = JSON.stringify(data.data);
                             } else {
                                 console.error('Error:', data.error);

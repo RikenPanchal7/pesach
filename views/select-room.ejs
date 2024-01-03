@@ -396,13 +396,13 @@
                     </div>
                 </div>
             </div>
-            <div class="bnr-main-div">
+            <!-- <div class="bnr-main-div">
                 <div class="row">
                     <div class="col-12">
                         <img class="bnr-img" src="images/Form_Cover_for_Chanukah_Registration_4 1.png" alt="">
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </section>
     <!-- section -->
@@ -696,19 +696,27 @@
                     p: room.package_id // package_id
                 };
             });
-            const ids = '<%= ids %>';
-            const queryString = `?ids=${ids}`;
+            const pids = '<%= pids %>';
+            const pidsjsonString = JSON.stringify(pids);
+            const pidsbase64Encoded = btoa(pidsjsonString);
+
+            const cid = '<%= cid %>';
+            // const queryString = `?cid=${cid}&pids=${pidsbase64Encoded}`;
             if (responseArray.length == 0) {
                 alert('Please select Room');
                 location.reload();
             } else {
+                var customer_id = '<%= cid %>';
                 const jsonString = JSON.stringify(responseArray);
 
                 // Encode the JSON string in base64
-                var customer_id = '<%= ids %>';
                 const base64Encoded = btoa(jsonString);
-                const queryString = `?data=${base64Encoded}&ids=${customer_id}`;
-                const cust_id = '<%= ids %>';
+                const pidjsonString = JSON.stringify(pids);
+                const pidbase64Encoded = btoa(pidjsonString);
+                const queryString = `?data=${base64Encoded}&cid=${customer_id}&pids=${pids}`;
+                const cust_id = '<%= cid %>';
+                const cust_idDecode = atob(cust_id);
+                const cust_iDecodedData = JSON.parse(cust_idDecode);
                 // Redirect to /package-tickets with the query string
                 window.location.href = '/package-tickets' + queryString;
                 fetch('/createOrder', {
@@ -716,12 +724,10 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ data: cust_id }),
+                    body: JSON.stringify({ cid: cust_iDecodedData }),
                 })
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Success:', data);
-                        // Handle the response data as needed
                     })
                     .catch((error) => {
                         console.error('Error:', error);
@@ -732,19 +738,20 @@
     <script>
         // jQuery code to handle the click event
         $(document).ready(function () {
-            const customer_id = '<%= customer_id %>';
-            const customer_id_number = parseInt(customer_id, 10);
+            const customer_id = '<%= cid %>';
+            const pids = '<%= pids %>';
+            const jsonString = JSON.stringify(pids);
+            const base64Encoded = btoa(jsonString);
             $("#previousButton").on('click', function () {
-                console.log('Customer ID:', customer_id);
-                // Redirect to '/select-event'
-                const queryString = '?id=' + encodeURIComponent(JSON.stringify(customer_id_number));
+                const queryString = `?cid=${customer_id}`;
                 window.location.href = '/select-event' + queryString;
             });
         });
     </script>
     <script>
-        var customer_id = '<%= ids %>';
-        console.log("customer_id", customer_id);
+        var pids = '<%= pids %>';
+
+        var cid = '<%= cid %>';
     </script>
 
 </body>

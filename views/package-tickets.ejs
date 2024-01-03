@@ -390,13 +390,13 @@
                     </div>
                 </div>
             </div>
-            <div class="bnr-main-div">
+            <!-- <div class="bnr-main-div">
                 <div class="row">
                     <div class="col-12">
                         <img class="bnr-img" src="images/Form_Cover_for_Chanukah_Registration_4 1.png" alt="">
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </section>
     <!-- section -->
@@ -543,12 +543,11 @@
                                                             data-package-id="<%= room.combinedResults.package_id %>"
                                                             data-name="no_of_additional_adult"
                                                             data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
+                                                            data-room-price="<%= room.roomInfos.room_price %>"
                                                             data-price="<%= room.combinedResults.additional_adult_price %>">
                                                             <option value="0">0</option>
                                                             <option value="1">1</option>
                                                             <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                            <option value="4">4</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -571,12 +570,11 @@
                                                             data-room-id="<%= room.roomInfos.room_id %>"
                                                             data-package-id="<%= room.combinedResults.package_id %>"
                                                             data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
+                                                            data-room-price="<%= room.roomInfos.room_price %>"
                                                             data-price="<%= room.combinedResults.kids_age_11_18_price %>">
                                                             <option value="0">0</option>
                                                             <option value="1">1</option>
                                                             <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                            <option value="4">4</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -599,12 +597,11 @@
                                                             data-room-id="<%= room.roomInfos.room_id %>"
                                                             data-package-id="<%= room.combinedResults.package_id %>"
                                                             data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
+                                                            data-room-price="<%= room.roomInfos.room_price %>"
                                                             data-price="<%= room.combinedResults.kids_age_6_10_price %>">
                                                             <option value="0">0</option>
                                                             <option value="1">1</option>
                                                             <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                            <option value="4">4</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -626,12 +623,11 @@
                                                             data-room-id="<%= room.roomInfos.room_id %>"
                                                             data-package-id="<%= room.combinedResults.package_id %>"
                                                             data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
+                                                            data-room-price="<%= room.roomInfos.room_price %>"
                                                             data-price="<%= room.combinedResults.kids_age_3_5_price %>">
                                                             <option value="0">0</option>
                                                             <option value="1">1</option>
                                                             <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                            <option value="4">4</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -653,12 +649,11 @@
                                                             data-room-id="<%= room.roomInfos.room_id %>"
                                                             data-package-id="<%= room.combinedResults.package_id %>"
                                                             data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
+                                                            data-room-price="<%= room.roomInfos.room_price %>"
                                                             data-price="<%= room.combinedResults.kids_age_1_2_price %>">
                                                             <option value="0">0</option>
                                                             <option value="1">1</option>
                                                             <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                            <option value="4">4</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -673,6 +668,7 @@
                                                             id="age_group room_id : <%= room.roomInfos.room_id %>"
                                                             data-room-id="<%= room.roomInfos.room_id %>"
                                                             data-package-id="<%= room.combinedResults.package_id %>"
+                                                            data-room-price="<%= room.roomInfos.room_price %>"
                                                             data-room-name="<%= room.roomInfos.room_name %> #<%= i %>">
                                                             <option value="0">0</option>
                                                             <option value="18-25">18-25</option>
@@ -704,13 +700,15 @@
                                                         </div>
                                                         <div class="fw-semibold">
                                                             <div class="form-check">
-                                                                <input class="form-check-input" type="checkbox"
+                                                                <input class="form-check-input" name="room-block"
+                                                                    type="checkbox"
                                                                     value="<%= room.roomInfos.room_id %>"
                                                                     id="cribCheckbox<%= room.roomInfos.room_id %>"
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
                                                                     data-package-id="<%= room.combinedResults.package_id %>"
                                                                     data-name="cribCheckbox"
                                                                     data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
+                                                                    data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-price="<%= room.combinedResults.cribs_price %>">
                                                                 <label class="form-check-label"
                                                                     for="cribCheckbox<%= room.roomInfos.room_id %>">
@@ -725,6 +723,7 @@
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
                                                                     data-package-id="<%= room.combinedResults.package_id %>"
                                                                     data-name="cotCheckbox"
+                                                                    data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
                                                                     data-price="<%= room.combinedResults.cot_price %>">
                                                                 <label class="form-check-label"
@@ -762,12 +761,11 @@
                                                                     data-package-id="<%= room.combinedResults.package_id %>"
                                                                     data-name="no_of_additional_adult"
                                                                     data-room-name="<%= room.roomInfos.room_name %>"
+                                                                    data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-price="<%= room.combinedResults.additional_adult_price %>">
                                                                     <option value="0">0</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
-                                                                    <option value="3">3</option>
-                                                                    <option value="4">4</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -792,12 +790,11 @@
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
                                                                     data-package-id="<%= room.combinedResults.package_id %>"
                                                                     data-room-name="<%= room.roomInfos.room_name %>"
+                                                                    data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-price="<%= room.combinedResults.kids_age_11_18_price %>">
                                                                     <option value="0">0</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
-                                                                    <option value="3">3</option>
-                                                                    <option value="4">4</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -820,13 +817,12 @@
                                                                     id="no_of_kids_age_6_10 room_id : <%= room.roomInfos.room_id %>"
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
                                                                     data-package-id="<%= room.combinedResults.package_id %>"
+                                                                    data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-room-name="<%= room.roomInfos.room_name %>"
                                                                     data-price="<%= room.combinedResults.kids_age_6_10_price %>">
                                                                     <option value="0">0</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
-                                                                    <option value="3">3</option>
-                                                                    <option value="4">4</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -850,12 +846,11 @@
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
                                                                     data-package-id="<%= room.combinedResults.package_id %>"
                                                                     data-room-name="<%= room.roomInfos.room_name %>"
+                                                                    data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-price="<%= room.combinedResults.kids_age_3_5_price %>">
                                                                     <option value="0">0</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
-                                                                    <option value="3">3</option>
-                                                                    <option value="4">4</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -879,12 +874,11 @@
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
                                                                     data-package-id="<%= room.combinedResults.package_id %>"
                                                                     data-room-name="<%= room.roomInfos.room_name %>"
+                                                                    data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-price="<%= room.combinedResults.kids_age_1_2_price %>">
                                                                     <option value="0">0</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
-                                                                    <option value="3">3</option>
-                                                                    <option value="4">4</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -900,6 +894,7 @@
                                                                     id="age_group room_id : <%= room.roomInfos.room_id %>"
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
                                                                     data-package-id="<%= room.combinedResults.package_id %>"
+                                                                    data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-room-name="<%= room.roomInfos.room_name %>">
                                                                     <option value="0">0</option>
                                                                     <option value="18-25">18-25</option>
@@ -932,12 +927,14 @@
                                                                 <div class="fw-semibold">
                                                                     <div class="form-check">
                                                                         <input class="form-check-input" type="checkbox"
+                                                                            name="room-block"
                                                                             value="<%= room.roomInfos.room_id %>"
                                                                             id="cribCheckbox<%= room.roomInfos.room_id %>"
                                                                             data-room-id="<%= room.roomInfos.room_id %>"
                                                                             data-package-id="<%= room.combinedResults.package_id %>"
                                                                             data-name="cribCheckbox"
                                                                             data-room-name="<%= room.roomInfos.room_name %>"
+                                                                            data-room-price="<%= room.roomInfos.room_price %>"
                                                                             data-price="<%= room.combinedResults.cribs_price %>">
                                                                         <label class="form-check-label"
                                                                             for="cribCheckbox<%= room.roomInfos.room_id %>">
@@ -952,6 +949,7 @@
                                                                             data-room-id="<%= room.roomInfos.room_id %>"
                                                                             data-package-id="<%= room.combinedResults.package_id %>"
                                                                             data-name="cotCheckbox"
+                                                                            data-room-price="<%= room.roomInfos.room_price %>"
                                                                             data-room-name="<%= room.roomInfos.room_name %>"
                                                                             data-price="<%= room.combinedResults.cot_price %>">
                                                                         <label class="form-check-label"
@@ -966,7 +964,6 @@
                                                 </div>
                                                 <% } %>
                                                     <% } %>
-
                                                         <!-- /cards -->
                                                         <!-- NEXT BUTTON-->
                                                         <div
@@ -1050,95 +1047,112 @@
                 // Iterate through all selects
                 document.querySelectorAll('select').forEach(function (select) {
                     const room_id = select.getAttribute('data-room-id');
+                    const room_price = select.getAttribute('data-room-price');
                     const package_id = select.getAttribute('data-package-id');
                     const name = select.getAttribute('data-name');
                     const room_name = select.getAttribute('data-room-name'); // Add this line
                     const price = select.getAttribute('data-price'); // Add this line
                     const selectedValue = select.value;
 
-                    if (selectedValue !== '0') {
-                        selectedValues.push({
-                            'name': name,
-                            'room_id': room_id,
-                            'package_id': package_id,
-                            'selected_value': selectedValue,
-                            'room_name': room_name,
-                            'price': price,
-                        });
-                    }
+                    // if (selectedValue !== '0') {
+                    selectedValues.push({
+                        'name': name,
+                        'room_id': room_id,
+                        'room_price': room_price,
+                        'package_id': package_id,
+                        'selected_value': selectedValue,
+                        'room_name': room_name,
+                        'price': price,
+                    });
+                    // }
                 });
 
                 // Iterate through all checkboxes
                 document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
                     const room_id = checkbox.getAttribute('data-room-id');
+                    const room_price = checkbox.getAttribute('data-room-price');
                     const package_id = checkbox.getAttribute('data-package-id');
                     const name = checkbox.getAttribute('data-name');
                     const room_name = checkbox.getAttribute('data-room-name');
                     const price = checkbox.getAttribute('data-price');
                     const isChecked = checkbox.checked;
 
-                    if (isChecked) {
-                        selectedValues.push({
-                            'name': name,
-                            'room_id': room_id,
-                            'package_id': package_id,
-                            'is_checked': isChecked,
-                            'room_name': room_name,
-                            'price': price,
-                        });
-                    }
+                    selectedValues.push({
+                        'name': name,
+                        'room_price': room_price,
+                        'room_id': room_id,
+                        'package_id': package_id,
+                        'is_checked': isChecked,
+                        'room_name': room_name,
+                        'price': price,
+                    });
                 });
                 const jsonString = JSON.stringify(selectedValues, null, 2);
                 const latin1String = unescape(encodeURIComponent(jsonString));
                 const base64Encoded = btoa(latin1String);
-                const ids = '<%= ids %>';
-                var arr = ids.split(',');
-                const queryString = `?ids=${arr}`;
+
+                const pids = '<%= pids %>';
+                const pidsdecodedString = atob(pids);
+                const pidsdecodedData = JSON.parse(pidsdecodedString);
+
+                var selectedRoomInfo = '<%= selectedRoomInfo %>';
+                var customer_id = '<%= customer_id %>';
+
+                const cidjsonString = JSON.stringify(customer_id);
+                const cidbase64Encoded = btoa(cidjsonString);
+
+                // var arr = pidsdecodedData.split(',');
+                const queryString = `?pids=${pids}&cid=${customer_id}&data=${selectedRoomInfo}`;
+
+                console.log("selectedValues", selectedValues)
+                window.location.href = '/dining-info' + queryString;
+
+                const cidString = atob(customer_id);
+                const cidData = JSON.parse(cidString);
+                // return
                 fetch('/createOrderRooms', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ selectedValues: selectedValues, ids: arr }),
+                    // body: JSON.stringify({ selectedValues: selectedValues, ids: arr, selectedRoomInfo: selectedRoomInfo }),
+                    body: JSON.stringify({ selectedValues: selectedValues, pids: pidsdecodedData, customer_id: cidData }),
                 })
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Success:', data);
-                        // Handle the response data as needed, including room_name
                     })
                     .catch((error) => {
                         console.error('Error:', error);
                     });
-
-                window.location.href = '/dining-info' + queryString;
-                // You can further handle or send the values as needed
             }
-
-            // Attach the function to the Next button click event
             document.querySelector('.next-btn').addEventListener('click', function () {
                 collectSelectedValues();
-                // Add your logic to handle the collected values on the Next button click
             });
         });
     </script>
-
     <script>
         // jQuery code to handle the click event
         $(document).ready(function () {
-            const ids = '<%= ids %>';
-            const valuesArray = ids.split(',');
+            const pids = '<%= pids %>';
+            const pidsArray = ids.split(',');
+
             $("#previousButton").on('click', function () {
                 // Redirect to '/select-event'
-                const queryString = '?ids=' + encodeURIComponent(JSON.stringify(valuesArray));
+                const pidsdecodedString = atob(pids);
+                const pidsdecodedData = JSON.parse(pidsdecodedString);
+                const queryString = `?cid=${customer_id}&pids=${pids}`;
                 window.location.href = '/select-room' + queryString;
             });
         });
     </script>
     <script>
         var customer_id = '<%= customer_id %>';
-        console.log("customer_id in ticket", customer_id);
-        var ids = '<%= ids %>';
-        console.log("ids in ticket", ids);
+
+        var selectedRoomInfo = '<%= selectedRoomInfo %>';
+        const jsonString = JSON.stringify(selectedRoomInfo);
+        const base64Encoded = btoa(jsonString);
+
+        var ids = '<%= pids %>';
     </script>
 </body>
 

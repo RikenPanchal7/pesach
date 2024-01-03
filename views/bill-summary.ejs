@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking</title>
+    <title>Bill Summary</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -390,13 +390,13 @@
                     </div>
                 </div>
             </div>
-            <div class="bnr-main-div">
+            <!-- <div class="bnr-main-div">
                 <div class="row">
                     <div class="col-12">
                         <img class="bnr-img" src="images/Form_Cover_for_Chanukah_Registration_4 1.png" alt="">
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </section>
     <!-- section -->
@@ -511,7 +511,7 @@
                                                     Subtotal
                                                 </td>
                                                 <td class="fw-semibold text-center py-2">
-                                                    3
+                                                    <%= totalRoomCount %>
                                                 </td>
                                                 <td class="text-disable fw-semibold text-end py-2">
 
@@ -687,8 +687,9 @@
                             <!-- NEXT BUTTON-->
                             <div
                                 class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3 border-top">
-                                <button type="button" style="visibility: hidden;"
-                                    class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn">
+                                <button type="button"
+                                    class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn"
+                                    id="previousButton">
                                     Previous</button>
                                 <button type="button"
                                     class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn"
@@ -722,7 +723,6 @@
         crossorigin="anonymous"></script>
     <script>
         function handleClick(cb) {
-            console.log("nj,n")
             const checkbox1 = document.getElementById('flexCheckDefault8');
             const checkbox2 = document.getElementById('flexCheckDefault9');
 
@@ -735,16 +735,10 @@
             }
         }
         $(document).ready(function () {
-
-            // let selectedPaymentMethod;
-
-
             const check1 = $("input[name='flexCheckDefault8']:checked").val();
             const check2 = $("input[name='flexCheckDefault9']:checked").val();
             const totalAmount = "<%= totalBillAmount %>"
             const customer_id = "<%= customer_id %>"
-            console.log("customer_id", customer_id)
-            console.log("totalAmount", totalAmount)
             function collectAllSelectedValues() {
                 const selectedCheckBox = $("input[name='payment_mode']:checked").val();
                 if (selectedCheckBox) {
@@ -757,89 +751,50 @@
                     })
                         .then(response => response.json())
                         .then(data => {
-                            console.log('Success:', data);
                         })
                         .catch((error) => {
                             console.error('Error:', error);
                         });
-                    window.location.href = '/success';
+                    if (selectedCheckBox == 'ACH') {
+                        const totalBillAmount = '<%= totalBillAmount %>';
+                        const queryString = `?cid=${cid}&pids=${pids}&data=${data}&amount=${totalBillAmount}`;
+                        window.location.href = '/ach' + queryString;
+                    } else {
+                        const totalBillAmount = '<%= totalBillAmount %>';
+                        const queryString = `?cid=${cid}&pids=${pids}&data=${data}&amount=${totalBillAmount}`;
+                        window.location.href = '/credit-card' + queryString;
+                    }
                 } else {
                 }
-                console.log("selectedCheckBox", selectedCheckBox)
-
-                // const cust_id = '?ids=' + encodeURIComponent(JSON.stringify(customer_id));
             }
             $('.next-btn').on('click', function () {
                 collectAllSelectedValues();
                 // Add your logic to handle the collected values on the button click
             });
         });
-
     </script>
     <script>
+        // jQuery code to handle the click event
         $(document).ready(function () {
-            var selectedPackageId = null;
-            // next button
-            $(".next").on({
-                click: function () {
-                    $("#progressBar").find(".active").next().addClass("active");
-                    $(this).parents(".row").fadeOut("slow", function () {
-                        $(this).next(".row").fadeIn("slow");
-                    });
-                }
-            });
-            // back button
-            $(".back").on({
-                click: function () {
-                    $("#progressBar .active").last().removeClass("active");
-                    $(this).parents(".row").fadeOut("slow", function () {
-                        $(this).prev(".row").fadeIn("slow");
-                    });
-                }
-            });
-            //Active card on click function
-            $(".card").on({
-                click: function () {
-                    $(this).toggleClass("active-card");
-                    selectedPackageId = $(this).data("package_id");
-                }
-            });
+            const ids = '<%= cid %>';
+            $("#previousButton").on('click', function () {
+                const cid = '<%= cid %>';
+                const pids = '<%= pids %>';
+                const data = '<%= data %>';
+                const queryString = `?cid=${cid}&pids=${pids}&data=${data}`;
+                window.location.href = '/dining-info' + queryString;
 
-            //back to wizard
-            $(".back-to-wizard").on({
-                click: function () {
-                    location.reload(true);
-                }
             });
         });
-        $(document).ready(function () {
-            const minus = $('.quantity__minus');
-            const plus = $('.quantity__plus');
-            const input = $('.quantity__input');
-            minus.click(function (e) {
-                e.preventDefault();
-                var value = input.val();
-                if (value > 0) {
-                    value--;
-                }
-                input.val(value);
-            });
+    </script>
+    <script>
+        const cid = '<%= cid %>';
 
-            plus.click(function (e) {
-                e.preventDefault();
-                var value = input.val();
-                value++;
-                input.val(value);
-            })
-        });
-        $(document).ready(function () {
-            $('input[type="radio"]').click(function () {
-                var inputValue = $(this).attr("value");
-                var targetBox = $("." + inputValue);
-                $(".payment-card").not(targetBox).hide();
-                $(targetBox).show();
-            });
-        });
+        const pids = '<%= pids %>';
+
+        const data = '<%= data %>';
+
+        const totalBillAmount = '<%= totalBillAmount %>';
     </script>
 </body>
 

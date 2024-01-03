@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select-Events</title>
+    <title>Credit Card</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
         crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -124,12 +124,6 @@
             cursor: pointer;
         }
 
-        .active-card {
-            color: #C94F6E;
-            font-weight: bold;
-            border: 3px solid #C94F6E;
-        }
-
         .form-check-input:focus {
             box-shadow: none;
         }
@@ -146,10 +140,6 @@
             padding: 16px 30px;
         }
 
-        .back-to-wizard {
-            transform: translate(-50%, -139%) !important;
-        }
-
         .bg-success-color {
             background-color: #87D185;
         }
@@ -161,80 +151,6 @@
         .content-text {
             font-size: 14px;
             color: #6e727d;
-        }
-
-        .discount-price {
-            font-size: 30px;
-            color: #C94F6E;
-        }
-
-        .early-bid-text {
-            font-size: 12px;
-        }
-
-        .original-price {
-            color: #545454;
-            font-size: 20px;
-            text-decoration: line-through;
-        }
-
-        .quantity {
-            display: flex;
-            align-items: center;
-            padding: 0;
-            background: #f5f5f5;
-            padding: 5px;
-            width: 130px;
-        }
-
-        .quantity__minus,
-        .quantity__plus {
-            display: block;
-            width: 45px;
-            font-size: 25px;
-            height: 35px;
-            margin: 0;
-            background: #C94F6E;
-            text-decoration: none;
-            text-align: center;
-            line-height: 28px;
-        }
-
-        .quantity__minus:hover,
-        .quantity__plus:hover {
-            background: #575b71;
-            color: #fff;
-        }
-
-        .quantity__minus {
-            border-radius: 3px 0 0 3px;
-        }
-
-        .quantity__plus {
-            border-radius: 0 3px 3px 0;
-        }
-
-        .quantity__input {
-            width: 45px;
-            height: 35px;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-            border: none;
-            background: #f5f5f5;
-            color: black;
-            font-weight: 600;
-        }
-
-        .quantity__minus:link,
-        .quantity__plus:link {
-            color: #FDFCED;
-        }
-
-        .quantity__minus:visited,
-        .quantity__plus:visited {
-            color: #FDFCED;
-            font-weight: 900;
         }
 
         .fs-18 {
@@ -300,7 +216,6 @@
             border-radius: 10px;
             width: 500px;
             margin: auto;
-            display: none;
         }
 
         .link-txt a {
@@ -332,6 +247,12 @@
             color: #065ba9;
         }
 
+        .disable {
+            background: #cccccc;
+            color: black !important;
+            pointer-events: none;
+        }
+
         @media only screen and (max-width:768px) {
             .copyright-text {
                 grid-row: 2;
@@ -343,18 +264,6 @@
 
             li {
                 font-size: 12px;
-            }
-
-            .discount-price {
-                font-size: 24px;
-            }
-
-            .original-price {
-                font-size: 18px;
-            }
-
-            .quantity {
-                width: 120px;
             }
         }
 
@@ -440,19 +349,19 @@
                                     class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list active">
                                     Select Event Package</li>
                                 <li id="progressList-2"
-                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list">
+                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list active">
                                     Select Room</li>
                                 <li id="progressList-3"
-                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list">
+                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list active">
                                     Package Tickets</li>
                                 <li id="progressList-4"
-                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list">
+                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list active">
                                     Dining Information</li>
                                 <li id="progressList-5"
-                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list">
+                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list active">
                                     Booking Summary</li>
                                 <li id="progressList-6"
-                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list">
+                                    class="d-inline-block fw-bold w-16 position-relative text-center float-start progressbar-list active">
                                     Payment</li>
                             </ul>
                             <!-- /ul -->
@@ -463,66 +372,92 @@
                 </div>
                 <!-- /row -->
                 <!-- row -->
-                <form action="">
-                    <!-- Select Event Package  -->
-                    <div class="row justify-content-center my-4" id="cardSection">
+                <form action="" id="creditForm">
+                    <!-- ACH payment  -->
+                    <!-- row -->
+                    <div class="row justify-content-center form-business">
                         <!-- col -->
                         <div class="col-md-11">
-                            <h3 class="fw-bold pt-5">Select one or multiple Packages</h3>
-                            <!-- cards -->
-                            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4 pb-5 mt-4 border-bottom"
-                                id="packages">
-                                <% for (let i=0; i < data.package_data.length; i++) { %>
-                                    <% const startDate=new Date(data.package_data[i].package_start_date); %>
-                                        <% const endDate=new Date(data.package_data[i].package_end_date); %>
-                                            <% const package_id=data.package_data[i].package_id %>
-                                                <div class="col">
-                                                    <div class="card text-center h-100 py-5 shadow-sm" id=<%=package_id
-                                                        %>>
-                                                        <div class="card-body px-0">
-                                                            <h5 class="card-title title-binding">
-                                                                <%= data.package_data[i].package_name %>
-                                                            </h5>
-                                                            <p class="card-text">
-                                                                <%= startDate.toLocaleDateString('en-US', {
-                                                                    month: 'short' , day: 'numeric' }) %>
-                                                                    - <%= endDate.toLocaleDateString('en-US', {
-                                                                        month: 'short' , day: 'numeric' }) %>
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <% } %>
-                                                    <div class="col">
-                                                        <div class="card text-center h-100 py-5 shadow-sm" id="dining">
-                                                            <div class="card-body px-0">
-                                                                <h5 class="card-title title-binding">
-                                                                    <%= data.dining_data[0].dining_name %>
-                                                                </h5>
-                                                                <p class="card-text">
-                                                                    <% const date_1=new
-                                                                        Date(data.dining_data[0].dining_date); %>
-                                                                        <%= date_1.toLocaleDateString('en-US', {
-                                                                            month: 'short' , day: 'numeric' }) %>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                            <h3 class="fw-bold text-disable pt-5 mb-0 text-center">Total Billing Amount Of All Days
+                                Event : </h3>
+                            <h3 class="fw-bold pt-0 mb-0 text-center">$<%= amount %>
+                            </h3>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="payment-card credit-card p-3 my-3" id="credit-card">
+                                        <div class="d-flex align-items-center credit-title">
+                                            <h3 class="fw-bold me-3">
+                                                Credit Card
+                                            </h3>
+                                            <img class="me-2" src="images/image 3.png" alt="">
+                                            <img class="me-2" src="images/image 4.png" alt="">
+                                            <img class="me-2" src="images/image 5.png" alt="">
+                                        </div>
+                                        <p class="text-disable">
+                                            Pay with your Visa, American Express or Mastercard
+                                        </p>
+                                        <div class="row mb-3">
+                                            <div class="col-12 mb-3">
+                                                <label for="card-number" class="form-label text-disable">Credit Card
+                                                    Number</label>
+                                                <input type="text" class="form-control" id="card-number" placeholder=""
+                                                    aria-label="" value="">
+                                            </div>
+                                            <div class="col-12 mb-3">
+                                                <label for="card-name" class="form-label text-disable">Card Holder
+                                                    Name</label>
+                                                <input type="text" class="form-control" id="card-name" placeholder=""
+                                                    value="" aria-label="">
+                                            </div>
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <label for="expiry" class="form-label text-disable">Expires
+                                                    MM/YYYY</label>
+                                                <input type="text" class="form-control" id="expiry" placeholder=""
+                                                    value="" aria-label="">
+                                            </div>
+                                            <div class="col-12 col-md-6 mb-3">
+                                                <label for="cvv" class="form-label text-disable">CVV</label>
+                                                <input type="text" class="form-control" id="cvv" placeholder="" value=""
+                                                    aria-label="">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <p class="fw-semibold fs-18 mb-0">
+                                                Review & Place Booking
+                                            </p>
+                                            <p class="text-disable">
+                                                Please review the booking details and payment details before proceeding
+                                                to confirm your Booking.
+                                            </p>
+                                        </div>
+                                        <div class="">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault" required>
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                    I agree to the
+                                                    <span class="link-txt"><a href="#">Terms & conditions,</a></span>
+                                                    <span class="link-txt"><a href="#">Privacy policy</a></span> &
+                                                    <span class="link-txt"><a href="#">Return policy</a></span>
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value=""
+                                                    id="flexCheckDefault">
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                    Update Booking Information and Confirmation on email
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="text-center mt-4">
+                                            <button type="submit" class="pay-btn fw-bold">
+                                                Pay Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <!-- /cards -->
-                            <!-- NEXT BUTTON-->
-                            <div class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3">
-                                <button type="button"
-                                    class="btn btn-dark fw-bold text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-4 back-btn">
-                                    <a href="booking-info" class="text-decoration-none text-light">Back to Booking
-                                        Information</a></button>
-                                <button type="button"
-                                    class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-4 next-btn">
-                                    Next
-                                </button>
-
-                            </div>
-                            <!-- /NEXT BUTTON-->
                         </div>
                         <!-- /col -->
                     </div>
@@ -547,51 +482,45 @@
     </section>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
-    <!-- Include jQuery in your EJS file -->
-
-    <script>
-        $(document).ready(function () {
-            var selectedPackageId = null;
-            //Active card on click function
-            $(".card").on({
-                click: function () {
-                    $(this).toggleClass("active-card");
-                    selectedPackageId = $(this).data("package_id");
-                }
-            });
-
-            $(".next-btn").one('click', function () {
-                let pids = [];
-                var decodedString = atob('<%= customer_id %>');
-                var customer_id = JSON.parse(decodedString);
-                $('#packages div.active-card').each(function (i) {
-                    if ($(this).is('.active-card')) {
-                        pids.push($(this).attr('id'));
-                    }
-                });
-                const pidsJsonString = JSON.stringify(pids);
-                const pidsBase64Encodedp = btoa(pidsJsonString);
-
-                const c_idJsonString = JSON.stringify(customer_id);
-                const c_idBase64Encodedp = btoa(c_idJsonString);
-
-                const queryString = `?cid=${c_idBase64Encodedp}&pids=${pidsBase64Encodedp}`;
-                const diningString = `?cid=${c_idBase64Encodedp}&pids=${pidsBase64Encodedp}`;
-                if (pids.length == 1 && pids[0] == 'dining') {
-                    window.location.href = '/dining-info' + diningString;
-                } else if (pids.length != [] || pids.length != '') {
-                    window.location.href = '/select-room' + queryString;
-                } else {
-                    alert('Please select Event');
-                    location.reload();
-                }
-            });
-
-        });
-    </script>
-    <script>
-        const customer_id = '<%= customer_id %>';
-    </script>
 </body>
+<script>
+    var creditForm = document.getElementById('creditForm');
+    creditForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var card_number = document.getElementById('card-number').value;
+
+        var card_name = document.getElementById('card-name').value;
+
+        var expiry = document.getElementById('expiry').value;
+
+        var cvv = document.getElementById('cvv').value;
+
+        const totalBillAmount = '<%= amount %>';
+        const cid = '<%= cid %>';
+        const cust_info = {
+            card_number: card_number,
+            card_holder_name: card_name,
+            card_expiry_date: expiry,
+            cvv: cvv,
+            amount: totalBillAmount,
+            cid: cid
+        }
+        fetch('/createCreditInfo', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ cust_info: cust_info }),
+        })
+            .then(response => response.json())
+            .then(data => {
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        window.location.href = '/success';
+    });
+</script>
 
 </html>

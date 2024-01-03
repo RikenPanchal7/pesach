@@ -390,13 +390,13 @@
                     </div>
                 </div>
             </div>
-            <div class="bnr-main-div">
+            <!-- <div class="bnr-main-div">
                 <div class="row">
                     <div class="col-12">
                         <img class="bnr-img" src="images/Form_Cover_for_Chanukah_Registration_4 1.png" alt="">
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </section>
     <!-- section -->
@@ -469,144 +469,132 @@
                         <% function formatDate(date) { const options={ year: 'numeric' , month: 'long' , day: 'numeric'
                             }; return new Date(date).toLocaleDateString('en-US', options); } %>
                             <div class="col-md-11">
-                                <%= counter=0; %>
-                                    <% data.forEach((data, index)=> { %>
-                                        <h3 class="fw-bold pt-4 mb-4">Reserve a <%= data.dining_name %> for <%=
-                                                    formatDate(data.dining_date) %>
-                                        </h3>
-                                        <!-- Additional Dining Information -->
-                                        <h5 class="fw-bold pt-4 mb-4">Additional Dining Information</h5>
-                                        <div class="row fs-18 fw-semibold">
-                                            <!-- Age 12+ -->
-                                            <div class="col-12 col-lg-6">
-                                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                                    <div>
-                                                        <p class="mb-0 fw-semibold">12+ years Age</p>
-                                                        <p class="mb-0 fw-bold">$ <%= data.above_12_price %> <span
-                                                                    class="fw-semibold text-disable">per
-                                                                    person</span></p>
-                                                        <input type="hidden" name="dining_date_<%= index %>"
-                                                            id="dining_date_<%= index %>"
-                                                            value="<%= data.dining_date %>">
+                                <!-- <%= counter=0; %> -->
+                                <% diningData.forEach((data, index)=> { %>
+                                    <h3 class="fw-bold pt-4 mb-4">Reserve a <%= data.dining_name %> for <%=
+                                                formatDate(data.dining_date) %>
+                                    </h3>
+                                    <!-- Additional Dining Information -->
+                                    <h5 class="fw-bold pt-4 mb-4">Additional Dining Information</h5>
+                                    <div class="row fs-18 fw-semibold">
+                                        <!-- Age 12+ -->
+                                        <div class="col-12 col-lg-6">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <div>
+                                                    <p class="mb-0 fw-semibold">12+ years Age</p>
+                                                    <p class="mb-0 fw-bold">$ <%= data.above_12_price %> <span
+                                                                class="fw-semibold text-disable">per
+                                                                person</span></p>
+                                                    <input type="hidden" name="dining_date_<%= index %>"
+                                                        id="dining_date_<%= index %>" value="<%= data.dining_date %>">
 
-                                                        <input type="hidden" name="above_12_price_<%= index %>"
-                                                            id="above_12_price_<%= index %>"
-                                                            value="<%= data.above_12_price %>">
+                                                    <input type="hidden" name="above_12_price_<%= index %>"
+                                                        id="above_12_price_<%= index %>"
+                                                        value="<%= data.above_12_price %>">
 
-                                                    </div>
-                                                    <select name="above_12_count_<%= index %>"
-                                                        id="above_12_count_<%= index %>">
-                                                        <option value="0">0</option>
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                    </select>
                                                 </div>
-                                            </div>
-                                            <!-- Age 3-11 -->
-                                            <div class="col-12 col-lg-6">
-                                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                                    <div>
-                                                        <p class="mb-0 fw-semibold">3-11 years Age</p>
-                                                        <p class="mb-0 fw-bold">$ <%= data.bet_3_11_price %> <span
-                                                                    class="fw-semibold text-disable">per
-                                                                    person</span></p>
-                                                        <input type="hidden" name="bet_3_11_price_<%= index %>"
-                                                            id="bet_3_11_price_<%= index %>"
-                                                            value="<%= data.bet_3_11_price %>">
-
-                                                    </div>
-                                                    <select name="bet_3_11_count_<%= index %>"
-                                                        id="bet_3_11_count_<%= index %>">
-                                                        <option value="0">0</option>
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <!-- Age 1-2 -->
-                                            <div class="col-12 col-lg-6">
-                                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                                    <div>
-                                                        <p class="mb-0 fw-semibold">1-2 years Age</p>
-                                                        <p class="mb-0 fw-bold">
-                                                            <%= data.bet_1_2_age %>
-                                                        </p>
-                                                        <input type="hidden" name="bet_1_2_price_<%= index %>"
-                                                            id="bet_1_2_price_<%= index %>"
-                                                            value="<%= data.bet_1_2_age %>">
-
-                                                    </div>
-                                                    <select name="bet_1_2_count_<%= index %>"
-                                                        id="bet_1_2_count_<%= index %>">
-                                                        <option value="0">0</option>
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                    </select>
-                                                </div>
+                                                <select name="above_12_count_<%= index %>"
+                                                    id="above_12_count_<%= index %>">
+                                                    <option value="0">0</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                </select>
                                             </div>
                                         </div>
-                                        <!-- Seating arrangements -->
-                                        <h5 class="fw-bold pt-4 mb-4">Seating arrangements</h5>
-                                        <div class="row fs-18 fw-semibold">
-                                            <!-- Highchairs -->
-                                            <div class="col-12 col-lg-6">
-                                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                                    <div>
-                                                        <p class="mb-0 fw-semibold">Highchairs (optional)</p>
-                                                    </div>
-                                                    <select name="highchair_<%= index %>" id="highchair_<%= index %>">
-                                                        <option value="0">0</option>
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                    </select>
+                                        <!-- Age 3-11 -->
+                                        <div class="col-12 col-lg-6">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <div>
+                                                    <p class="mb-0 fw-semibold">3-11 years Age</p>
+                                                    <p class="mb-0 fw-bold">$ <%= data.bet_3_11_price %> <span
+                                                                class="fw-semibold text-disable">per
+                                                                person</span></p>
+                                                    <input type="hidden" name="bet_3_11_price_<%= index %>"
+                                                        id="bet_3_11_price_<%= index %>"
+                                                        value="<%= data.bet_3_11_price %>">
+
                                                 </div>
-                                            </div>
-                                            <!-- Total number of seats -->
-                                            <div class="col-12 col-lg-6">
-                                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                                    <div>
-                                                        <p class="mb-0 fw-semibold text-wrap">Total number of seats at
-                                                            your
-                                                            table (optional)</p>
-                                                    </div>
-                                                    <select name="total_seat_<%= index %>" id="total_seat_<%= index %>">
-                                                        <option value="0">0</option>
-                                                        <option value="1">1</option>
-                                                        <option value="2">2</option>
-                                                        <option value="3">3</option>
-                                                        <option value="4">4</option>
-                                                    </select>
-                                                </div>
+                                                <select name="bet_3_11_count_<%= index %>"
+                                                    id="bet_3_11_count_<%= index %>">
+                                                    <option value="0">0</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                </select>
                                             </div>
                                         </div>
-                                        <%= counter=index; %>
-                                            <% }); %>
-                                                <!-- /cards -->
-                                                <!-- NEXT BUTTON-->
-                                                <div
-                                                    class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3 border-top">
-                                                    <button type="button"
-                                                        class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn"
-                                                        id="previousButton">
-                                                        Previous
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">
-                                                        Checkout Now
-                                                    </button>
+                                        <!-- Age 1-2 -->
+                                        <div class="col-12 col-lg-6">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <div>
+                                                    <p class="mb-0 fw-semibold">1-2 years Age</p>
+                                                    <p class="mb-0 fw-bold">
+                                                        <%= data.bet_1_2_age %>
+                                                    </p>
+                                                    <input type="hidden" name="bet_1_2_price_<%= index %>"
+                                                        id="bet_1_2_price_<%= index %>" value="<%= data.bet_1_2_age %>">
+
                                                 </div>
-                                                <!-- /NEXT BUTTON-->
+                                                <select name="bet_1_2_count_<%= index %>"
+                                                    id="bet_1_2_count_<%= index %>">
+                                                    <option value="0">0</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Seating arrangements -->
+                                    <h5 class="fw-bold pt-4 mb-4">Seating arrangements</h5>
+                                    <div class="row fs-18 fw-semibold">
+                                        <!-- Highchairs -->
+                                        <div class="col-12 col-lg-6">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <div>
+                                                    <p class="mb-0 fw-semibold">Highchairs (optional)</p>
+                                                </div>
+                                                <select name="highchair_<%= index %>" id="highchair_<%= index %>">
+                                                    <option value="0">0</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- Total number of seats -->
+                                        <div class="col-12 col-lg-6">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <div>
+                                                    <p class="mb-0 fw-semibold text-wrap">Total number of seats at
+                                                        your
+                                                        table (optional)</p>
+                                                </div>
+                                                <select name="total_seat_<%= index %>" id="total_seat_<%= index %>">
+                                                    <option value="0">0</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <%= counter=index; %> -->
+                                    <% }); %>
+                                        <!-- /cards -->
+                                        <!-- NEXT BUTTON-->
+                                        <div
+                                            class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3 border-top">
+                                            <button type="button"
+                                                class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn"
+                                                id="previousButton">
+                                                Previous
+                                            </button>
+                                            <button type="button"
+                                                class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">
+                                                Checkout Now
+                                            </button>
+                                        </div>
+                                        <!-- /NEXT BUTTON-->
                             </div>
-                            counter = <%= counter; %>
-                                <!-- /col -->
+                            <!-- counter = <%= counter; %> -->
+                            <!-- /col -->
                     </div>
                     <!-- /row -->
                 </form>
@@ -685,7 +673,6 @@
 
             function collectAllSelectedValues() {
                 let ct = "<%= counter; %>"
-                console.log("coun", ct)
                 var diningTableData = {};
 
                 for (var i = 0; i <= ct; i++) {
@@ -701,24 +688,36 @@
                         total_seat: $('#total_seat_' + i).val()
                     }
                 }
-                const customer_id = '<%= customer_id %>';
-                console.log("All Selected Values", diningTableData);
-                fetch('/createOrderDining', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ selectedValues: diningTableData, customer_id: customer_id }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Success:', data);
+                const pids = '<%= pids %>';
+                const pidsdecodedString = atob(pids);
+                const pidsdecodedData = JSON.parse(pidsdecodedString);
+                if (diningTableData[0].above_12_count == 0 && diningTableData[0].bet_3_11_count == 0 && pidsdecodedData[0] == 'dining') {
+                    alert('Please select Person');
+                    location.reload();
+                } else {
+                    console.log("in else condition")
+                    const customer_id = '<%= cid %>';
+                    const decodedString = atob(customer_id);
+                    const ciddecodedData = JSON.parse(decodedString);
+                    fetch('/createOrderDining', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            selectedValues: diningTableData,
+                            customer_id: ciddecodedData
+                        }),
                     })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                    });
-                const cust_id = '?ids=' + encodeURIComponent(JSON.stringify(customer_id));
-                window.location.href = '/bill-summary' + cust_id;
+                        .then(response => response.json())
+                        .then(data => {
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
+                    const queryString = `?cid=${customer_id}&pids=${pids}&data=${data}`;
+                    window.location.href = '/bill-summary' + queryString;
+                }
             }
             $('.next-btn').on('click', function () {
                 collectAllSelectedValues();
@@ -730,18 +729,37 @@
     <script>
         // jQuery code to handle the click event
         $(document).ready(function () {
-            const ids = '<%= customer_id %>';
+            const ids = '<%= cid %>';
             $("#previousButton").on('click', function () {
-                // Redirect to '/select-event'
-                const queryString = '?id=' + encodeURIComponent(JSON.stringify(ids));
-                window.location.href = '/select-event' + queryString;
+                const pids = '<%= pids %>';
+
+                const pidsdecodedString = atob(pids);
+                const pidsdecodedData = JSON.parse(pidsdecodedString);
+                if (pidsdecodedData[0] == 'dining') {
+                    const queryString = `?cid=${ids}`;
+                    window.location.href = '/select-event' + queryString;
+                } else {
+                    const cid = '<%= cid %>';
+                    const pids = '<%= pids %>';
+                    const data = '<%= data %>';
+                    const queryString = `?cid=${cid}&pids=${pids}&data=${data}`;
+                    window.location.href = '/package-tickets' + queryString;
+                }
+
             });
         });
     </script>
     <script>
-        const customer_id = '<%= customer_id %>';
+        const cid = '<%= cid %>';
 
-        console.log('Customer ID:  event', customer_id);
+        const pids = '<%= pids %>';
+        const pidsdecodedString = atob(pids);
+        const pidsdecodedData = JSON.parse(pidsdecodedString);
+        console.log("pidsdecodedData", pidsdecodedData[0])
+        const data = '<%= data %>';
+
+        const decodedString = atob(pids);
+        const decodedData = JSON.parse(decodedString);
     </script>
 </body>
 
