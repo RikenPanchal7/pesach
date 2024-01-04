@@ -74,9 +74,10 @@ router.post("/createOrderRooms", async (req, res) => {
     try {
         const package_idArr = req.body.pids;
         const selectedValues = req.body.selectedValues;
+        const guestObj = req.body.guestInfo;
         const customer_id = req.body.customer_id;
         const orderRoomData = await packageController.createOrderRooms(
-            customer_id, selectedValues, package_idArr);
+            customer_id, selectedValues, package_idArr, guestObj);
         // res.render('dining-info', { orderData: orderData.order_id, customer_id: orderData.customer_id});
     } catch (error) {
         console.error("Error:", error);

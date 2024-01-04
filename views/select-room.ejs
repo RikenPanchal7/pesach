@@ -497,40 +497,66 @@
                                                     </p>
                                                 </div>
                                                 <div class="ms-auto">
-                                                    <p class="discount-price fw-bold mb-0">
-                                                        <span>
-                                                            $
-                                                        </span>
-                                                        <span class="room-price">
-                                                            <%= data.package_data[i].room_data[j].room_price %>
-                                                        </span>
-                                                    </p>
-                                                    <p class="fw-semibold early-bid-text mb-1">
-                                                        Early bid special offer before January 1st
-                                                    </p>
-                                                    <p class="original-price fw-bold">
-                                                        <span>
-                                                            $
-                                                        </span>
-                                                        <span class="early-bird-price">
-                                                            <%= data.package_data[i].room_data[j].early_bird_special_price
-                                                                %>
-                                                        </span>
-                                                    </p>
-                                                    <div class="quantity"
-                                                        data-room-id="<%= data.package_data[i].room_data[j].room_id %>"
-                                                        data-package-id="<%= data.package_data[i].package_info.package_id %>">
-                                                        <a href="#" class="quantity__minus disable"><span>-</span></a>
-                                                        <input name="quantity" type="text" class="quantity__input"
-                                                            value="0" readonly>
-                                                        <a href="#" class="quantity__plus"><span>+</span></a>
-                                                    </div>
+                                                    <% if (new Date() < new Date('2024-01-15')) { %>
+                                                        <!-- Before January 15, 2024 -->
+                                                        <p class="discount-price fw-bold mb-0">
+                                                            <span>$</span>
+                                                            <span class="room-price">
+                                                                <%= data.package_data[i].room_data[j].early_bird_special_price
+                                                                    %>
+                                                            </span>
+                                                        </p>
+                                                        <% } else { %>
+                                                            <!-- On or after January 15, 2024 -->
+                                                            <p class="discount-price fw-bold mb-0">
+                                                                <span>$</span>
+                                                                <span class="room-price">
+                                                                    <%= data.package_data[i].room_data[j].room_price %>
+                                                                </span>
+                                                            </p>
+                                                            <% } %>
+                                                                <p class="fw-semibold early-bid-text mb-1">
+                                                                    Early bid special offer before January 15th
+                                                                </p>
+
+                                                                <% if (new Date() < new Date('2024-01-15')) { %>
+                                                                    <!-- Before January 15, 2024 -->
+                                                                    <p class="original-price fw-bold">
+                                                                        <span>$</span>
+                                                                        <span class="early-bird-price">
+                                                                            <%= data.package_data[i].room_data[j].room_price
+                                                                                %>
+                                                                        </span>
+                                                                    </p>
+                                                                    <% } else { %>
+                                                                        <!-- On or after January 15, 2024 -->
+                                                                        <p class="original-price fw-bold">
+                                                                            <span>$</span>
+                                                                            <span class="early-bird-price">
+                                                                                <%= data.package_data[i].room_data[j].early_bird_special_price
+                                                                                    %>
+                                                                            </span>
+                                                                        </p>
+                                                                        <% } %>
+                                                                            <div class="quantity"
+                                                                                data-room-id="<%= data.package_data[i].room_data[j].room_id %>"
+                                                                                data-package-id="<%= data.package_data[i].package_info.package_id %>">
+                                                                                <a href="#"
+                                                                                    class="quantity__minus disable"><span>-</span></a>
+                                                                                <input name="quantity" type="text"
+                                                                                    class="quantity__input intLimitTextBox"
+                                                                                    value="0">
+                                                                                <a href="#"
+                                                                                    class="quantity__plus"><span>+</span></a>
+                                                                            </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <% } %>
                                         <% } %>
+
+
                                             <!-- room loop end -->
                                             <!-- package loop end -->
                                             <!-- /cards -->
@@ -600,6 +626,7 @@
 
         // For quantity plus
         $(".quantity__plus").click(function (e) {
+
             e.preventDefault();
             var quantityInput = $(this).siblings(".quantity__input");
             var roomCount = parseInt(quantityInput.val()) + 1;
@@ -608,10 +635,12 @@
             if (roomCount === 0) {
                 roomCount = 1;
             }
+            if (roomCount <= 100) {
+                quantityInput.val(roomCount);
+                updateTotal();
+                toggleDisableClass(quantityInput, roomCount);
+            }
 
-            quantityInput.val(roomCount);
-            updateTotal();
-            toggleDisableClass(quantityInput, roomCount);
         });
 
         // Quantity minus button click event
@@ -752,6 +781,40 @@
         var pids = '<%= pids %>';
 
         var cid = '<%= cid %>';
+
+
+        (function ($) {
+            $.fn.inputFilter = function (callback, errMsg) {
+                return this.on("input keydown keyup mousedown mouseup select contextmenu drop focusout", function (e) {
+                    if (callback(this.value)) {
+                        // Accepted value
+                        if (["keydown", "mousedown", "focusout"].indexOf(e.type) >= 0) {
+                            $(this).removeClass("input-error");
+                            this.setCustomValidity("");
+                        }
+                        this.oldValue = this.value;
+                        this.oldSelectionStart = this.selectionStart;
+                        this.oldSelectionEnd = this.selectionEnd;
+                    } else if (this.hasOwnProperty("oldValue")) {
+                        // Rejected value - restore the previous one
+                        $(this).addClass("input-error");
+                        this.setCustomValidity(errMsg);
+                        this.reportValidity();
+                        this.value = this.oldValue;
+                        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                    } else {
+                        // Rejected value - nothing to restore
+                        this.value = "";
+                    }
+                });
+            };
+        }(jQuery));
+
+
+        // Install input filters.
+        $(".intLimitTextBox").inputFilter(function (value) {
+            return /^\d*$/.test(value) && (value === "" || parseInt(value) <= 100);
+        }, "Must be between 0 and 100");
     </script>
 
 </body>

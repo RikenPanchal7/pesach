@@ -491,118 +491,156 @@
                                 </thead>
                                 <tbody>
                                     <% roomInfo.forEach((room, index)=> { %>
-                                        <tr class="pb-3 border-bottom">
-                                            <td class="text-disable fw-semibold py-2">
-                                                <%= room[`data_${index + 1}`].room_name %>
-                                            </td>
-                                            <td class="fw-semibold text-center py-2">
-                                                <%= room[`data_${index + 1}`].total_room %>
-                                            </td>
-                                            <td class="text-disable fw-semibold text-end py-2">
-                                                $ <%= room[`data_${index + 1}`].room_price.toFixed(2) %>
-                                            </td>
-                                            <td class="text-disable fw-semibold text-end py-2">
-                                                $ <%= room[`data_${index + 1}`].total_price.toFixed(2) %>
-                                            </td>
-                                        </tr>
-                                        <% }); %>
+                                        <% if (room[`data_${index + 1}`].total_room> 0) { %>
                                             <tr class="pb-3 border-bottom">
-                                                <td class="fw-semibold py-2">
-                                                    Subtotal
+                                                <td class="text-disable fw-semibold py-2">
+                                                    <%= room[`data_${index + 1}`].room_name %>
                                                 </td>
                                                 <td class="fw-semibold text-center py-2">
-                                                    <%= totalRoomCount %>
+                                                    <%= room[`data_${index + 1}`].total_room %>
                                                 </td>
                                                 <td class="text-disable fw-semibold text-end py-2">
-
+                                                    $ <%= room[`data_${index + 1}`].room_price.toFixed(2) %>
                                                 </td>
-                                                <td class="fw-semibold text-end py-2">
-                                                    $ <%= subTotal %>
+                                                <td class="text-disable fw-semibold text-end py-2">
+                                                    $ <%= room[`data_${index + 1}`].total_price.toFixed(2) %>
                                                 </td>
                                             </tr>
-                                            <% Object.keys(roomInnerInfo).forEach((key)=> { %>
-                                                <% if (Array.isArray(roomInnerInfo[key])) { %>
-                                                    <% roomInnerInfo[key].forEach((room)=> { %>
+                                            <% } %>
+                                                <% }); %>
+
+                                                    <!-- Subtotal -->
+                                                    <% if (totalRoomCount && totalRoomCount> 0) { %>
                                                         <tr class="pb-3 border-bottom">
-                                                            <td class="text-disable fw-semibold py-2">
-                                                                <%= room.room_name %>
+                                                            <td class="fw-semibold py-2">
+                                                                Subtotal
                                                             </td>
                                                             <td class="fw-semibold text-center py-2">
-                                                                <%= room.person %>
+                                                                <%= totalRoomCount %>
                                                             </td>
                                                             <td class="text-disable fw-semibold text-end py-2">
-
+                                                                <!-- Additional details if needed -->
                                                             </td>
-                                                            <td class="text-disable fw-semibold text-end py-2">
-                                                                $ <%= room.total_price.toFixed(2) %>
+                                                            <td class="fw-semibold text-end py-2">
+                                                                $ <%= subTotal %>
                                                             </td>
                                                         </tr>
-                                                        <% }); %>
-                                                            <% } %>
-                                                                <% }); %>
+                                                        <% } %>
 
-                                                                    <% function formatDate(date) { const options={
-                                                                        year: 'numeric' , month: 'long' , day: 'numeric'
-                                                                        }; return new
-                                                                        Date(date).toLocaleDateString('en-US', options);
-                                                                        } %>
-                                                                        <% diningOrderResult.forEach(order=> { %>
-                                                                            <% if (order.bet_3_11_count) { %>
-                                                                                <tr class="pb-3 border-bottom">
-                                                                                    <td
-                                                                                        class="text-disable fw-semibold py-2">
-                                                                                        <%= formatDate(order.dining_date)
-                                                                                            %>
-                                                                                            <%= order.dining_name %>:
-                                                                                                Between 3-11
-                                                                                    </td>
-                                                                                    <td
-                                                                                        class="fw-semibold text-center py-2">
-                                                                                        <%= order.bet_3_11_count %>
-                                                                                    </td>
-                                                                                    <td
-                                                                                        class="text-disable fw-semibold text-end py-2">
-                                                                                        <!-- Additional details if needed -->
-                                                                                    </td>
-                                                                                    <td
-                                                                                        class="text-disable fw-semibold text-end py-2">
-                                                                                        $ <%= order.bet_3_11_price *
-                                                                                            order.bet_3_11_count %>
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <% } %>
 
-                                                                                    <% if (order.above_12_count) { %>
-                                                                                        <tr class="pb-3 border-bottom">
-                                                                                            <td
-                                                                                                class="text-disable fw-semibold py-2">
-                                                                                                <%= formatDate(order.dining_date)
-                                                                                                    %>
-                                                                                                    <%= order.dining_name
-                                                                                                        %>
-                                                                                                        : 12+ Years Age
-                                                                                                        Person
-                                                                                            </td>
-                                                                                            <td
-                                                                                                class="fw-semibold text-center py-2">
-                                                                                                <%= order.above_12_count
-                                                                                                    %>
-                                                                                            </td>
-                                                                                            <td
-                                                                                                class="text-disable fw-semibold text-end py-2">
-                                                                                                <!-- Additional details if needed -->
-                                                                                            </td>
-                                                                                            <td
-                                                                                                class="text-disable fw-semibold text-end py-2">
-                                                                                                $ <%=
-                                                                                                    order.above_12_price
-                                                                                                    *
-                                                                                                    order.above_12_count
-                                                                                                    %>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                        <% } %>
-                                                                                            <% }); %>
+                                                            <% Object.keys(roomInnerInfo).forEach((key)=> { %>
+                                                                <% if (Array.isArray(roomInnerInfo[key])) { %>
+                                                                    <% roomInnerInfo[key].forEach((room)=> { %>
+                                                                        <% if (room.total_price> 0) { %>
+                                                                            <tr class="pb-3 border-bottom">
+                                                                                <td
+                                                                                    class="text-disable fw-semibold py-2">
+                                                                                    <%= room.room_name %>
+                                                                                </td>
+                                                                                <td
+                                                                                    class="fw-semibold text-center py-2">
+                                                                                    <%= room.person %>
+                                                                                </td>
+                                                                                <td
+                                                                                    class="text-disable fw-semibold text-end py-2">
+                                                                                    <!-- Additional details if needed -->
+                                                                                </td>
+                                                                                <td
+                                                                                    class="text-disable fw-semibold text-end py-2">
+                                                                                    $ <%= room.total_price.toFixed(2) %>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <% } %>
+                                                                                <% }); %>
+                                                                                    <% } %>
+                                                                                        <% }); %>
+
+                                                                                            <% function formatDate(date)
+                                                                                                { const options={
+                                                                                                year: 'numeric' ,
+                                                                                                month: 'long' ,
+                                                                                                day: 'numeric' }; return
+                                                                                                new
+                                                                                                Date(date).toLocaleDateString('en-US',
+                                                                                                options); } %>
+
+                                                                                                <%
+                                                                                                    diningOrderResult.forEach(order=>
+                                                                                                    { %>
+                                                                                                    <% if
+                                                                                                        (order.bet_3_11_count>
+                                                                                                        0) { %>
+                                                                                                        <tr
+                                                                                                            class="pb-3 border-bottom">
+                                                                                                            <td
+                                                                                                                class="text-disable fw-semibold py-2">
+                                                                                                                <%= formatDate(order.dining_date)
+                                                                                                                    %>
+                                                                                                                    <%= order.dining_name
+                                                                                                                        %>
+                                                                                                                        :
+                                                                                                                        Between
+                                                                                                                        3-11
+                                                                                                            </td>
+                                                                                                            <td
+                                                                                                                class="fw-semibold text-center py-2">
+                                                                                                                <%= order.bet_3_11_count
+                                                                                                                    %>
+                                                                                                            </td>
+                                                                                                            <td
+                                                                                                                class="text-disable fw-semibold text-end py-2">
+                                                                                                                <!-- Additional details if needed -->
+                                                                                                            </td>
+                                                                                                            <td
+                                                                                                                class="text-disable fw-semibold text-end py-2">
+                                                                                                                $ <%=
+                                                                                                                    order.bet_3_11_price
+                                                                                                                    *
+                                                                                                                    order.bet_3_11_count
+                                                                                                                    %>
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                        <% } %>
+
+                                                                                                            <% if
+                                                                                                                (order.above_12_count>
+                                                                                                                0) { %>
+                                                                                                                <tr
+                                                                                                                    class="pb-3 border-bottom">
+                                                                                                                    <td
+                                                                                                                        class="text-disable fw-semibold py-2">
+                                                                                                                        <%= formatDate(order.dining_date)
+                                                                                                                            %>
+                                                                                                                            <%= order.dining_name
+                                                                                                                                %>
+                                                                                                                                :
+                                                                                                                                12+
+                                                                                                                                Years
+                                                                                                                                Age
+                                                                                                                                Person
+                                                                                                                    </td>
+                                                                                                                    <td
+                                                                                                                        class="fw-semibold text-center py-2">
+                                                                                                                        <%= order.above_12_count
+                                                                                                                            %>
+                                                                                                                    </td>
+                                                                                                                    <td
+                                                                                                                        class="text-disable fw-semibold text-end py-2">
+                                                                                                                        <!-- Additional details if needed -->
+                                                                                                                    </td>
+                                                                                                                    <td
+                                                                                                                        class="text-disable fw-semibold text-end py-2">
+                                                                                                                        $
+                                                                                                                        <%= order.above_12_price
+                                                                                                                            *
+                                                                                                                            order.above_12_count
+                                                                                                                            %>
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                                <% } %>
+                                                                                                                    <% });
+                                                                                                                        %>
+
 
 
 
@@ -610,30 +648,33 @@
                             </table>
                             <table class="table-responsive ms-auto" width="30%">
                                 <tbody>
-                                    <tr class="pb-3 border-bottom">
-                                        <td class="fw-bold py-2">
-                                            Subtotal
-                                        </td>
-                                        <td class="fw-bold text-end py-2">
-                                            $ <%= subTotal %>
-                                        </td>
-                                    </tr>
-                                    <tr class="pb-3 border-bottom">
-                                        <td class="fw-semibold py-2">
-                                            Total
-                                        </td>
-                                        <td class="fw-semibold text-end py-2">
-                                            $ <%= totalBillAmount %>
-                                        </td>
-                                    </tr>
-                                    <tr class="pb-3">
-                                        <td class="fw-bold py-2">
-                                            Total Amount
-                                        </td>
-                                        <td class="fw-semibold text-end py-2">
-                                            $ <%= totalBillAmount %>
-                                        </td>
-                                    </tr>
+                                    <% if (totalRoomCount && totalRoomCount> 0) { %>
+                                        <tr class="pb-3 border-bottom">
+                                            <td class="fw-bold py-2">
+                                                Subtotal
+                                            </td>
+                                            <td class="fw-bold text-end py-2">
+                                                $ <%= subTotal %>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+
+                                            <tr class="pb-3 border-bottom">
+                                                <td class="fw-semibold py-2">
+                                                    Total
+                                                </td>
+                                                <td class="fw-semibold text-end py-2">
+                                                    $ <%= totalBillAmount %>
+                                                </td>
+                                            </tr>
+                                            <tr class="pb-3">
+                                                <td class="fw-bold py-2">
+                                                    Total Amount
+                                                </td>
+                                                <td class="fw-semibold text-end py-2">
+                                                    $ <%= totalBillAmount %>
+                                                </td>
+                                            </tr>
                                 </tbody>
                             </table>
                             <h3 class="my-3 fw-bold">

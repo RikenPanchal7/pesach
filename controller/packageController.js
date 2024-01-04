@@ -128,7 +128,6 @@ module.exports = {
 
                                         // Push the individual packageDataElement into the package_data array
                                         package_data.push(packageDataElement);
-
                                         innerResolve(innerResult);
                                     }
                                 });
@@ -174,10 +173,18 @@ module.exports = {
                     if (error) {
                         reject(error);
                     } else {
-                        const room_price = result[0].room_price;
+                        const currentDate = new Date();
+                        const earlyBirdSpecialDate = new Date('2024-01-15');
+
+                        const isBeforeEarlyBirdSpecialDate = currentDate < earlyBirdSpecialDate;
+
+                        const room_price = isBeforeEarlyBirdSpecialDate
+                            ? result[0].early_bird_special_price
+                            : result[0].room_price;
+
                         const totalRoomPrice = quantity * room_price;
-                        totalPrice += totalRoomPrice; // Add totalRoomPrice to totalPrice
-                        resolve({ result, quantity, totalRoomPrice });
+                        totalPrice += totalRoomPrice;
+                        resolve({ result, quantity, totalRoomPrice, room_price });
                     }
                 });
             });
@@ -190,7 +197,6 @@ module.exports = {
 
             const roomInfoPromises = allResults.map(async (value) => {
                 const room_id = value.result[0].room_id;
-
                 const query = `SELECT r.*,pr.room_price FROM room r LEFT JOIN package_rooms pr ON r.room_id = pr.room_id  WHERE r.room_id = ${room_id}`;
 
                 return new Promise((resolve, reject) => {
@@ -268,7 +274,7 @@ module.exports = {
             );
         });
     },
-    createOrderRooms: async function (customer_id, selectedValues, package_idArr, selectedRoomInfo) {
+    createOrderRooms: async function (customer_id, selectedValues, package_idArr, guestObj, selectedRoomInfo) {
         try {
             const currentDate = new Date();
             let order_id;
@@ -311,26 +317,24 @@ module.exports = {
                         const roomEntries = data[roomName];
                         return {
                             package_id: package_id,
-                            room_price: roomEntries[0].room_price,
+                            room_price: (new Date() < new Date('2024-01-15')) ? roomEntries[0].early_room_price : roomEntries[0].room_price,
                             room_id: roomEntries[0].room_id,
+                            room_unique_id: roomEntries[0].room_unique_id,
                             room_name: roomName,
                             additional_data: roomEntries.reduce((acc, entry) => {
                                 if (entry.name == 'cribCheckbox' || entry.name == 'cotCheckbox') {
                                     acc[entry.name] = entry.selected_value;
                                     if (entry.is_checked) {
                                         acc[`${entry.name}_price`] = entry.price;
-                                    }
-                                    else {
+                                    } else {
                                         acc[`${entry.name}_price`] = null;
                                     }
                                     return acc;
-                                }
-                                else {
+                                } else {
                                     acc[entry.name] = entry.selected_value;
                                     acc[`${entry.name}_price`] = entry.price;
                                     return acc;
                                 }
-
                             }, {}),
                         };
                     });
@@ -351,6 +355,7 @@ module.exports = {
                         {
                             order_id: order_id,
                             room_id: resultArray[i].room_id,
+                            room_unique_id: resultArray[i].room_unique_id,
                             room_price: resultArray[i].room_price,
                             package_id: resultArray[i].package_id,
                             age_group: resultArray[i].additional_data.age_group,
@@ -374,6 +379,36 @@ module.exports = {
                         }
                     );
                 }
+
+                // add guestInfo
+                if (guestObj != '') {
+                    guestObj.forEach(async (value) => {
+                        let order_room_id;
+                        const queryString = `SELECT * FROM order_room WHERE room_unique_id = ${value.room_unique_id}`;
+                        const results = await new Promise((resolve, reject) => {
+                            db.query(queryString, (error, results, fields) => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve(results);
+                                }
+                            });
+                        });
+                        order_room_id = results[0].order_room_id;
+                        db.query(
+                            'INSERT INTO order_room_guest SET ?',
+                            {
+                                order_room_id: order_room_id,
+                                guest_first_name: value.fname,
+                                guest_last_name: value.lname,
+                                guest_age: value.age,
+                            }
+                        );
+                    })
+                } else {
+                    console.log("in else")
+                }
+
             } else {
                 console.log("in else----------------------------------------------------------", selectedRoomInfo)
             }
@@ -395,7 +430,6 @@ module.exports = {
     },
     createOrderDining: async function (customer_id, selectedValues) {
         try {
-            console.log("customer_id", customer_id)
             const currentDate = new Date();
             let order_id;
 
@@ -409,13 +443,8 @@ module.exports = {
                     }
                 });
             });
-
-            console.log("results", results);
-
             // Check if the results array is empty
             if (results.length === 0) {
-                console.log("in if---------------");
-
                 // Use another promise to perform the insert into the 'orders' table
                 const addOrder = await new Promise((resolve, reject) => {
                     db.query(
@@ -433,12 +462,9 @@ module.exports = {
                                 reject(error);
                             } else {
                                 order_id = result.insertId;
-                                console.log("selectedValues", selectedValues)
-                                console.log("order_id", order_id)
                                 // Use Promise.all to handle multiple asynchronous operations concurrently
                                 Promise.all(Object.keys(selectedValues).map(async (key) => {
                                     const values = selectedValues[key];
-                                    console.log("values", values)
                                     // Use another promise to perform the insert into the 'order_dining_table' table
                                     await new Promise((resolve, reject) => {
                                         db.query(
@@ -468,14 +494,12 @@ module.exports = {
                                         );
                                     });
                                 }));
-
                                 resolve({ customer_id: customer_id, order_id: order_id });
                             }
                         }
                     );
                 });
             } else {
-                console.log("in else---------------");
                 const currentDate = new Date();
                 Object.keys(selectedValues).forEach(async (key) => {
                     const values = selectedValues[key];
@@ -527,11 +551,63 @@ module.exports = {
                             if (anotherError) {
                                 innerReject(anotherError);
                             } else {
-                                console.log("orderResult", orderResult)
                                 if (orderResult == '') {
-                                    console.log("-------------------------------")
+                                    const results = new Promise((diningresolve, reject) => {
+                                        db.query(`SELECT od.*, d.dining_name FROM order_dining_table od LEFT JOIN dining d ON od.dining_id = d.dining_id WHERE customer_id = ${customer_id} AND order_id=${orderId}`
+                                            , (error, results, fields) => {
+                                                if (error) {
+                                                    reject(error);
+                                                } else {
+                                                    let totalPrice = 0;
+                                                    let totalRoomCount = 0;
+
+                                                    // Calculate total price and count for each object in the result array
+                                                    let dining_name;
+                                                    results.forEach(item => {
+                                                        dining_name = item.dining_name
+                                                        if (item.above_12_count > 0) {
+                                                            totalPrice += item.above_12_count * item.above_12_price;
+                                                            totalRoomCount += item.above_12_count;
+                                                        }
+
+                                                        if (item.bet_3_11_count > 0) {
+                                                            totalPrice += item.bet_3_11_count * item.bet_3_11_price;
+                                                            totalRoomCount += item.bet_3_11_count;
+                                                        }
+                                                    });
+
+                                                    console.log('dining_name:', dining_name);
+                                                    console.log('Total Price:', totalPrice);
+                                                    console.log('Total Count:', totalRoomCount);
+                                                    // return
+                                                    const room_info = result.map((item, index) => {
+                                                        return {
+                                                            [`data_${index + 1}`]: {
+                                                                room_name: dining_name,
+                                                                room_price: 0, // Replace with the actual room price
+                                                                total_room: 0, // Replace with the actual total room count
+                                                                total_price: 0 // Replace with the actual total price
+                                                            }
+                                                        };
+                                                    });
+                                                    console.log('room_info:', room_info);
+                                                    diningresolve({
+                                                        customer_id: customer_id,
+                                                        // subTotal: totalPrice,
+                                                        room_info: room_info,
+                                                        roomInnerInfo: [],
+                                                        totalBillAmount: totalPrice,
+                                                        diningOrderResult: results
+                                                    });
+                                                }
+                                            });
+                                    });
+                                    results.then((resolve1) => {
+                                        resolve(resolve1);
+                                    }).catch((error) => {
+                                        console.error("Error:", error);
+                                    });
                                 } else {
-                                    console.log("++++++++++++++++++++++++++++++")
                                     const roomIds = orderResult.map(room => room.room_id);
                                     const packageIds = orderResult.map(room => room.package_id);
                                     // Execute another query (package_room) using room_ids and package_ids
@@ -616,15 +692,17 @@ module.exports = {
                                                                         };
 
                                                                         const responseObj = {};
+                                                                        const today = new Date();
                                                                         orderResult.forEach((order) => {
                                                                             const room = findRoomById(order.room_id);
                                                                             const packageRoom = findPackageRoomEntry(order.room_id, order.package_id);
                                                                             const roomPackageKey = `${order.room_id}-${order.package_id}`;
+
                                                                             if (!responseObj[roomPackageKey]) {
                                                                                 // Initialize properties for the room if not already present
                                                                                 responseObj[roomPackageKey] = {
                                                                                     room_name: room.room_name,
-                                                                                    room_price: packageRoom.room_price,
+                                                                                    room_price: (today < new Date('2024-01-15')) ? packageRoom.early_bird_special_price : packageRoom.room_price,
                                                                                     total_room: 0,
                                                                                     no_of_additional_adult: 0,
                                                                                     no_of_additional_adult_price: 0,
@@ -752,7 +830,6 @@ module.exports = {
                                                                             roomInnerInfo: response,
                                                                             totalBillAmount: totalBillAmount,
                                                                             diningOrderResult: diningOrderResult
-
                                                                         });
                                                                     }
                                                                 });
