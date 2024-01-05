@@ -554,7 +554,9 @@
                                                                             %>
                                                                     </p>
                                                                 </div>
-                                                                <select name="no_of_additional_adult"
+                                                                <select
+                                                                    class="no_of_additional_adult_<%= guest_count %>"
+                                                                    name="no_of_additional_adult"
                                                                     id="adult_room_<%= room.roomInfos.room_id %>"
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
                                                                     data-room-unique-id="<%= guest_count %>"
@@ -586,6 +588,7 @@
                                                                     </p>
                                                                 </div>
                                                                 <select name="no_of_kids_age_11_18"
+                                                                    class="no_of_kids_age_11_18_<%= guest_count %>"
                                                                     data-name="no_of_kids_age_11_18"
                                                                     id="no_of_kids_age_11_18 room_id : <%= room.roomInfos.room_id %>"
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
@@ -616,6 +619,7 @@
                                                                     </p>
                                                                 </div>
                                                                 <select name="no_of_kids_age_6_10"
+                                                                    class="no_of_kids_age_6_10_<%= guest_count %>"
                                                                     data-name="no_of_kids_age_6_10"
                                                                     id="no_of_kids_age_6_10 room_id : <%= room.roomInfos.room_id %>"
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
@@ -646,6 +650,7 @@
                                                                     </p>
                                                                 </div>
                                                                 <select name="no_of_kids_age_3_5"
+                                                                    class="no_of_kids_age_3_5_<%= guest_count %>"
                                                                     data-name="no_of_kids_age_3_5"
                                                                     id="no_of_kids_age_3_5 room_id : <%= room.roomInfos.room_id %>"
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
@@ -676,6 +681,7 @@
                                                                     </p>
                                                                 </div>
                                                                 <select name="no_of_kids_age_1_2"
+                                                                    class="no_of_kids_age_1_2_<%= guest_count %>"
                                                                     data-name="no_of_kids_age_1_2"
                                                                     id="no_of_kids_age_1_2 room_id : <%= room.roomInfos.room_id %>"
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
@@ -700,6 +706,7 @@
                                                                     </p>
                                                                 </div>
                                                                 <select name="age_group" data-name="age_group"
+                                                                    class="age_group_<%= guest_count %>"
                                                                     id="age_group room_id : <%= room.roomInfos.room_id %>"
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
                                                                     data-room-unique-id="<%= guest_count %>"
@@ -737,7 +744,8 @@
                                                                 </div>
                                                                 <div class="fw-semibold">
                                                                     <div class="form-check">
-                                                                        <input class="form-check-input"
+                                                                        <input
+                                                                            class="form-check-input cribCheckbox_<%= guest_count %>"
                                                                             name="room-block" type="checkbox"
                                                                             value="<%= room.roomInfos.room_id %>"
                                                                             id="cribCheckbox<%= room.roomInfos.room_id %>"
@@ -757,7 +765,9 @@
                                                                         </label>
                                                                     </div>
                                                                     <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox"
+                                                                        <input
+                                                                            class="form-check-input cotCheckbox_<%= guest_count %>"
+                                                                            type="checkbox"
                                                                             value="<%= room.roomInfos.room_id %>"
                                                                             id="cotCheckbox<%= room.roomInfos.room_id %>"
                                                                             data-room-id="<%= room.roomInfos.room_id %>"
@@ -810,6 +820,7 @@
                                                                                 </p>
                                                                             </div>
                                                                             <select name="no_of_additional_adult"
+                                                                                class="no_of_additional_adult_<%= guest_count %>"
                                                                                 id="adult_room_<%= room.roomInfos.room_id %>"
                                                                                 data-room-id="<%= room.roomInfos.room_id %>"
                                                                                 data-room-unique-id="<%= guest_count %>"
@@ -842,6 +853,7 @@
                                                                                 </p>
                                                                             </div>
                                                                             <select name="no_of_kids_age_11_18"
+                                                                                class="no_of_kids_age_11_18_<%= guest_count %>"
                                                                                 data-name="no_of_kids_age_11_18"
                                                                                 id="no_of_kids_age_11_18 room_id : <%= room.roomInfos.room_id %>"
                                                                                 data-room-id="<%= room.roomInfos.room_id %>"
@@ -874,6 +886,7 @@
                                                                                 </p>
                                                                             </div>
                                                                             <select name="no_of_kids_age_6_10"
+                                                                                class="no_of_kids_age_6_10_<%= guest_count %>"
                                                                                 data-name="no_of_kids_age_6_10"
                                                                                 id="no_of_kids_age_6_10 room_id : <%= room.roomInfos.room_id %>"
                                                                                 data-room-id="<%= room.roomInfos.room_id %>"
@@ -906,6 +919,7 @@
                                                                                 </p>
                                                                             </div>
                                                                             <select name="no_of_kids_age_3_5"
+                                                                                class="no_of_kids_age_3_5_<%= guest_count %>"
                                                                                 data-name="no_of_kids_age_3_5"
                                                                                 id="no_of_kids_age_3_5 room_id : <%= room.roomInfos.room_id %>"
                                                                                 data-room-id="<%= room.roomInfos.room_id %>"
@@ -938,6 +952,7 @@
                                                                                 </p>
                                                                             </div>
                                                                             <select name="no_of_kids_age_1_2"
+                                                                                class="no_of_kids_age_1_2_<%= guest_count %>"
                                                                                 data-name="no_of_kids_age_1_2"
                                                                                 id="no_of_kids_age_1_2 room_id : <%= room.roomInfos.room_id %>"
                                                                                 data-room-id="<%= room.roomInfos.room_id %>"
@@ -963,6 +978,7 @@
                                                                             </div>
                                                                             <select name="age_group"
                                                                                 data-name="age_group"
+                                                                                class="age_group_<%= guest_count %>"
                                                                                 id="age_group room_id : <%= room.roomInfos.room_id %>"
                                                                                 data-room-id="<%= room.roomInfos.room_id %>"
                                                                                 data-room-unique-id="<%= guest_count %>"
@@ -1001,7 +1017,8 @@
                                                                             </div>
                                                                             <div class="fw-semibold">
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input"
+                                                                                    <input
+                                                                                        class="form-check-input cribCheckbox_<%= guest_count %>"
                                                                                         type="checkbox"
                                                                                         name="room-block"
                                                                                         value="<%= room.roomInfos.room_id %>"
@@ -1022,7 +1039,8 @@
                                                                                     </label>
                                                                                 </div>
                                                                                 <div class="form-check">
-                                                                                    <input class="form-check-input"
+                                                                                    <input
+                                                                                        class="form-check-input cotCheckbox_<%= guest_count %>  "
                                                                                         type="checkbox"
                                                                                         value="<%= room.roomInfos.room_id %>"
                                                                                         id="cotCheckbox<%= room.roomInfos.room_id %>"
@@ -1225,6 +1243,9 @@
                     };
                     guestObj.push(dynamicObject);
                 });
+                console.log("selectedValues==============", selectedValues)
+                // store selected data in localstorage
+                localStorage.setItem('selectedPackageTicket', JSON.stringify(selectedValues));
                 window.location.href = '/dining-info' + queryString;
 
                 const cidString = atob(customer_id);
@@ -1313,6 +1334,32 @@
             par.remove();
         }
     </script>
+
+    <script>
+        var retrievedData = localStorage.getItem('selectedPackageTicket');
+
+        if (retrievedData) {
+            var parsedData = JSON.parse(retrievedData);
+
+            for (let i = 0; i < parsedData.length; i++) {
+                var room_unique_id = parsedData[i].room_unique_id;
+                var name = parsedData[i].name;
+
+                var classname = name;
+                if ((name == 'cribCheckbox') || (name == 'cotCheckbox')) {
+                    var selected_value = parsedData[i].is_checked;
+                    $('.' + classname + '_' + room_unique_id).prop('checked', selected_value);
+                }
+                else {
+                    var selected_value = parsedData[i].selected_value;
+                    $('.' + classname + '_' + room_unique_id).val(selected_value);
+                }
+            }
+        } else {
+            console.log('No data found in localStorage');
+        }
+    </script>
+
 
 
     <script>

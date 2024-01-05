@@ -3,18 +3,18 @@ const packageController = require("../controller/packageController");
 const express = require('express');
 const router = express.Router();
 
-router.get("/index", async (req, res, next) => {
-    try {
-        const eventData = await packageController.getEventDetail();
-        const originalDate = eventData.event_date;
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        const event_date = originalDate.toLocaleDateString('en-US', options);
+// router.get("/index", async (req, res, next) => {
+//     try {
+//         const eventData = await packageController.getEventDetail();
+//         const originalDate = eventData.event_date;
+//         const options = { year: 'numeric', month: 'long', day: 'numeric' };
+//         const event_date = originalDate.toLocaleDateString('en-US', options);
 
-        res.render('index', { data: eventData, event_date: event_date });
-    } catch (error) {
-        next(error);
-    }
-});
+//         res.render('index', { data: eventData, event_date: event_date });
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 
 router.get("/booking-info", (req, res) => {
     res.render("booking-info")

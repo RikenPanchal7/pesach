@@ -516,7 +516,7 @@
                                                             </p>
                                                             <% } %>
                                                                 <p class="fw-semibold early-bid-text mb-1">
-                                                                    Early bid special offer before January 15th
+                                                                    Early bird special offer before January 15th
                                                                 </p>
 
                                                                 <% if (new Date() < new Date('2024-01-15')) { %>
@@ -538,16 +538,24 @@
                                                                             </span>
                                                                         </p>
                                                                         <% } %>
-                                                                            <div class="quantity"
-                                                                                data-room-id="<%= data.package_data[i].room_data[j].room_id %>"
-                                                                                data-package-id="<%= data.package_data[i].package_info.package_id %>">
-                                                                                <a href="#"
-                                                                                    class="quantity__minus disable"><span>-</span></a>
-                                                                                <input name="quantity" type="text"
-                                                                                    class="quantity__input intLimitTextBox"
-                                                                                    value="0">
-                                                                                <a href="#"
-                                                                                    class="quantity__plus"><span>+</span></a>
+                                                                            <div>
+                                                                                <div class="row">
+                                                                                    <div class="quantity col-sm"
+                                                                                        data-room-id="<%= data.package_data[i].room_data[j].room_id %>"
+                                                                                        data-package-id="<%= data.package_data[i].package_info.package_id %>">
+                                                                                        <a href="#"
+                                                                                            class="quantity__minus disable"><span>-</span></a>
+                                                                                        <input name="quantity"
+                                                                                            type="text"
+                                                                                            class="quantity__input intLimitTextBox"
+                                                                                            value="0">
+                                                                                        <a href="#"
+                                                                                            class="quantity__plus"><span>+</span></a>
+                                                                                    </div>
+                                                                                    <div class="col-sm mt-3">
+                                                                                        <p>Select Room</p>
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
                                                 </div>
                                             </div>
@@ -669,7 +677,11 @@
 
                 totalQuantity += roomCount;
                 totalPrice += totalRoomPrice;
+
+                // data store in lcoalstorage
             });
+            localStorage.setItem('selectRoomsDataTotalQuantity', JSON.stringify(totalQuantity));
+            localStorage.setItem('selectRoomsDataTotalPrice', JSON.stringify(totalPrice));
 
             $(".total-quantity-count").text(totalQuantity);
             $(".total-price-count").text("$ " + totalPrice.toFixed(2));
@@ -713,6 +725,9 @@
                     selectedRooms.push(roomData);
                 }
             });
+
+            // data store in lcoalstorage
+            localStorage.setItem('selectedRoomsData', JSON.stringify(selectedRooms));
 
             // Calculate total quantity and total price
             const totalQuantity = selectedRooms.reduce((total, room) => total + room.quantity, 0);
@@ -777,6 +792,63 @@
             });
         });
     </script>
+    <!-- Your existing HTML code -->
+
+    <script>
+        var retrievedData = localStorage.getItem('selectedRoomsData');
+        var totalPrice = localStorage.getItem('selectRoomsDataTotalPrice');
+        var totalQuantity = localStorage.getItem('selectRoomsDataTotalQuantity');
+
+        if (retrievedData) {
+            var parsedData = JSON.parse(retrievedData);
+            var totalQuantityElement = document.querySelector('.total-quantity-count');
+            var totalPriceElement = document.querySelector('.total-price-count');
+
+            var updatedTotalQuantity = 0;
+            var updatedTotalPrice = parseFloat(totalPrice) || 0;
+
+            for (let i = 0; i < parsedData.length; i++) {
+                var roomId = parsedData[i].id;
+                var quantity = parsedData[i].quantity;
+                var roomPrice = parsedData[i].price;
+
+                // Update the quantity in the input field based on the retrieved data
+                var roomElement = document.querySelector('[data-room-id="' + roomId + '"]');
+                var quantityInput = roomElement ? roomElement.querySelector('.quantity__input') : null;
+
+                if (quantityInput) {
+                    quantityInput.value = quantity;
+                    // Update total quantity
+                    updatedTotalQuantity += parseInt(quantity);
+                    // Update total price
+                    updatedTotalPrice = parseFloat(updatedTotalPrice);
+                } else {
+                    console.log("Quantity input element not found for room ID:", roomId);
+                }
+            }
+            // Update the total quantity and total price elements
+            if (totalQuantityElement) {
+                totalQuantityElement.textContent = updatedTotalQuantity;
+            }
+
+            if (totalPriceElement) {
+                totalPriceElement.textContent = '$ ' + updatedTotalPrice.toFixed(2);
+            }
+
+            console.log("retrievedData", parsedData);
+        } else {
+            console.log('No data found in localStorage');
+        }
+    </script>
+
+    <script>
+        var retrievedData = localStorage.getItem('selectedRoomsData');
+        if (retrievedData) {
+            var parsedData = JSON.parse(retrievedData);
+            console.log("retrievedData", retrievedData)
+        } else { }
+    </script>
+
     <script>
         var pids = '<%= pids %>';
 

@@ -477,7 +477,7 @@
                                         <% const endDate=new Date(data.package_data[i].package_end_date); %>
                                             <% const package_id=data.package_data[i].package_id %>
                                                 <div class="col">
-                                                    <div class="card text-center h-100 py-5 shadow-sm" id=<%=package_id
+                                                    <div class="card text-center h-100 py-5 shadow-sm " id=<%=package_id
                                                         %>>
                                                         <div class="card-body px-0">
                                                             <h5 class="card-title title-binding">
@@ -577,6 +577,10 @@
 
                 const queryString = `?cid=${c_idBase64Encodedp}&pids=${pidsBase64Encodedp}`;
                 const diningString = `?cid=${c_idBase64Encodedp}&pids=${pidsBase64Encodedp}`;
+
+                // data store in lcoalstorage
+                localStorage.setItem('selectEventData', JSON.stringify(pids));
+
                 if (pids.length == 1 && pids[0] == 'dining') {
                     window.location.href = '/dining-info' + diningString;
                 } else if (pids.length != [] || pids.length != '') {
@@ -586,10 +590,27 @@
                     location.reload();
                 }
             });
-
         });
     </script>
     <script>
+        var activePackageIds = JSON.parse(localStorage.getItem('selectEventData')) || [];
+        for (let i = 0; i < activePackageIds.length; i++) {
+            var packageId = activePackageIds[i];
+            var cardElement = document.getElementById(packageId);
+            if (cardElement) {
+                cardElement.classList.add('active-card');
+            }
+        }
+        var retrievedData = localStorage.getItem('selectEventData');
+        if (retrievedData) {
+            var parsedData = JSON.parse(retrievedData);
+        } else { }
+    </script>
+    <script>
+        var retrievedData = localStorage.getItem('selectEventData');
+        if (retrievedData) {
+            var parsedData = JSON.parse(retrievedData);
+        } else { }
         const customer_id = '<%= customer_id %>';
     </script>
 </body>
