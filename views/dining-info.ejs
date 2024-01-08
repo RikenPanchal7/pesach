@@ -493,12 +493,14 @@
                                                         value="<%= data.above_12_price %>">
 
                                                 </div>
-                                                <select name="above_12_count_<%= index %>"
+                                                <input class="intLimitTextBox" style="width: 15%" type="text"
+                                                    id="above_12_count_<%= index %>" name="above_12_count_<%= index %>">
+                                                <!-- <select name="above_12_count_<%= index %>"
                                                     id="above_12_count_<%= index %>">
                                                     <option value="0">0</option>
                                                     <option value="1">1</option>
                                                     <option value="2">2</option>
-                                                </select>
+                                                </select> -->
                                             </div>
                                         </div>
                                         <!-- Age 3-11 -->
@@ -514,12 +516,14 @@
                                                         value="<%= data.bet_3_11_price %>">
 
                                                 </div>
-                                                <select name="bet_3_11_count_<%= index %>"
+                                                <input class="intLimitTextBox" style="width: 15%" type="text"
+                                                    id="bet_3_11_count_<%= index %>" name="bet_3_11_count_<%= index %>">
+                                                <!-- <select name="bet_3_11_count_<%= index %>"
                                                     id="bet_3_11_count_<%= index %>">
                                                     <option value="0">0</option>
                                                     <option value="1">1</option>
                                                     <option value="2">2</option>
-                                                </select>
+                                                </select> -->
                                             </div>
                                         </div>
                                         <!-- Age 1-2 -->
@@ -534,12 +538,14 @@
                                                         id="bet_1_2_price_<%= index %>" value="<%= data.bet_1_2_age %>">
 
                                                 </div>
-                                                <select name="bet_1_2_count_<%= index %>"
+                                                <input class="intLimitTextBox" style="width: 15%" type="text"
+                                                    id="bet_1_2_count_<%= index %>" name="bet_1_2_count_<%= index %>">
+                                                <!-- <select name="bet_1_2_count_<%= index %>"
                                                     id="bet_1_2_count_<%= index %>">
                                                     <option value="0">0</option>
                                                     <option value="1">1</option>
                                                     <option value="2">2</option>
-                                                </select>
+                                                </select> -->
                                             </div>
                                         </div>
                                     </div>
@@ -552,11 +558,13 @@
                                                 <div>
                                                     <p class="mb-0 fw-semibold">Highchairs (optional)</p>
                                                 </div>
-                                                <select name="highchair_<%= index %>" id="highchair_<%= index %>">
+                                                <input class="intLimitTextBox" style="width: 15%" type="text"
+                                                    id="highchair_<%= index %>" name="highchair_<%= index %>">
+                                                <!-- <select name="highchair_<%= index %>" id="highchair_<%= index %>">
                                                     <option value="0">0</option>
                                                     <option value="1">1</option>
                                                     <option value="2">2</option>
-                                                </select>
+                                                </select> -->
                                             </div>
                                         </div>
                                         <!-- Total number of seats -->
@@ -567,11 +575,13 @@
                                                         your
                                                         table (optional)</p>
                                                 </div>
-                                                <select name="total_seat_<%= index %>" id="total_seat_<%= index %>">
+                                                <input class="intLimitTextBox" style="width: 15%" type="text"
+                                                    id="total_seat_<%= index %>" name="total_seat_<%= index %>">
+                                                <!-- <select name="total_seat_<%= index %>" id="total_seat_<%= index %>">
                                                     <option value="0">0</option>
                                                     <option value="1">1</option>
                                                     <option value="2">2</option>
-                                                </select>
+                                                </select> -->
                                             </div>
                                         </div>
                                     </div>
@@ -691,6 +701,9 @@
                 const pids = '<%= pids %>';
                 const pidsdecodedString = atob(pids);
                 const pidsdecodedData = JSON.parse(pidsdecodedString);
+
+                // data store in lcoalstorage
+                localStorage.setItem('diningTableData', JSON.stringify(diningTableData));
                 if (diningTableData[0].above_12_count == 0 && diningTableData[0].bet_3_11_count == 0 && pidsdecodedData[0] == 'dining') {
                     alert('Please select Person');
                     location.reload();
@@ -726,6 +739,46 @@
 
     </script>
     <script>
+        var retrievedData = localStorage.getItem('diningTableData');
+        if (retrievedData) {
+            var parsedData = JSON.parse(retrievedData);
+            console.log("parsedData", parsedData["0"]["above_12_count"])
+
+            var updatedAbove_12_count = parseFloat(parsedData["0"]["above_12_count"]) || '';
+            var above_12_countElement = document.getElementById('above_12_count_0');
+
+            var updatedBet_3_11_count_ = parseFloat(parsedData["0"]["bet_3_11_count"]) || '';
+            var bet_3_11_count_Element = document.getElementById('bet_3_11_count_0');
+
+            var updatedBet_1_2_count_ = parseFloat(parsedData["0"]["bet_1_2_count"]) || '';
+            var bet_1_2_count_Element = document.getElementById('bet_1_2_count_0');
+
+            var updatedHighchair_ = parseFloat(parsedData["0"]["highchair"]) || '';
+            var highchair_Element = document.getElementById('highchair_0');
+
+            var updatedTotal_seat_ = parseFloat(parsedData["0"]["total_seat"]) || '';
+            var total_seat_Element = document.getElementById('total_seat_0');
+
+            if (above_12_countElement) {
+                above_12_countElement.value = updatedAbove_12_count;
+            }
+            if (bet_3_11_count_Element) {
+                bet_3_11_count_Element.value = updatedBet_3_11_count_;
+            }
+            if (bet_1_2_count_Element) {
+                bet_1_2_count_Element.value = updatedBet_1_2_count_;
+            }
+            if (highchair_Element) {
+                highchair_Element.value = updatedHighchair_;
+            }
+            if (total_seat_Element) {
+                total_seat_Element.value = updatedTotal_seat_;
+            }
+        } else {
+            console.log('No data found in localStorage');
+        }
+    </script>
+    <script>
         // jQuery code to handle the click event
         $(document).ready(function () {
             const ids = '<%= cid %>';
@@ -746,6 +799,14 @@
                 }
 
             });
+        });
+    </script>
+    <script>
+        $(".intLimitTextBox").on('input', function () {
+            var value = this.value;
+            if (!/^\d*$/.test(value) || (value !== "" && (parseInt(value) < 0 || parseInt(value) >= 1000))) {
+                this.value = "";
+            }
         });
     </script>
     <script>

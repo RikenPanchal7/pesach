@@ -593,6 +593,7 @@
         });
     </script>
     <script>
+        localStorage.removeItem('selectedRoomsData');
         var activePackageIds = JSON.parse(localStorage.getItem('selectEventData')) || [];
         for (let i = 0; i < activePackageIds.length; i++) {
             var packageId = activePackageIds[i];
@@ -607,6 +608,8 @@
         } else { }
     </script>
     <script>
+        localStorage.removeItem('guestInfo');
+        localStorage.removeItem('selectedPackageTicket');
         var retrievedData = localStorage.getItem('selectEventData');
         if (retrievedData) {
             var parsedData = JSON.parse(retrievedData);

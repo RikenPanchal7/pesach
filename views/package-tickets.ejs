@@ -387,6 +387,14 @@
                 font-size: 12px;
             }
         }
+
+        .add-guest-btn {
+            padding: 5px 0px;
+        }
+
+        .guestAdd {
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -533,7 +541,7 @@
                             </div>
                             <% guest_count=0 %>
                                 <% for (const room of data.roomInfos) { %>
-                                    <% if (room.quantity> 1) { %>
+                                    <% if (room.quantity>= 1) { %>
 
                                         <% for (let i=1; i <=room.quantity; i++) { %>
                                             <% guest_count=guest_count+1 %>
@@ -565,12 +573,17 @@
                                                                     data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
                                                                     data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                    data-price="<%= room.combinedResults.additional_adult_price %>">
+                                                                    onchange="addguest(this.value, <%= guest_count %>, 'adult')"
+                                                                    data-price="<%= room.combinedResults.additional_adult_price %>"
+                                                                    <%=room.combinedResults.additional_adult_price===0
+                                                                    ? 'disabled' : '' %>
+                                                                    >
                                                                     <option value="0">0</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
                                                                 </select>
                                                             </div>
+
                                                         </div>
                                                         <div class="col-12 col-lg-6">
                                                             <div
@@ -597,7 +610,8 @@
                                                                     data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
                                                                     data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                    data-price="<%= room.combinedResults.kids_age_11_18_price %>">
+                                                                    data-price="<%= room.combinedResults.kids_age_11_18_price %>"
+                                                                    onchange="addguest(this.value, <%= guest_count %>, '11_18')">
                                                                     <option value="0">0</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
@@ -628,7 +642,8 @@
                                                                     data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
                                                                     data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                    data-price="<%= room.combinedResults.kids_age_6_10_price %>">
+                                                                    data-price="<%= room.combinedResults.kids_age_6_10_price %>"
+                                                                    onchange="addguest(this.value, <%= guest_count %>, '6_10')">
                                                                     <option value="0">0</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
@@ -659,7 +674,8 @@
                                                                     data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
                                                                     data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                    data-price="<%= room.combinedResults.kids_age_3_5_price %>">
+                                                                    data-price="<%= room.combinedResults.kids_age_3_5_price %>"
+                                                                    onchange="addguest(this.value, <%= guest_count %>, '3_5')">
                                                                     <option value="0">0</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
@@ -690,7 +706,8 @@
                                                                     data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
                                                                     data-room-price="<%= room.roomInfos.room_price %>"
                                                                     data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                    data-price="<%= room.combinedResults.kids_age_1_2_price %>">
+                                                                    data-price="<%= room.combinedResults.kids_age_1_2_price %>"
+                                                                    onchange="addguest(this.value, <%= guest_count %>, '1_2')">
                                                                     <option value="0">0</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
@@ -789,306 +806,32 @@
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-12 text-end">
-                                                            <button type="button"
+                                                            <!-- <button type="button"
                                                                 class="add-guest-btn fw-semibold bg-color-info rounded-3 col-12"
+                                                                id="guestButton<%=guest_count %>"
                                                                 onclick=addguest(<%=guest_count %>)>
                                                                 + Add Guest
-                                                            </button>
+                                                            </button> -->
                                                         </div>
                                                     </div>
-                                                    <div id="guest-add<%= guest_count %>">
+                                                    <div class="guestAdd" id="guest-add<%= guest_count %>">
                                                     </div>
                                                 </div>
                                                 <% } %>
-                                                    <% } else { %>
-                                                        <% guest_count=guest_count+1 %>
-                                                            <h4 class="fw-bold mb-2">
-                                                                <%= room.roomInfos.room_name %>
-                                                            </h4>
-                                                            <div class="bg-lightgray p-4 my-3">
-                                                                <div class="row fs-18">
-                                                                    <div class="col-12 col-lg-6">
-                                                                        <div
-                                                                            class="d-flex justify-content-between align-items-center mb-3">
-                                                                            <div>
-                                                                                <p class="mb-0 fw-semibold">
-                                                                                    Additional adult in room
-                                                                                </p>
-                                                                                <p class="mb-0 fw-bold">
-                                                                                    $<%= room.combinedResults.additional_adult_price
-                                                                                        %>
-                                                                                </p>
-                                                                            </div>
-                                                                            <select name="no_of_additional_adult"
-                                                                                class="no_of_additional_adult_<%= guest_count %>"
-                                                                                id="adult_room_<%= room.roomInfos.room_id %>"
-                                                                                data-room-id="<%= room.roomInfos.room_id %>"
-                                                                                data-room-unique-id="<%= guest_count %>"
-                                                                                data-package-id="<%= room.combinedResults.package_id %>"
-                                                                                data-name="no_of_additional_adult"
-                                                                                data-room-name="<%= room.roomInfos.room_name %>"
-                                                                                data-room-price="<%= room.roomInfos.room_price %>"
-                                                                                data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                                data-price="<%= room.combinedResults.additional_adult_price %>">
-                                                                                <option value="0">0</option>
-                                                                                <option value="1">1</option>
-                                                                                <option value="2">2</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-12 col-lg-6">
-                                                                        <div
-                                                                            class="d-flex justify-content-between align-items-center mb-3">
-                                                                            <div>
-                                                                                <p class="mb-0 fw-semibold">
-                                                                                    Kids ages 11-18
-                                                                                </p>
-                                                                                <p class="mb-0 fw-bold">
-                                                                                    $<%= room.combinedResults.kids_age_11_18_price
-                                                                                        %>
-                                                                                        <span
-                                                                                            class="text-disable fw-semibold">
-                                                                                            per child
-                                                                                        </span>
-                                                                                </p>
-                                                                            </div>
-                                                                            <select name="no_of_kids_age_11_18"
-                                                                                class="no_of_kids_age_11_18_<%= guest_count %>"
-                                                                                data-name="no_of_kids_age_11_18"
-                                                                                id="no_of_kids_age_11_18 room_id : <%= room.roomInfos.room_id %>"
-                                                                                data-room-id="<%= room.roomInfos.room_id %>"
-                                                                                data-room-unique-id="<%= guest_count %>"
-                                                                                data-package-id="<%= room.combinedResults.package_id %>"
-                                                                                data-room-name="<%= room.roomInfos.room_name %>"
-                                                                                data-room-price="<%= room.roomInfos.room_price %>"
-                                                                                data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                                data-price="<%= room.combinedResults.kids_age_11_18_price %>">
-                                                                                <option value="0">0</option>
-                                                                                <option value="1">1</option>
-                                                                                <option value="2">2</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-12 col-lg-6">
-                                                                        <div
-                                                                            class="d-flex justify-content-between align-items-center mb-3">
-                                                                            <div>
-                                                                                <p class="mb-0 fw-semibold">
-                                                                                    Kids ages 6-10
-                                                                                </p>
-                                                                                <p class="mb-0 fw-bold">
-                                                                                    $<%= room.combinedResults.kids_age_6_10_price
-                                                                                        %>
-                                                                                        <span
-                                                                                            class="text-disable fw-semibold">
-                                                                                            per child
-                                                                                        </span>
-                                                                                </p>
-                                                                            </div>
-                                                                            <select name="no_of_kids_age_6_10"
-                                                                                class="no_of_kids_age_6_10_<%= guest_count %>"
-                                                                                data-name="no_of_kids_age_6_10"
-                                                                                id="no_of_kids_age_6_10 room_id : <%= room.roomInfos.room_id %>"
-                                                                                data-room-id="<%= room.roomInfos.room_id %>"
-                                                                                data-room-unique-id="<%= guest_count %>"
-                                                                                data-package-id="<%= room.combinedResults.package_id %>"
-                                                                                data-room-price="<%= room.roomInfos.room_price %>"
-                                                                                data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                                data-room-name="<%= room.roomInfos.room_name %>"
-                                                                                data-price="<%= room.combinedResults.kids_age_6_10_price %>">
-                                                                                <option value="0">0</option>
-                                                                                <option value="1">1</option>
-                                                                                <option value="2">2</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-12 col-lg-6">
-                                                                        <div
-                                                                            class="d-flex justify-content-between align-items-center mb-3">
-                                                                            <div>
-                                                                                <p class="mb-0 fw-semibold">
-                                                                                    kids-ages 3-5
-                                                                                </p>
-                                                                                <p class="mb-0 fw-bold">
-                                                                                    $<%= room.combinedResults.kids_age_3_5_price
-                                                                                        %>
-                                                                                        <span
-                                                                                            class="text-disable fw-semibold">
-                                                                                            per child
-                                                                                        </span>
-                                                                                </p>
-                                                                            </div>
-                                                                            <select name="no_of_kids_age_3_5"
-                                                                                class="no_of_kids_age_3_5_<%= guest_count %>"
-                                                                                data-name="no_of_kids_age_3_5"
-                                                                                id="no_of_kids_age_3_5 room_id : <%= room.roomInfos.room_id %>"
-                                                                                data-room-id="<%= room.roomInfos.room_id %>"
-                                                                                data-room-unique-id="<%= guest_count %>"
-                                                                                data-package-id="<%= room.combinedResults.package_id %>"
-                                                                                data-room-name="<%= room.roomInfos.room_name %>"
-                                                                                data-room-price="<%= room.roomInfos.room_price %>"
-                                                                                data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                                data-price="<%= room.combinedResults.kids_age_3_5_price %>">
-                                                                                <option value="0">0</option>
-                                                                                <option value="1">1</option>
-                                                                                <option value="2">2</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-12 col-lg-6">
-                                                                        <div
-                                                                            class="d-flex justify-content-between align-items-center mb-3">
-                                                                            <div>
-                                                                                <p class="mb-0 fw-semibold">
-                                                                                    Kids ages 1-2
-                                                                                </p>
-                                                                                <p class="mb-0 fw-bold">
-                                                                                    $<%= room.combinedResults.kids_age_1_2_price
-                                                                                        %>
-                                                                                        <span
-                                                                                            class="text-disable fw-semibold">
-                                                                                            per child
-                                                                                        </span>
-                                                                                </p>
-                                                                            </div>
-                                                                            <select name="no_of_kids_age_1_2"
-                                                                                class="no_of_kids_age_1_2_<%= guest_count %>"
-                                                                                data-name="no_of_kids_age_1_2"
-                                                                                id="no_of_kids_age_1_2 room_id : <%= room.roomInfos.room_id %>"
-                                                                                data-room-id="<%= room.roomInfos.room_id %>"
-                                                                                data-room-unique-id="<%= guest_count %>"
-                                                                                data-package-id="<%= room.combinedResults.package_id %>"
-                                                                                data-room-name="<%= room.roomInfos.room_name %>"
-                                                                                data-room-price="<%= room.roomInfos.room_price %>"
-                                                                                data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                                data-price="<%= room.combinedResults.kids_age_1_2_price %>">
-                                                                                <option value="0">0</option>
-                                                                                <option value="1">1</option>
-                                                                                <option value="2">2</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-12 col-lg-6">
-                                                                        <div
-                                                                            class="d-flex justify-content-between align-items-center mb-3">
-                                                                            <div>
-                                                                                <p class="mb-0 fw-semibold">
-                                                                                    Age Group
-                                                                                </p>
-                                                                            </div>
-                                                                            <select name="age_group"
-                                                                                data-name="age_group"
-                                                                                class="age_group_<%= guest_count %>"
-                                                                                id="age_group room_id : <%= room.roomInfos.room_id %>"
-                                                                                data-room-id="<%= room.roomInfos.room_id %>"
-                                                                                data-room-unique-id="<%= guest_count %>"
-                                                                                data-package-id="<%= room.combinedResults.package_id %>"
-                                                                                data-room-price="<%= room.roomInfos.room_price %>"
-                                                                                data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                                data-room-name="<%= room.roomInfos.room_name %>">
-                                                                                <option value="0">0</option>
-                                                                                <option value="18-25">18-25</option>
-                                                                                <option value="25-30">25-30</option>
-                                                                                <option value="30-35">30-35</option>
-                                                                                <option value="35-40">35-40</option>
-                                                                                <option value="40-45">40-45</option>
-                                                                                <option value="45-50">45-50</option>
-                                                                                <option value="50-55">50-55</option>
-                                                                                <option value="55-60">55-60</option>
-                                                                                <option value="60-65">60-65</option>
-                                                                                <option value="65-70">65-70</option>
-                                                                                <option value="70-75">70-75</option>
-                                                                                <option value="75-80">75-80</option>
-                                                                                <option value="80-85">80-85</option>
-                                                                                <option value="85-90">85-90</option>
-                                                                                <option value="90-100">90-100</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row fs-18">
-                                                                    <div class="col-12 col-lg-6">
-                                                                        <div
-                                                                            class="d-flex justify-content-between mb-3">
-                                                                            <div>
-                                                                                <p class="mb-0 fw-semibold me-3">
-                                                                                    Additional
-                                                                                </p>
-                                                                            </div>
-                                                                            <div class="fw-semibold">
-                                                                                <div class="form-check">
-                                                                                    <input
-                                                                                        class="form-check-input cribCheckbox_<%= guest_count %>"
-                                                                                        type="checkbox"
-                                                                                        name="room-block"
-                                                                                        value="<%= room.roomInfos.room_id %>"
-                                                                                        id="cribCheckbox<%= room.roomInfos.room_id %>"
-                                                                                        data-room-id="<%= room.roomInfos.room_id %>"
-                                                                                        data-room-unique-id="<%= guest_count %>"
-                                                                                        data-package-id="<%= room.combinedResults.package_id %>"
-                                                                                        data-name="cribCheckbox"
-                                                                                        data-room-name="<%= room.roomInfos.room_name %>"
-                                                                                        data-room-price="<%= room.roomInfos.room_price %>"
-                                                                                        data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                                        data-price="<%= room.combinedResults.cribs_price %>">
-                                                                                    <label class="form-check-label"
-                                                                                        for="cribCheckbox<%= room.roomInfos.room_id %>">
-                                                                                        Crib $<%=
-                                                                                            room.combinedResults.cribs_price
-                                                                                            %> OR bring your own
-                                                                                    </label>
-                                                                                </div>
-                                                                                <div class="form-check">
-                                                                                    <input
-                                                                                        class="form-check-input cotCheckbox_<%= guest_count %>  "
-                                                                                        type="checkbox"
-                                                                                        value="<%= room.roomInfos.room_id %>"
-                                                                                        id="cotCheckbox<%= room.roomInfos.room_id %>"
-                                                                                        data-room-id="<%= room.roomInfos.room_id %>"
-                                                                                        data-room-unique-id="<%= guest_count %>"
-                                                                                        data-package-id="<%= room.combinedResults.package_id %>"
-                                                                                        data-name="cotCheckbox"
-                                                                                        data-room-price="<%= room.roomInfos.room_price %>"
-                                                                                        data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
-                                                                                        data-room-name="<%= room.roomInfos.room_name %>"
-                                                                                        data-price="<%= room.combinedResults.cot_price %>">
-                                                                                    <label class="form-check-label"
-                                                                                        for="cotCheckbox<%= room.roomInfos.room_id %>">
-                                                                                        Cot $<%=
-                                                                                            room.combinedResults.cot_price
-                                                                                            %>
-                                                                                    </label>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row">
-                                                                    <div class="col-12 text-end">
-                                                                        <button type="button"
-                                                                            class="add-guest-btn fw-semibold bg-color-info rounded-3 col-12"
-                                                                            onclick=addguest(<%=guest_count %>)>
-                                                                            + Add Guest
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                                <div id="guest-add<%= guest_count %>">
-                                                                </div>
+                                                    <% } %>
+                                                        <% } %>
+                                                            <!-- /cards -->
+                                                            <!-- NEXT BUTTON-->
+                                                            <div
+                                                                class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3">
+                                                                <button type="button"
+                                                                    class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn"
+                                                                    id="previousButton">
+                                                                    Previous</button>
+                                                                <button type="button"
+                                                                    class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Next</button>
                                                             </div>
-                                                            <% } %>
-                                                                <% } %>
-                                                                    <!-- /cards -->
-                                                                    <!-- NEXT BUTTON-->
-                                                                    <div
-                                                                        class="row d-flex justify-content-between align-items-center text-center mx-md-0 mx-3">
-                                                                        <button type="button"
-                                                                            class="btn btn-dark fw-bold back text-white mt-4 rounded-3 col-12 mb-3 mb-md-0 col-md-3 back-btn"
-                                                                            id="previousButton">
-                                                                            Previous</button>
-                                                                        <button type="button"
-                                                                            class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Next</button>
-                                                                    </div>
-                                                                    <!-- /NEXT BUTTON-->
+                                                            <!-- /NEXT BUTTON-->
                         </div>
                         <!-- /col -->
                     </div>
@@ -1229,6 +972,7 @@
 
                 $(".firstname").each(function () {
                     var id = $(this).data('id');
+                    var agegroup = $(this).data('agegroup');
                     var gtcnt = $(this).data('gtcnt');
                     var lastname = $('#guest_lastname' + gtcnt).val();
                     var fname = $(this).val();
@@ -1239,13 +983,15 @@
                         fname: fname,
                         lname: lname,
                         age: age,
-                        room_unique_id: id
+                        room_unique_id: id,
+                        agegroup: agegroup
                     };
                     guestObj.push(dynamicObject);
                 });
-                console.log("selectedValues==============", selectedValues)
+                console.log("guestObj==============", guestObj)
                 // store selected data in localstorage
                 localStorage.setItem('selectedPackageTicket', JSON.stringify(selectedValues));
+                localStorage.setItem('guestInfo', JSON.stringify(guestObj));
                 window.location.href = '/dining-info' + queryString;
 
                 const cidString = atob(customer_id);
@@ -1286,51 +1032,76 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function () {
+            const guestCount = "<%= guest_count %>"
+            var guestInfo = localStorage.getItem('guestInfo');
+
+            if (!guestInfo) {
+                for (let i = 1; i <= guestCount; i++) {
+                    addguest(2, i, 'guest')
+                }
+            }
+
+
+        });
+    </script>
 
     <script>
-        var gtcnt = 0;
-        function addguest(id) {
-            gtcnt = gtcnt + 1;
-            $("#guest-add" + id).append('<div class="row guest-row align-items-center">' +
-                '<div class="col-12 col-lg-4">' +
-                '<div class="mb-3">' +
-                '<input type="hidden" name="guest_count_' + id + '" id="guest_count_' + id + '"' +
-                '<label class="form-label fw-semibold">' +
-                'Guest First Name' +
-                '</label>' +
-                '<input type="text" class="form-control firstname" data-gtcnt="' + gtcnt + '" data-id="' + id + '" name="guest_firstname' + id + '[]" id="guest_firstname' + gtcnt + '">' +
-                '</div>' +
-                '</div>' +
-                '<div class="col-12 col-lg-4">' +
-                '<div class="mb-3">' +
-                '<input type="hidden" name="guest_count_' + id + '" id="guest_count_' + id + '"' +
-                '<label class="form-label fw-semibold">' +
-                'Guest Last Name' +
-                '</label>' +
-                '<input type="text" class="form-control lastname" name="guest_lastname' + id + '[]"  id="guest_lastname' + gtcnt + '">' +
-                '</div>' +
-                '</div>' +
-                '<div class="col-11 col-lg-3">' +
-                '<div class="mb-3">' +
-                '<input type="hidden" name="guest_count_' + id + '" id="guest_count_' + id + '"' +
-                '<label class="form-label fw-semibold">' +
-                'Age' +
-                '</label>' +
-                '<input type="text" class="form-control" name="guest_age' + id + '[]" id="guest_age' + gtcnt + '" pattern="[0-9]+" title="Please enter a valid integer value">' +
-                '</div>' +
-                '</div>' +
-                '<div class="col-1 col-lg-1 text-center">' +
-                '<button type="button" class="remove-guest-btn fw-semibold text-danger" onclick=removeguest(this)>' +
-                '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16">' +
-                '<path fill="currentColor" fill-rule="evenodd" d="M5.75 3V1.5h4.5V3zm-1.5 0V1a1 1 0 0 1 1-1h5.5a1 1 0 0 1 1 1v2h2.5a.75.75 0 0 1 0 1.5h-.365l-.743 9.653A2 2 0 0 1 11.148 16H4.852a2 2 0 0 1-1.994-1.847L2.115 4.5H1.75a.75.75 0 0 1 0-1.5zm-.63 1.5h8.76l-.734 9.538a.5.5 0 0 1-.498.462H4.852a.5.5 0 0 1-.498-.462z" clip-rule="evenodd"/>' +
-                '</svg>' +
-                '</button>' +
-                '</div>' +
-                '</div>')
+        var gtcnt1_2 = 0;
+        var gtcnt3_5 = 0;
+        var gtcnt6_10 = 0;
+        var gtcnt11_18 = 0;
+        var gtcntadult = 0;
+
+        function addguest(selectedValue, id, ageGroup) {
+            // Clear existing guest rows based on ageGroup
+            $(".guest-row-" + ageGroup + '_' + id).remove();
+
+            // Add new guest rows based on selected value
+            for (var i = 0; i < selectedValue; i++) {
+                var gtcnt = (ageGroup === '1_2') ? ++gtcnt1_2 :
+                    (ageGroup === '3_5') ? ++gtcnt3_5 :
+                        (ageGroup === '6_10') ? ++gtcnt6_10 :
+                            (ageGroup === '11_18') ? ++gtcnt11_18 :
+                                ++gtcntadult;
+                var fnamelabel = 'Guest First Name';
+                var lnamelabel = 'Guest Last Name';
+                if (ageGroup != 'adult' && ageGroup != 'guest') {
+                    fnamelabel = 'Kids First Name';
+                    lnamelabel = 'Kids Last Name';
+                }
+
+                $("#guest-add" + id).append('<div class="row guest-row guest-row-' + ageGroup + '_' + id + ' align-items-center">' +
+                    '<div class="col-12 col-lg-4">' +
+                    '<div class="mb-3">' +
+                    '<label class="form-label fw-semibold">' + fnamelabel +
+                    '</label>' +
+                    '<input type="text" class="form-control firstname" data-agegroup="' + ageGroup + '" data-gtcnt="' + gtcnt + '" data-id="' + id + '" name="guest_firstname' + id + '[]" id="guest_firstname' + gtcnt + '">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="col-12 col-lg-4">' +
+                    '<div class="mb-3">' +
+                    '<label class="form-label fw-semibold">' +
+                    lnamelabel +
+                    '</label>' +
+                    '<input type="text" class="form-control lastname" name="guest_lastname' + id + '[]"  id="guest_lastname' + gtcnt + '">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="col-11 col-lg-4">' +
+                    '<div class="mb-3">' +
+                    '<label class="form-label fw-semibold">' +
+                    'Age' +
+                    '</label>' +
+                    '<input type="text" class="form-control" name="guest_age' + id + '[]" id="guest_age' + gtcnt + '" pattern="[0-9]+" title="Please enter a valid integer value">' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>');
+            }
         }
 
         function removeguest(e) {
-            var par = $(event.target).closest(".guest-row");
+            var par = $(e).closest(".guest-row");
             par.remove();
         }
     </script>
@@ -1360,7 +1131,62 @@
         }
     </script>
 
+    <script>
+        var guestInfo = localStorage.getItem('guestInfo');
 
+        if (guestInfo) {
+            var parsedData = JSON.parse(guestInfo);
+            var gtcnt = 0;
+            for (let i = 0; i < parsedData.length; i++) {
+                gtcnt++;
+                var room_unique_id = parsedData[i].room_unique_id;
+                console.log("room_unique_id", room_unique_id)
+                var fname = parsedData[i].fname;
+                console.log("fname", fname)
+                var lname = parsedData[i].lname;
+                console.log("lname", lname)
+                var age = parsedData[i].age;
+                console.log("age", age)
+                var agegroup = parsedData[i].agegroup;
+                console.log("agegroup", agegroup)
+
+                var fnamelabel = 'Guest First Name';
+                var lnamelabel = 'Guest Last Name';
+                if (agegroup != 'adult' && agegroup != 'guest') {
+                    fnamelabel = 'Kids First Name';
+                    lnamelabel = 'Kids Last Name';
+                }
+
+                $("#guest-add" + room_unique_id).append('<div class="row guest-row guest-row-' + agegroup + '_' + room_unique_id + ' align-items-center">' +
+                    '<div class="col-12 col-lg-4">' +
+                    '<div class="mb-3">' +
+                    '<label class="form-label fw-semibold">' + fnamelabel +
+                    '</label>' +
+                    '<input type="text" class="form-control firstname" data-gtcnt="' + gtcnt + '" value="' + fname + '" data-agegroup="' + agegroup + '" data-id="' + room_unique_id + '" name="guest_firstname' + room_unique_id + '[]" id="guest_firstname' + gtcnt + '">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="col-12 col-lg-4">' +
+                    '<div class="mb-3">' +
+                    '<label class="form-label fw-semibold">' +
+                    lnamelabel +
+                    '</label>' +
+                    '<input type="text" class="form-control lastname" value="' + lname + '" name="guest_lastname' + room_unique_id + '[]"  id="guest_lastname' + gtcnt + '">' +
+                    '</div>' +
+                    '</div>' +
+                    '<div class="col-11 col-lg-4">' +
+                    '<div class="mb-3">' +
+                    '<label class="form-label fw-semibold">' +
+                    'Age' +
+                    '</label>' +
+                    '<input type="text" class="form-control" value="' + age + '" name="guest_age' + room_unique_id + '[]" id="guest_age' + gtcnt + '" pattern="[0-9]+" title="Please enter a valid integer value">' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>');
+            }
+        } else {
+            console.log('No data found in localStorage');
+        }
+    </script>
 
     <script>
         var customer_id = '<%= customer_id %>';

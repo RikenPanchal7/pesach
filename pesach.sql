@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 04, 2024 at 03:35 PM
+-- Generation Time: Jan 08, 2024 at 03:33 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -273,10 +273,10 @@ CREATE TABLE `order_room` (
 
 CREATE TABLE `order_room_guest` (
   `order_room_guest_id` bigint(20) NOT NULL,
-  `order_room_id` bigint(20) NOT NULL,
-  `guest_first_name` varchar(255) NOT NULL,
-  `guest_last_name` varchar(255) NOT NULL,
-  `guest_age` int(11) NOT NULL
+  `order_room_id` bigint(20) DEFAULT NULL,
+  `guest_first_name` varchar(255) DEFAULT NULL,
+  `guest_last_name` varchar(255) DEFAULT NULL,
+  `guest_age` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -302,14 +302,14 @@ CREATE TABLE `package` (
 --
 
 INSERT INTO `package` (`package_id`, `event_id`, `package_name`, `package_slug`, `package_start_date`, `package_end_date`, `created_date`, `updated_date`, `is_deleted`) VALUES
-(1, 1, 'ALL DAYS', 'all_days', '2024-04-22', '2024-05-01', '2023-12-25 14:16:35', '2023-12-25 14:16:35', NULL),
-(2, 1, 'FIRST DAYS ONLY', 'first_days_only', '2024-04-22', '2024-04-25', '2023-12-26 05:42:15', '2023-12-26 05:42:15', NULL),
-(3, 1, 'FIRST DAYS + 1 DAY C”H', 'FIRST DAYS + 1 DAY C”H', '2024-04-22', '2024-04-26', '2023-12-26 06:12:32', '2023-12-26 06:12:32', NULL),
-(4, 1, 'LAST DAYS ONLY', 'LAST DAYS ONLY', '2024-04-28', '2024-05-01', '2023-12-26 06:15:27', '2023-12-26 06:15:27', NULL),
-(5, 1, 'FIRST DAYS + CHOL HAMOED', 'FIRST DAYS + CHOL HAMOED', '2024-04-22', '2024-04-28', '2023-12-26 06:22:13', '2023-12-26 06:22:13', NULL),
-(6, 1, 'CHOL HAMOED + LAST DAYS', 'CHOL HAMOED + LAST DAYS', '2024-04-25', '2024-05-01', '2023-12-26 06:24:39', '2023-12-26 06:24:39', NULL),
-(7, 1, 'SHABBOS C”H + LAST DAYS', 'SHABBOS C”H + LAST DAYS', '2024-04-26', '2024-05-01', '2024-01-03 16:43:46', '2024-01-03 16:43:46', NULL),
-(8, 1, 'JUST CHOL HAMOED', 'JUST CHOL HAMOED', '2024-04-25', '2024-04-29', '2024-01-03 16:45:41', '2024-01-03 16:45:41', NULL);
+(1, 1, 'FULL PESACH', 'FULL PESACH', '2024-04-22', '2024-05-01', '2024-01-08 08:25:58', '2024-01-08 08:25:58', NULL),
+(2, 1, 'FIRST DAYS ONLY', 'FIRST DAYS ONLY', '2024-04-22', '2024-04-25', '2024-01-08 08:26:39', '2024-01-08 08:26:39', NULL),
+(3, 1, 'FIRST DAYS + 1 DAY C\"\"H', 'FIRST DAYS + 1 DAY C\"\"H', '2024-04-22', '2024-04-25', '2024-01-08 08:27:09', '2024-01-08 08:27:09', NULL),
+(4, 1, 'CHOL HAMOED', 'CHOL HAMOED', '2024-04-25', '2024-04-28', '2024-01-08 08:27:48', '2024-01-08 08:27:48', NULL),
+(5, 1, 'FIRST DAYS + CHOL HAMOED', 'FIRST DAYS + CHOL HAMOED', '2024-04-22', '2024-04-28', '2024-01-08 08:28:14', '2024-01-08 08:28:14', NULL),
+(6, 1, 'CHOL HAMOED + LAST DAYS', 'CHOL HAMOED + LAST DAYS', '2024-04-25', '2024-05-01', '2024-01-08 08:28:40', '2024-01-08 08:28:40', NULL),
+(7, 1, 'SHABBOS C\"\"H + LAST DAYS', 'SHABBOS C\"\"H + LAST DAYS', '2024-04-26', '2024-05-01', '2024-01-08 08:29:02', '2024-01-08 08:29:02', NULL),
+(8, 1, 'LAST DAYS', 'LAST DAYS', '2024-04-28', '2024-05-01', '2024-01-08 08:29:33', '2024-01-08 08:29:33', NULL);
 
 -- --------------------------------------------------------
 
@@ -345,14 +345,35 @@ CREATE TABLE `package_rooms` (
 --
 
 INSERT INTO `package_rooms` (`package_room_id`, `package_id`, `room_id`, `room_price`, `per_couple`, `early_bird_special_price`, `single_occupancy`, `duration`, `no_of_additional_adult`, `no_of_additional_kids`, `additional_adult_price`, `kids_age_11_18_price`, `kids_age_6_10_price`, `kids_age_3_5_price`, `kids_age_1_2_price`, `cribs_price`, `cot_price`, `created_date`, `updated_date`, `is_deleted`) VALUES
-(1, 1, 1, 9750.00, 9750.00, 9200.00, 7500.00, 0, 0, 0, 2000.00, 1750.00, 1200.00, 900.00, 650.00, 50.00, 200.00, '2024-01-03 16:25:57', '2024-01-03 16:25:57', NULL),
-(2, 2, 2, 4800.00, 4800.00, 4300.00, 3950.00, 0, 0, 0, 900.00, 850.00, 650.00, 450.00, 250.00, 50.00, 100.00, '2024-01-03 16:29:48', '2024-01-03 16:29:48', NULL),
-(3, 3, 3, 5500.00, 5500.00, 5000.00, 4650.00, 0, 0, 0, 1000.00, 900.00, 700.00, 500.00, 300.00, 50.00, 125.00, '2024-01-03 16:31:53', '2024-01-03 16:31:53', NULL),
-(4, 4, 4, 3600.00, 3600.00, 3100.00, 3000.00, 0, 0, 0, 900.00, 700.00, 500.00, 350.00, 250.00, 50.00, 100.00, '2024-01-03 16:34:01', '2024-01-03 16:34:01', NULL),
-(5, 5, 5, 7950.00, 7950.00, 7500.00, 6800.00, 0, 0, 0, 1600.00, 1450.00, 1100.00, 800.00, 550.00, 50.00, 180.00, '2024-01-03 16:40:30', '2024-01-03 16:40:30', NULL),
-(6, 6, 6, 7200.00, 7200.00, 6700.00, 6200.00, 0, 0, 0, 1500.00, 1250.00, 900.00, 650.00, 500.00, 50.00, 180.00, '2024-01-03 16:42:36', '2024-01-03 16:42:36', NULL),
-(7, 7, 7, 6900.00, 6900.00, 6400.00, 6000.00, 0, 0, 0, 1450.00, 1200.00, 850.00, 600.00, 450.00, 50.00, 150.00, '2024-01-03 16:44:36', '2024-01-03 16:44:36', NULL),
-(8, 8, 8, 4500.00, 4500.00, 4000.00, 3500.00, 0, 0, 0, 1000.00, 800.00, 600.00, 500.00, 400.00, 50.00, 100.00, '2024-01-03 16:46:28', '2024-01-03 16:46:28', NULL);
+(1, 1, 1, 9750.00, 9750.00, 9750.00, 0.00, 0, 0, 0, 2000.00, 1750.00, 1200.00, 900.00, 650.00, 50.00, 200.00, '2024-01-08 09:37:53', '2024-01-08 09:37:53', NULL),
+(2, 1, 2, 9750.00, 9750.00, 9750.00, 0.00, 0, 0, 0, 2000.00, 1750.00, 1200.00, 900.00, 650.00, 50.00, 200.00, '2024-01-08 09:41:52', '2024-01-08 09:41:52', NULL),
+(3, 1, 3, 7500.00, 0.00, 7500.00, 7500.00, 0, 0, 0, 0.00, 1750.00, 1200.00, 900.00, 650.00, 50.00, 200.00, '2024-01-08 09:42:44', '2024-01-08 09:42:44', NULL),
+(4, 1, 4, 11500.00, 11500.00, 11500.00, 0.00, 0, 0, 0, 2000.00, 1750.00, 1200.00, 900.00, 650.00, 50.00, 200.00, '2024-01-08 09:43:53', '2024-01-08 09:43:53', NULL),
+(5, 1, 5, 12500.00, 12500.00, 12500.00, 0.00, 0, 0, 0, 2000.00, 1750.00, 1200.00, 900.00, 650.00, 50.00, 200.00, '2024-01-08 09:44:26', '2024-01-08 09:44:26', NULL),
+(6, 1, 6, 16000.00, 16000.00, 16000.00, 0.00, 0, 0, 0, 2000.00, 1750.00, 1200.00, 900.00, 650.00, 50.00, 200.00, '2024-01-08 09:45:00', '2024-01-08 09:45:00', NULL),
+(7, 1, 7, 17000.00, 17000.00, 17000.00, 0.00, 0, 0, 0, 2000.00, 1750.00, 1200.00, 900.00, 650.00, 50.00, 200.00, '2024-01-08 09:45:33', '2024-01-08 09:45:33', NULL),
+(8, 1, 8, 21000.00, 21000.00, 21000.00, 0.00, 0, 0, 0, 2000.00, 1750.00, 1200.00, 900.00, 650.00, 50.00, 200.00, '2024-01-08 09:46:05', '2024-01-08 09:46:05', NULL),
+(9, 2, 1, 4800.00, 4800.00, 4800.00, 0.00, 0, 0, 0, 900.00, 850.00, 650.00, 450.00, 250.00, 50.00, 100.00, '2024-01-08 09:46:34', '2024-01-08 09:46:34', NULL),
+(10, 2, 2, 4800.00, 4800.00, 4800.00, 0.00, 0, 0, 0, 900.00, 850.00, 650.00, 450.00, 250.00, 50.00, 100.00, '2024-01-08 09:48:06', '2024-01-08 09:48:06', NULL),
+(11, 2, 3, 3950.00, 0.00, 3950.00, 3950.00, 0, 0, 0, 0.00, 850.00, 650.00, 450.00, 250.00, 50.00, 100.00, '2024-01-08 09:48:46', '2024-01-08 09:48:46', NULL),
+(12, 3, 1, 5500.00, 5500.00, 5500.00, 0.00, 0, 0, 0, 1000.00, 900.00, 700.00, 500.00, 300.00, 50.00, 125.00, '2024-01-08 09:49:45', '2024-01-08 09:49:45', NULL),
+(13, 3, 2, 5500.00, 5500.00, 5500.00, 0.00, 0, 0, 0, 1000.00, 900.00, 700.00, 500.00, 300.00, 50.00, 125.00, '2024-01-08 09:50:52', '2024-01-08 09:50:52', NULL),
+(14, 3, 3, 4650.00, 0.00, 4650.00, 4650.00, 0, 0, 0, 0.00, 900.00, 700.00, 500.00, 300.00, 50.00, 125.00, '2024-01-08 09:51:44', '2024-01-08 09:51:44', NULL),
+(15, 4, 1, 4500.00, 4500.00, 4500.00, 0.00, 0, 0, 0, 1000.00, 800.00, 600.00, 500.00, 400.00, 50.00, 100.00, '2024-01-08 09:52:47', '2024-01-08 09:52:47', NULL),
+(16, 4, 2, 4500.00, 4500.00, 4500.00, 0.00, 0, 0, 0, 1000.00, 800.00, 600.00, 500.00, 400.00, 50.00, 100.00, '2024-01-08 09:53:36', '2024-01-08 09:53:36', NULL),
+(17, 4, 3, 3500.00, 0.00, 3500.00, 3500.00, 0, 0, 0, 0.00, 800.00, 600.00, 500.00, 400.00, 50.00, 100.00, '2024-01-08 09:54:05', '2024-01-08 09:54:05', NULL),
+(18, 5, 1, 7950.00, 7950.00, 7950.00, 0.00, 0, 0, 0, 1600.00, 1450.00, 1100.00, 800.00, 550.00, 50.00, 200.00, '2024-01-08 09:54:59', '2024-01-08 09:54:59', NULL),
+(19, 5, 2, 7950.00, 7950.00, 7950.00, 0.00, 0, 0, 0, 1600.00, 1450.00, 1100.00, 800.00, 550.00, 50.00, 200.00, '2024-01-08 09:55:47', '2024-01-08 09:55:47', NULL),
+(20, 5, 3, 6800.00, 0.00, 6800.00, 6800.00, 0, 0, 0, 0.00, 1450.00, 1100.00, 800.00, 550.00, 50.00, 200.00, '2024-01-08 09:56:47', '2024-01-08 09:56:47', NULL),
+(21, 6, 1, 7200.00, 7200.00, 7200.00, 0.00, 0, 0, 0, 1500.00, 1250.00, 900.00, 650.00, 500.00, 50.00, 180.00, '2024-01-08 09:57:38', '2024-01-08 09:57:38', NULL),
+(22, 6, 2, 7200.00, 7200.00, 7200.00, 0.00, 0, 0, 0, 1500.00, 1250.00, 900.00, 650.00, 500.00, 50.00, 180.00, '2024-01-08 09:58:43', '2024-01-08 09:58:43', NULL),
+(23, 6, 3, 6200.00, 0.00, 6200.00, 6200.00, 0, 0, 0, 0.00, 1250.00, 900.00, 650.00, 500.00, 50.00, 180.00, '2024-01-08 09:59:35', '2024-01-08 09:59:35', NULL),
+(24, 7, 1, 6900.00, 6900.00, 6900.00, 0.00, 0, 0, 0, 1450.00, 1200.00, 850.00, 600.00, 450.00, 50.00, 150.00, '2024-01-08 10:00:31', '2024-01-08 10:00:31', NULL),
+(25, 7, 2, 6900.00, 6900.00, 6900.00, 0.00, 0, 0, 0, 1450.00, 1200.00, 850.00, 600.00, 450.00, 50.00, 150.00, '2024-01-08 10:01:15', '2024-01-08 10:01:15', NULL),
+(26, 7, 3, 6000.00, 0.00, 6000.00, 6000.00, 0, 0, 0, 0.00, 1200.00, 850.00, 600.00, 450.00, 50.00, 150.00, '2024-01-08 10:02:21', '2024-01-08 10:02:21', NULL),
+(27, 8, 1, 3600.00, 3600.00, 3600.00, 0.00, 0, 0, 0, 900.00, 700.00, 500.00, 350.00, 250.00, 50.00, 100.00, '2024-01-08 10:03:12', '2024-01-08 10:03:12', NULL),
+(28, 8, 2, 3600.00, 3600.00, 3600.00, 0.00, 0, 0, 0, 900.00, 700.00, 500.00, 350.00, 250.00, 50.00, 100.00, '2024-01-08 10:04:01', '2024-01-08 10:04:01', NULL),
+(29, 8, 3, 3000.00, 0.00, 3000.00, 3000.00, 0, 0, 0, 0.00, 700.00, 500.00, 350.00, 250.00, 50.00, 100.00, '2024-01-08 10:04:45', '2024-01-08 10:04:45', NULL);
 
 -- --------------------------------------------------------
 
@@ -362,9 +383,9 @@ INSERT INTO `package_rooms` (`package_room_id`, `package_id`, `room_id`, `room_p
 
 CREATE TABLE `room` (
   `room_id` bigint(20) NOT NULL,
-  `room_number` varchar(255) NOT NULL,
+  `room_number` varchar(255) DEFAULT NULL,
   `room_name` varchar(255) NOT NULL,
-  `max_person` int(11) NOT NULL,
+  `max_person` int(11) DEFAULT NULL,
   `description` text NOT NULL,
   `created_date` datetime NOT NULL,
   `updated_date` datetime NOT NULL DEFAULT current_timestamp(),
@@ -376,14 +397,14 @@ CREATE TABLE `room` (
 --
 
 INSERT INTO `room` (`room_id`, `room_number`, `room_name`, `max_person`, `description`, `created_date`, `updated_date`, `is_deleted`) VALUES
-(1, '101', '1 KING BED OR 2 FULL (54”) BEDS', 4, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '2024-01-03 16:25:12', '2024-01-03 20:55:44', NULL),
-(2, '102', 'FIRST DAYS ONLY', 4, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '2024-01-03 16:29:11', '2024-01-03 20:59:31', NULL),
-(3, '103', 'FIRST DAYS + 1 DAY C”H', 4, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '2024-01-03 16:31:34', '2024-01-03 21:01:46', NULL),
-(4, '104', 'LAST DAYS ONLY', 4, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '2024-01-03 16:33:28', '2024-01-03 21:03:52', NULL),
-(5, '105', 'FIRST DAYS + CHOL HAMOED', 4, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '2024-01-03 16:39:45', '2024-01-03 21:10:09', NULL),
-(6, '106', 'CHOL HAMOED + LAST DAYS', 4, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '2024-01-03 16:42:16', '2024-01-03 21:12:31', NULL),
-(7, '107', 'SHABBOS C”H + LAST DAYS', 4, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '2024-01-03 16:44:13', '2024-01-03 21:14:30', NULL),
-(8, '108', 'JUST CHOL HAMOED', 4, 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.', '2024-01-03 16:46:12', '2024-01-03 21:16:24', NULL);
+(1, '', 'STANDARD KING ROOM', 0, 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.', '2024-01-08 08:30:37', '2024-01-08 13:01:59', NULL),
+(2, NULL, 'STANDARD DOUBLE ROOM', NULL, 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.', '2024-01-08 09:35:12', '2024-01-08 14:05:24', NULL),
+(3, '', 'SINGLE OCCUPANCY', NULL, 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.', '2024-01-08 09:35:37', '2024-01-08 14:05:46', NULL),
+(4, NULL, 'JR SUITE', NULL, 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.', '2024-01-08 09:36:08', '2024-01-08 14:06:18', NULL),
+(5, NULL, 'VIP JR SUITE', NULL, 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.', '2024-01-08 09:36:26', '2024-01-08 14:06:35', NULL),
+(6, NULL, 'EXECUTIVE SUITE\r\n', NULL, 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.', '2024-01-08 09:36:45', '2024-01-08 14:06:55', NULL),
+(7, NULL, 'EXECUITE SUITE WITH JACUZZI\r\n', NULL, 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.', '2024-01-08 09:37:01', '2024-01-08 14:07:09', NULL),
+(8, NULL, 'PRESIDENTIAL SUITE\r\n', NULL, 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.', '2024-01-08 09:37:16', '2024-01-08 14:07:24', NULL);
 
 --
 -- Indexes for dumped tables
@@ -575,7 +596,7 @@ ALTER TABLE `package`
 -- AUTO_INCREMENT for table `package_rooms`
 --
 ALTER TABLE `package_rooms`
-  MODIFY `package_room_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `package_room_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `room`
