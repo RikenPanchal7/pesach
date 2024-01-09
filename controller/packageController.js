@@ -179,11 +179,12 @@ module.exports = {
                         const isBeforeEarlyBirdSpecialDate = currentDate < earlyBirdSpecialDate;
 
                         const room_price = isBeforeEarlyBirdSpecialDate
-                            ? result[0].early_bird_special_price
+                            ? (result[0].early_bird_special_price === 0 ? result[0].room_price : result[0].early_bird_special_price)
                             : result[0].room_price;
 
                         const totalRoomPrice = quantity * room_price;
                         totalPrice += totalRoomPrice;
+
                         resolve({ result, quantity, totalRoomPrice, room_price });
                     }
                 });
@@ -317,7 +318,9 @@ module.exports = {
                         const roomEntries = data[roomName];
                         return {
                             package_id: package_id,
-                            room_price: (new Date() < new Date('2024-01-15')) ? roomEntries[0].early_room_price : roomEntries[0].room_price,
+                            room_price: (new Date() < new Date('2024-01-15')) ?
+                                (roomEntries[0].early_room_price === 0 ? roomEntries[0].room_price : roomEntries[0].early_room_price) :
+                                roomEntries[0].room_price,
                             room_id: roomEntries[0].room_id,
                             room_unique_id: roomEntries[0].room_unique_id,
                             room_name: roomName,
@@ -747,7 +750,10 @@ module.exports = {
                                     const roomIds = orderResult.map(room => room.room_id);
                                     const packageIds = orderResult.map(room => room.package_id);
                                     // Execute another query (package_room) using room_ids and package_ids
-                                    const packageRoomQuery = `SELECT * FROM package_rooms WHERE room_id IN (${roomIds.join(',')}) AND package_id IN (${packageIds.join(',')})`;
+
+                                    // const packageRoomQuery = `SELECT * FROM package_rooms WHERE room_id IN (${roomIds.join(',')}) AND package_id IN (${packageIds.join(',')})`;
+
+                                    const packageRoomQuery = `SELECT pr.*, p.package_name FROM package_rooms pr LEFT JOIN package p ON p.package_id = pr.package_id WHERE pr.room_id IN (${roomIds.join(',')}) AND pr.package_id IN (${packageIds.join(',')})`;
 
                                     db.query(packageRoomQuery, (packageRoomError, packageRoomResult) => {
                                         if (packageRoomError) {
@@ -833,12 +839,14 @@ module.exports = {
                                                                             const room = findRoomById(order.room_id);
                                                                             const packageRoom = findPackageRoomEntry(order.room_id, order.package_id);
                                                                             const roomPackageKey = `${order.room_id}-${order.package_id}`;
-
                                                                             if (!responseObj[roomPackageKey]) {
                                                                                 // Initialize properties for the room if not already present
                                                                                 responseObj[roomPackageKey] = {
                                                                                     room_name: room.room_name,
-                                                                                    room_price: (today < new Date('2024-01-15')) ? packageRoom.early_bird_special_price : packageRoom.room_price,
+                                                                                    package_name: packageRoom.package_name,
+                                                                                    room_price: (today < new Date('2024-01-15')) ?
+                                                                                        (packageRoom.early_bird_special_price === 0 ? packageRoom.room_price : packageRoom.early_bird_special_price) :
+                                                                                        packageRoom.room_price,
                                                                                     total_room: 0,
                                                                                     no_of_additional_adult: 0,
                                                                                     no_of_additional_adult_price: 0,
@@ -877,9 +885,10 @@ module.exports = {
                                                                         }, 0);
 
                                                                         const room_info = responseArray.map((item, index) => {
+                                                                            console.log("item", item)
                                                                             return {
                                                                                 [`data_${index + 1}`]: {
-                                                                                    room_name: item.room_name,
+                                                                                    room_name: item.room_name + ' : ' + item.package_name,
                                                                                     room_price: item.room_price,
                                                                                     total_room: item.total_room,
                                                                                     total_price: item.room_price * item.total_room
@@ -958,6 +967,7 @@ module.exports = {
                                                                             const roomData = Object.values(room)[0];
                                                                             return total + roomData.total_room;
                                                                         }, 0);
+                                                                        console.log("room_info", room_info)
                                                                         innerResolve({
                                                                             customer_id: customer_id,
                                                                             subTotal: subTotal,

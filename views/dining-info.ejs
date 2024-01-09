@@ -259,6 +259,12 @@
             border-radius: 10px;
         }
 
+        .disable {
+            background: #cccccc;
+            color: black !important;
+            pointer-events: none;
+        }
+
         select {
             padding: 5px 10px;
             background: #eeeeee;
@@ -493,8 +499,15 @@
                                                         value="<%= data.above_12_price %>">
 
                                                 </div>
-                                                <input class="intLimitTextBox" style="width: 15%" type="text"
-                                                    id="above_12_count_<%= index %>" name="above_12_count_<%= index %>">
+                                                <div class="quantity">
+                                                    <a href="#" class="quantity__minus disable"><span>-</span></a>
+                                                    <input type="text" class="quantity__input intLimitTextBox"
+                                                        name="above_12_count_<%= index %>"
+                                                        id="above_12_count_<%= index %>" value="0">
+                                                    <a href="#" class="quantity__plus"><span>+</span></a>
+                                                </div>
+                                                <!-- <input class="intLimitTextBox" style="width: 15%" type="text"
+                                                    id="above_12_count_<%= index %>" name="above_12_count_<%= index %>"> -->
                                                 <!-- <select name="above_12_count_<%= index %>"
                                                     id="above_12_count_<%= index %>">
                                                     <option value="0">0</option>
@@ -516,8 +529,15 @@
                                                         value="<%= data.bet_3_11_price %>">
 
                                                 </div>
-                                                <input class="intLimitTextBox" style="width: 15%" type="text"
-                                                    id="bet_3_11_count_<%= index %>" name="bet_3_11_count_<%= index %>">
+                                                <div class="quantity">
+                                                    <a href="#" class="quantity__minus disable"><span>-</span></a>
+                                                    <input type="text" class="quantity__input intLimitTextBox"
+                                                        name="bet_3_11_count_<%= index %>"
+                                                        id="bet_3_11_count_<%= index %>" value="0">
+                                                    <a href="#" class="quantity__plus"><span>+</span></a>
+                                                </div>
+                                                <!-- <input class="intLimitTextBox" style="width: 15%" type="text"
+                                                    id="bet_3_11_count_<%= index %>" name="bet_3_11_count_<%= index %>"> -->
                                                 <!-- <select name="bet_3_11_count_<%= index %>"
                                                     id="bet_3_11_count_<%= index %>">
                                                     <option value="0">0</option>
@@ -538,8 +558,15 @@
                                                         id="bet_1_2_price_<%= index %>" value="<%= data.bet_1_2_age %>">
 
                                                 </div>
-                                                <input class="intLimitTextBox" style="width: 15%" type="text"
-                                                    id="bet_1_2_count_<%= index %>" name="bet_1_2_count_<%= index %>">
+                                                <div class="quantity">
+                                                    <a href="#" class="quantity__minus disable"><span>-</span></a>
+                                                    <input type="text" class="quantity__input intLimitTextBox"
+                                                        name="bet_1_2_count_<%= index %>"
+                                                        id="bet_1_2_count_<%= index %>" value="0">
+                                                    <a href="#" class="quantity__plus"><span>+</span></a>
+                                                </div>
+                                                <!-- <input class="intLimitTextBox" style="width: 15%" type="text"
+                                                    id="bet_1_2_count_<%= index %>" name="bet_1_2_count_<%= index %>"> -->
                                                 <!-- <select name="bet_1_2_count_<%= index %>"
                                                     id="bet_1_2_count_<%= index %>">
                                                     <option value="0">0</option>
@@ -558,8 +585,15 @@
                                                 <div>
                                                     <p class="mb-0 fw-semibold">Highchairs (optional)</p>
                                                 </div>
-                                                <input class="intLimitTextBox" style="width: 15%" type="text"
-                                                    id="highchair_<%= index %>" name="highchair_<%= index %>">
+                                                <div class="quantity">
+                                                    <a href="#" class="quantity__minus disable"><span>-</span></a>
+                                                    <input type="text" class="quantity__input intLimitTextBox"
+                                                        name="highchair_<%= index %>" id="highchair_<%= index %>"
+                                                        value="0">
+                                                    <a href="#" class="quantity__plus"><span>+</span></a>
+                                                </div>
+                                                <!-- <input class="intLimitTextBox" style="width: 15%" type="text"
+                                                    id="highchair_<%= index %>" name="highchair_<%= index %>"> -->
                                                 <!-- <select name="highchair_<%= index %>" id="highchair_<%= index %>">
                                                     <option value="0">0</option>
                                                     <option value="1">1</option>
@@ -575,8 +609,15 @@
                                                         your
                                                         table (optional)</p>
                                                 </div>
-                                                <input class="intLimitTextBox" style="width: 15%" type="text"
-                                                    id="total_seat_<%= index %>" name="total_seat_<%= index %>">
+                                                <div class="quantity">
+                                                    <a href="#" class="quantity__minus disable"><span>-</span></a>
+                                                    <input type="text" class="quantity__input intLimitTextBox"
+                                                        name="total_seat_<%= index %>" id="total_seat_<%= index %>"
+                                                        value=" 0">
+                                                    <a href="#" class="quantity__plus"><span>+</span></a>
+                                                </div>
+                                                <!-- <input class="intLimitTextBox" style="width: 15%" type="text"
+                                                    id="total_seat_<%= index %>" name="total_seat_<%= index %>"> -->
                                                 <!-- <select name="total_seat_<%= index %>" id="total_seat_<%= index %>">
                                                     <option value="0">0</option>
                                                     <option value="1">1</option>
@@ -667,6 +708,50 @@
     </script>
     <script>
         $(document).ready(function () {
+            $(".quantity__plus").click(function (e) {
+
+                e.preventDefault();
+                var quantityInput = $(this).siblings(".quantity__input");
+                var quantityInputValue = quantityInput.val();
+                console.log("quantityInputValue", quantityInputValue)
+                if (quantityInputValue == '') {
+                    quantityInputValue = 0;
+                }
+                var roomCount = parseInt(quantityInputValue) + 1;
+
+                // If the quantity is 0, set it to 1 directly
+                if (roomCount === 0) {
+                    roomCount = 1;
+                }
+                if (roomCount <= 100) {
+                    quantityInput.val(roomCount);
+                    toggleDisableClass(quantityInput, roomCount);
+                }
+
+            });
+
+            // Quantity minus button click event
+            $(".quantity__minus").click(function (e) {
+                e.preventDefault();
+                var quantityInput = $(this).siblings(".quantity__input");
+                var roomCount = parseInt(quantityInput.val()) - 1;
+
+                // Ensure the quantity does not go below 0
+                roomCount = Math.max(0, roomCount);
+
+                quantityInput.val(roomCount);
+                toggleDisableClass(quantityInput, roomCount);
+            });
+
+            function toggleDisableClass(input, count) {
+                var minusButton = input.siblings(".quantity__minus");
+                if (count === 0) {
+                    minusButton.addClass("disable");
+                } else {
+                    minusButton.removeClass("disable");
+                }
+            }
+
             function formatDate(date) {
                 var d = new Date(date),
                     month = '' + (d.getMonth() + 1),

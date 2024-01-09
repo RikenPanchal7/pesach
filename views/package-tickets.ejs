@@ -395,6 +395,10 @@
         .guestAdd {
             margin-top: 20px;
         }
+
+        .error-message {
+            color: red
+        }
     </style>
 </head>
 
@@ -507,7 +511,9 @@
                                         <div class="d-flex justify-content-between fs-18">
                                             <p class="fw-semibold mb-0 me-3">
                                                 $ <%= (new Date() < new Date('2024-01-15')) ?
-                                                    room.combinedResults.early_bird_special_price :
+                                                    (room.combinedResults.early_bird_special_price===0 ?
+                                                    room.combinedResults.room_price :
+                                                    room.combinedResults.early_bird_special_price) :
                                                     room.combinedResults.room_price %>
                                             </p>
                                             <span class="fw-semibold">
@@ -714,7 +720,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-12 col-lg-6">
+                                                        <!-- <div class="col-12 col-lg-6">
                                                             <div
                                                                 class="d-flex justify-content-between align-items-center mb-3">
                                                                 <div>
@@ -749,17 +755,17 @@
                                                                     <option value="90-100">90-100</option>
                                                                 </select>
                                                             </div>
-                                                        </div>
+                                                        </div> -->
                                                     </div>
                                                     <div class="row fs-18">
-                                                        <div class="col-12 col-lg-6">
-                                                            <div class="d-flex justify-content-between mb-3">
-                                                                <div>
+                                                        <div class="col-12 col-lg-12">
+                                                            <div class="d-flex justify-content-center mb-3">
+                                                                <div class="me-5">
                                                                     <p class="mb-0 fw-semibold me-3">
                                                                         Additional
                                                                     </p>
                                                                 </div>
-                                                                <div class="fw-semibold">
+                                                                <div class="fw-semibold ms-5">
                                                                     <div class="form-check">
                                                                         <input
                                                                             class="form-check-input cribCheckbox_<%= guest_count %>"
@@ -829,7 +835,8 @@
                                                                     id="previousButton">
                                                                     Previous</button>
                                                                 <button type="button"
-                                                                    class="btn fw-bold next mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn">Next</button>
+                                                                    class="btn fw-bold mt-4 px-4 rounded-3 bg-color-info col-12 mb-3 mb-md-0 col-md-3 next-btn"
+                                                                    id="nextButton">Next</button>
                                                             </div>
                                                             <!-- /NEXT BUTTON-->
                         </div>
@@ -859,13 +866,17 @@
     <script>
         $(document).ready(function () {
             var selectedPackageId = null;
+            var nextEnable = false;
             // next button
             $(".next").on({
                 click: function () {
-                    $("#progressBar").find(".active").next().addClass("active");
-                    $(this).parents(".row").fadeOut("slow", function () {
-                        $(this).next(".row").fadeIn("slow");
-                    });
+                    alert(nextEnable);
+                    if (nextEnable) {
+                        $("#progressBar").find(".active").next().addClass("active");
+                        $(this).parents(".row").fadeOut("slow", function () {
+                            $(this).next(".row").fadeIn("slow");
+                        });
+                    }
                 }
             });
             // back button
@@ -969,15 +980,57 @@
                 const queryString = `?pids=${pids}&cid=${customer_id}&data=${selectedRoomInfo}`;
 
                 const guestObj = [];
-
+                var validationError = false;
+                var firstErrorId = "";
                 $(".firstname").each(function () {
                     var id = $(this).data('id');
                     var agegroup = $(this).data('agegroup');
                     var gtcnt = $(this).data('gtcnt');
                     var lastname = $('#guest_lastname' + gtcnt).val();
+
                     var fname = $(this).val();
                     var lname = $('#guest_lastname' + gtcnt).val();
                     var age = $('#guest_age' + gtcnt).val();
+
+                    if (lname == '') {
+                        validationError = true;
+                        if (firstErrorId == '') {
+                            firstErrorId = '#error_guest_lastname' + gtcnt;
+                        }
+
+                        $('#error_guest_lastname' + gtcnt).html('This field is required.');
+                    } else {
+                        if (!validationError) {
+                            validationError = false;
+                        }
+                        $('#error_guest_lastname' + gtcnt).html('');
+                    }
+
+                    if (fname == '') {
+                        validationError = true;
+                        if (firstErrorId == '') {
+                            firstErrorId = '#error_guest_firstname' + gtcnt;
+                        }
+                        $('#error_guest_firstname' + gtcnt).html('This field is required.');
+                    } else {
+                        if (!validationError) {
+                            validationError = false;
+                        }
+                        $('#error_guest_firstname' + gtcnt).html('');
+                    }
+
+                    if (age == '') {
+                        validationError = true;
+                        if (firstErrorId == '') {
+                            firstErrorId = '#error_guest_age' + gtcnt;
+                        }
+                        $('#error_guest_age' + gtcnt).html('This field is required.');
+                    } else {
+                        if (!validationError) {
+                            validationError = false;
+                        }
+                        $('#error_guest_age' + gtcnt).html('');
+                    }
 
                     const dynamicObject = {
                         fname: fname,
@@ -988,29 +1041,46 @@
                     };
                     guestObj.push(dynamicObject);
                 });
-                console.log("guestObj==============", guestObj)
+
+
                 // store selected data in localstorage
                 localStorage.setItem('selectedPackageTicket', JSON.stringify(selectedValues));
                 localStorage.setItem('guestInfo', JSON.stringify(guestObj));
-                window.location.href = '/dining-info' + queryString;
 
-                const cidString = atob(customer_id);
-                const cidData = JSON.parse(cidString);
+                if (validationError) {
 
-                fetch('/createOrderRooms', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    // body: JSON.stringify({ selectedValues: selectedValues, ids: arr, selectedRoomInfo: selectedRoomInfo }),
-                    body: JSON.stringify({ selectedValues: selectedValues, pids: pidsdecodedData, customer_id: cidData, guestInfo: guestObj }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
+
+                    var target = $(firstErrorId);
+                    if (target.length) {
+                        $('html,body').animate({
+                            scrollTop: target.offset().top - 90
+                        }, 1000);
+
+                    }
+                    nextEnable = false;
+                }
+                else {
+                    nextEnable = true;
+                    window.location.href = '/dining-info' + queryString;
+
+                    const cidString = atob(customer_id);
+                    const cidData = JSON.parse(cidString);
+
+                    fetch('/createOrderRooms', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        // body: JSON.stringify({ selectedValues: selectedValues, ids: arr, selectedRoomInfo: selectedRoomInfo }),
+                        body: JSON.stringify({ selectedValues: selectedValues, pids: pidsdecodedData, customer_id: cidData, guestInfo: guestObj }),
                     })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
+                }
             }
             document.querySelector('.next-btn').addEventListener('click', function () {
                 collectSelectedValues();
@@ -1036,35 +1106,29 @@
         $(document).ready(function () {
             const guestCount = "<%= guest_count %>"
             var guestInfo = localStorage.getItem('guestInfo');
-
             if (!guestInfo) {
                 for (let i = 1; i <= guestCount; i++) {
                     addguest(2, i, 'guest')
                 }
             }
-
-
         });
     </script>
 
     <script>
+        var gtcnt = 0;
         var gtcnt1_2 = 0;
         var gtcnt3_5 = 0;
         var gtcnt6_10 = 0;
         var gtcnt11_18 = 0;
         var gtcntadult = 0;
 
-        function addguest(selectedValue, id, ageGroup) {
+        function addguest(selectedValue, id, ageGroup,) {
             // Clear existing guest rows based on ageGroup
             $(".guest-row-" + ageGroup + '_' + id).remove();
 
             // Add new guest rows based on selected value
             for (var i = 0; i < selectedValue; i++) {
-                var gtcnt = (ageGroup === '1_2') ? ++gtcnt1_2 :
-                    (ageGroup === '3_5') ? ++gtcnt3_5 :
-                        (ageGroup === '6_10') ? ++gtcnt6_10 :
-                            (ageGroup === '11_18') ? ++gtcnt11_18 :
-                                ++gtcntadult;
+                gtcnt++;
                 var fnamelabel = 'Guest First Name';
                 var lnamelabel = 'Guest Last Name';
                 if (ageGroup != 'adult' && ageGroup != 'guest') {
@@ -1072,12 +1136,14 @@
                     lnamelabel = 'Kids Last Name';
                 }
 
-                $("#guest-add" + id).append('<div class="row guest-row guest-row-' + ageGroup + '_' + id + ' align-items-center">' +
+                $("#guest-add" + id).append(
+                    '<div class="row guest-row guest-row-' + ageGroup + '_' + id + ' align-items-center">' +
                     '<div class="col-12 col-lg-4">' +
                     '<div class="mb-3">' +
                     '<label class="form-label fw-semibold">' + fnamelabel +
                     '</label>' +
                     '<input type="text" class="form-control firstname" data-agegroup="' + ageGroup + '" data-gtcnt="' + gtcnt + '" data-id="' + id + '" name="guest_firstname' + id + '[]" id="guest_firstname' + gtcnt + '">' +
+                    '<span class="error-message" id="error_guest_firstname' + gtcnt + '"></span>' +
                     '</div>' +
                     '</div>' +
                     '<div class="col-12 col-lg-4">' +
@@ -1086,6 +1152,7 @@
                     lnamelabel +
                     '</label>' +
                     '<input type="text" class="form-control lastname" name="guest_lastname' + id + '[]"  id="guest_lastname' + gtcnt + '">' +
+                    '<span class="error-message" id="error_guest_lastname' + gtcnt + '"></span>' +
                     '</div>' +
                     '</div>' +
                     '<div class="col-11 col-lg-4">' +
@@ -1094,6 +1161,7 @@
                     'Age' +
                     '</label>' +
                     '<input type="text" class="form-control" name="guest_age' + id + '[]" id="guest_age' + gtcnt + '" pattern="[0-9]+" title="Please enter a valid integer value">' +
+                    '<span class="error-message" id="error_guest_age' + gtcnt + '"></span>' +
                     '</div>' +
                     '</div>' +
                     '</div>');
@@ -1136,19 +1204,14 @@
 
         if (guestInfo) {
             var parsedData = JSON.parse(guestInfo);
-            var gtcnt = 0;
+
             for (let i = 0; i < parsedData.length; i++) {
                 gtcnt++;
                 var room_unique_id = parsedData[i].room_unique_id;
-                console.log("room_unique_id", room_unique_id)
                 var fname = parsedData[i].fname;
-                console.log("fname", fname)
                 var lname = parsedData[i].lname;
-                console.log("lname", lname)
                 var age = parsedData[i].age;
-                console.log("age", age)
                 var agegroup = parsedData[i].agegroup;
-                console.log("agegroup", agegroup)
 
                 var fnamelabel = 'Guest First Name';
                 var lnamelabel = 'Guest Last Name';
@@ -1163,6 +1226,7 @@
                     '<label class="form-label fw-semibold">' + fnamelabel +
                     '</label>' +
                     '<input type="text" class="form-control firstname" data-gtcnt="' + gtcnt + '" value="' + fname + '" data-agegroup="' + agegroup + '" data-id="' + room_unique_id + '" name="guest_firstname' + room_unique_id + '[]" id="guest_firstname' + gtcnt + '">' +
+                    '<span class="error-message" id="error_guest_firstname' + gtcnt + '"></span>' +
                     '</div>' +
                     '</div>' +
                     '<div class="col-12 col-lg-4">' +
@@ -1171,6 +1235,7 @@
                     lnamelabel +
                     '</label>' +
                     '<input type="text" class="form-control lastname" value="' + lname + '" name="guest_lastname' + room_unique_id + '[]"  id="guest_lastname' + gtcnt + '">' +
+                    '<span class="error-message" id="error_guest_lastname' + gtcnt + '"></span>' +
                     '</div>' +
                     '</div>' +
                     '<div class="col-11 col-lg-4">' +
@@ -1178,7 +1243,8 @@
                     '<label class="form-label fw-semibold">' +
                     'Age' +
                     '</label>' +
-                    '<input type="text" class="form-control" value="' + age + '" name="guest_age' + room_unique_id + '[]" id="guest_age' + gtcnt + '" pattern="[0-9]+" title="Please enter a valid integer value">' +
+                    '<input type="text" class="form-control" value="' + age + '" name="guest_age' + room_unique_id + '[]" id="guest_age' + gtcnt + '">' +
+                    '<span class="error-message" id="error_guest_age' + gtcnt + '"></span>' +
                     '</div>' +
                     '</div>' +
                     '</div>');

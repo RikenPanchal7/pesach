@@ -502,7 +502,9 @@
                                                         <p class="discount-price fw-bold mb-0">
                                                             <span>$</span>
                                                             <span class="room-price">
-                                                                <%= data.package_data[i].room_data[j].early_bird_special_price
+                                                                <%= data.package_data[i].room_data[j].early_bird_special_price===0
+                                                                    ? data.package_data[i].room_data[j].room_price :
+                                                                    data.package_data[i].room_data[j].early_bird_special_price
                                                                     %>
                                                             </span>
                                                         </p>
@@ -515,6 +517,7 @@
                                                                 </span>
                                                             </p>
                                                             <% } %>
+
                                                                 <p class="fw-semibold early-bid-text mb-1">
                                                                     Early bird special offer before January 15th
                                                                 </p>
