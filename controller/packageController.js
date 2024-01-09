@@ -166,8 +166,9 @@ module.exports = {
 
             totalQuantity += quantity; // Add quantity to totalQuantity
 
-            const query = `SELECT * FROM package_rooms WHERE room_id = ${room_id} AND package_id = ${package_id}`;
-
+            // const query = `SELECT * FROM package_rooms WHERE room_id = ${room_id} AND package_id = ${package_id}`;
+            const query = `SELECT pr.*, p.package_name FROM package_rooms pr LEFT JOIN package p ON p.package_id = pr.package_id WHERE room_id = ${room_id} AND pr.package_id = ${package_id}`;
+            // `SELECT r.*,pr.room_price FROM room r LEFT JOIN package_rooms pr ON r.room_id = pr.room_id  WHERE r.room_id = ${room_id}`;
             const promise = new Promise((resolve, reject) => {
                 db.query(query, (error, result) => {
                     if (error) {
@@ -184,7 +185,6 @@ module.exports = {
 
                         const totalRoomPrice = quantity * room_price;
                         totalPrice += totalRoomPrice;
-
                         resolve({ result, quantity, totalRoomPrice, room_price });
                     }
                 });
@@ -194,8 +194,9 @@ module.exports = {
         }
 
         try {
+            console.log("promises", promises)
             const allResults = await Promise.all(promises);
-
+            console.log("allResults", allResults)
             const roomInfoPromises = allResults.map(async (value) => {
                 const room_id = value.result[0].room_id;
                 const query = `SELECT r.*,pr.room_price FROM room r LEFT JOIN package_rooms pr ON r.room_id = pr.room_id  WHERE r.room_id = ${room_id}`;
@@ -215,8 +216,8 @@ module.exports = {
                     });
                 });
             });
-
             const roomInfos = await Promise.all(roomInfoPromises);
+            // console.log("roomInfos", roomInfos)
             return { roomInfos, totalQuantity, totalPrice }; // Return both roomInfos, totalQuantity, and totalPrice
         } catch (error) {
             console.error(error);
