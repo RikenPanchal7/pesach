@@ -253,6 +253,10 @@
             pointer-events: none;
         }
 
+        .error-message {
+            color: red
+        }
+
         @media only screen and (max-width:768px) {
             .copyright-text {
                 grid-row: 2;
@@ -400,25 +404,32 @@
                                             <div class="col-12 mb-3">
                                                 <label for="card-number" class="form-label text-disable">Credit Card
                                                     Number</label>
-                                                <input type="text" class="form-control" id="card-number" placeholder=""
-                                                    aria-label="" value="">
+                                                <input type="text" class="form-control"
+                                                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                                                    id="card-number" placeholder="" aria-label="" value="" required>
+                                                <span class="error-message" id="error-card-number"></span>
                                             </div>
                                             <div class="col-12 mb-3">
                                                 <label for="card-name" class="form-label text-disable">Card Holder
                                                     Name</label>
                                                 <input type="text" class="form-control" id="card-name" placeholder=""
-                                                    value="" aria-label="">
+                                                    value="" aria-label="" required>
+                                                <span class="error-message" id="error-card-name"></span>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <label for="expiry" class="form-label text-disable">Expires
                                                     MM/YYYY</label>
-                                                <input type="text" class="form-control" id="expiry" placeholder=""
-                                                    value="" aria-label="">
+                                                <input type="text" class="form-control"
+                                                    onkeypress="return (event.charCode == 47 || event.charCode == 8 || event.charCode == 0 || (event.charCode >= 48 && event.charCode <= 57))"
+                                                    id="expiry" placeholder="" value="" aria-label="" required>
+                                                <span class="error-message" id="error-expiry"></span>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <label for="cvv" class="form-label text-disable">CVV</label>
-                                                <input type="text" class="form-control" id="cvv" placeholder="" value=""
-                                                    aria-label="">
+                                                <input type="text" class="form-control"
+                                                    onkeypress="return (event.charCode == 8 || event.charCode == 0 || (event.charCode >= 48 && event.charCode <= 57) && this.value.length < 4)"
+                                                    id="cvv" placeholder="" value="" aria-label="" required>
+                                                <span class="error-message" id="error-cvv"></span>
                                             </div>
                                         </div>
                                         <div class="mb-3">
@@ -450,7 +461,8 @@
                                             </div>
                                         </div>
                                         <div class="text-center mt-4">
-                                            <button type="submit" class="pay-btn fw-bold">
+                                            <button type="submit" class="pay-btn fw-bold"
+                                                onclick="validateCreditCard()">
                                                 Pay Now
                                             </button>
                                         </div>
@@ -521,6 +533,85 @@
             });
         window.location.href = '/success';
     });
+</script>
+<script>
+    function validateCreditCard() {
+
+        const cardNumber = document.getElementById('card-number').value;
+        const cardHolderName = document.getElementById('card-name').value;
+        const expiryDate = document.getElementById('expiry').value;
+        const cvv = document.getElementById('cvv').value;
+
+        if (!validateCardNumber(cardNumber)) {
+            $('#error-card-number').html('Invalid Credit Card Number');
+        } else {
+            $('#error-card-number').html('');
+        }
+
+        if (!validateCardHolderName(cardHolderName)) {
+            $('#error-card-name').html('Invalid Card Holder Name');
+        } else {
+            $('#error-card-name').html('');
+        }
+
+        if (!validateExpiryDate(expiryDate)) {
+            $('#error-expiry').html('Invalid Expiry Date');
+        } else {
+            $('#error-expiry').html('');
+        }
+
+        if (!validateCVV(cvv)) {
+            $('#error-cvv').html('Invalid CVV Number');
+        } else {
+            $('#error-cvv').html('');
+        }
+
+        return true;
+    }
+
+    function validateCardNumber(input) {
+        if (input.length >= 13 && input.length <= 19) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    function validateCardHolderName(input) {
+        if (input.length >= 3) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function validateExpiryDate(input) {
+
+        if (input.length == 0) {
+            return false;
+        }
+        const [month, year] = input.split('/').map(Number);
+
+        // Check if the date is in the future
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear() % 100; // Extract the last two digits of the current year
+
+        if (year < currentYear || (year === currentYear && month < currentDate.getMonth() + 1)) {
+            return false; // Date is not in the future
+        }
+
+        return true;
+    }
+
+    function validateCVV(input) {
+        // The input must be a string of digits and have a length of 3 or 4
+        if (typeof input !== 'string' || !/^\d{3,4}$/.test(input)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 </script>
 
 </html>

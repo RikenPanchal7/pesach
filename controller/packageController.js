@@ -194,9 +194,7 @@ module.exports = {
         }
 
         try {
-            console.log("promises", promises)
             const allResults = await Promise.all(promises);
-            console.log("allResults", allResults)
             const roomInfoPromises = allResults.map(async (value) => {
                 const room_id = value.result[0].room_id;
                 const query = `SELECT r.*,pr.room_price FROM room r LEFT JOIN package_rooms pr ON r.room_id = pr.room_id  WHERE r.room_id = ${room_id}`;
@@ -217,7 +215,6 @@ module.exports = {
                 });
             });
             const roomInfos = await Promise.all(roomInfoPromises);
-            // console.log("roomInfos", roomInfos)
             return { roomInfos, totalQuantity, totalPrice }; // Return both roomInfos, totalQuantity, and totalPrice
         } catch (error) {
             console.error(error);
@@ -886,7 +883,6 @@ module.exports = {
                                                                         }, 0);
 
                                                                         const room_info = responseArray.map((item, index) => {
-                                                                            console.log("item", item)
                                                                             return {
                                                                                 [`data_${index + 1}`]: {
                                                                                     room_name: item.room_name + ' : ' + item.package_name,
@@ -968,7 +964,6 @@ module.exports = {
                                                                             const roomData = Object.values(room)[0];
                                                                             return total + roomData.total_room;
                                                                         }, 0);
-                                                                        console.log("room_info", room_info)
                                                                         innerResolve({
                                                                             customer_id: customer_id,
                                                                             subTotal: subTotal,

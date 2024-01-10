@@ -253,6 +253,10 @@
             pointer-events: none;
         }
 
+        .error-message {
+            color: red
+        }
+
         @media only screen and (max-width:768px) {
             .copyright-text {
                 grid-row: 2;
@@ -395,18 +399,22 @@
                                             <div class="col-12 col-md-6 mb-3">
                                                 <input type="text" class="form-control" placeholder="Name" id="name"
                                                     value="" aria-label="Name" required>
+                                                <span class="error-message" id="error-name"></span>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <input type="email" class="form-control" placeholder="Email" id="email"
                                                     value="" aria-label="Email" required>
+                                                <span class="error-message" id="error-email"></span>
                                             </div>
                                             <div class="col-12 col-md-12 mb-3">
                                                 <input type="text" class="form-control" placeholder="Address"
                                                     id="address" value="" aria-label="Address" required>
+                                                <span class="error-message" id="error-address"></span>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <input class="form-control" list="datalistOptions" id="city"
                                                     placeholder="City" required>
+                                                <span class="error-message" id="error-city"></span>
                                                 <datalist id="datalistOptions">
                                                     <option value="San Francisco">
                                                     <option value="New York">
@@ -418,6 +426,7 @@
                                             <div class="col-12 col-md-6 mb-3">
                                                 <input class="form-control" list="datalistOptions" id="state"
                                                     placeholder="State" required>
+                                                <span class="error-message" id="error-state"></span>
                                                 <datalist id="datalistOptions">
                                                     <option value="San Francisco">
                                                     <option value="New York">
@@ -433,15 +442,22 @@
                                         <div class="row">
                                             <div class="col-12 col-md-6 mb-3">
                                                 <input type="text" class="form-control" placeholder="Routing Number"
-                                                    id="routing-number" value="" aria-label="routing-number" required>
+                                                    id="routing-number"
+                                                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                                                    value="" aria-label="routing-number" required>
+                                                <span class="error-message" id="error-routing-number"></span>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <input type="text" class="form-control" placeholder="Account Number"
-                                                    id="account-number" value="" aria-label="accont-number" required>
+                                                    id="account-number"
+                                                    onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                                                    value="" aria-label="accont-number" required>
+                                                <span class="error-message" id="error-accont-number"></span>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <input type="date" class="form-control" placeholder="Date" id="date"
                                                     value="" aria-label="date" required>
+                                                <span class="error-message" id="error-date"></span>
                                             </div>
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="d-flex">
@@ -482,7 +498,7 @@
                                             </div>
                                         </div>
                                         <div class="text-center mt-4">
-                                            <button type="submit" class="pay-btn fw-bold">
+                                            <button type="submit" class="pay-btn fw-bold" onclick="validateACH()">
                                                 Pay Now
                                             </button>
                                         </div>
@@ -568,6 +584,135 @@
             });
         window.location.href = '/success';
     });
+</script>
+<script>
+    function validateACH() {
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const address = document.getElementById('address').value;
+        const city = document.getElementById('city').value;
+        const state = document.getElementById('state').value;
+        const routingNumber = document.getElementById('routing-number').value;
+        const accountNumber = document.getElementById('account-number').value;
+        const date = document.getElementById('date').value;
+
+        if (!validateName(name)) {
+            $('#error-name').html('Invalid Name');
+        } else {
+            $('#error-name').html('');
+        }
+
+        if (!validateEmail(email)) {
+            $('#error-email').html('Invalid Email');
+        } else {
+            $('#error-email').html('');
+        }
+
+        if (!validateAddress(address)) {
+            $('#error-address').html('Invalid Address');
+        } else {
+            $('#error-address').html('');
+        }
+
+        if (!validateCity(city)) {
+            $('#error-city').html('Invalid City');
+        } else {
+            $('#error-city').html('');
+        }
+
+        if (!validateState(state)) {
+            $('#error-state').html('Invalid State');
+        } else {
+            $('#error-state').html('');
+        }
+
+        if (!validateRoutingNumber(routingNumber)) {
+            $('#error-routing-number').html('Invalid Routing Number');
+        } else {
+            $('#error-routing-number').html('');
+        }
+
+        if (!validateAccountNumber(accountNumber)) {
+            $('#error-accont-number').html('Invalid Account Number');
+        } else {
+            $('#error-accont-number').html('');
+        }
+
+        if (!validateDate(date)) {
+            $('#error-date').html('Invalid Date');
+        } else {
+            $('#error-date').html('');
+        }
+
+        return true;
+    }
+
+    function validateName(input) {
+        if (input.length >= 3) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function validateEmail(input) {
+        if (input.length != 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function validateAddress(input) {
+        if (input.length != 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function validateCity(input) {
+        if (input.length != 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function validateState(input) {
+        if (input.length != 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function validateRoutingNumber(input) {
+        if (input.length >= 10 && input.length <= 19) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function validateAccountNumber(input) {
+        if (input.length >= 10 && input.length <= 19) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function validateDate(input) {
+        const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}$/;
+
+        if (regex.test(input)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 </script>
 
 </html>

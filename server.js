@@ -38,6 +38,7 @@ app.set('views', __dirname + '/views');
 
 // Routes
 app.use("/", require("./routes/packageRoute"));
+app.use("/", require("./routes/adminRoute"));
 
 server.listen(process.env.PORT, () => {
     console.log(`Listening on ${process.env.BASE_URL}`);
