@@ -1,7 +1,7 @@
-const e = require("express");
 const packageController = require("../controller/packageController");
 const express = require('express');
 const router = express.Router();
+const ejs = require('ejs');
 
 // router.get("/index", async (req, res, next) => {
 //     try {
@@ -153,6 +153,7 @@ router.get("/ach", async (req, res) => {
 
 router.post("/createAchInfo", async (req, res) => {
     const cust_info = req.body.cust_info;
+    console.log("cust_info", cust_info)
     const getAchInfo = await packageController.createAchInfo(cust_info);
 });
 
@@ -163,6 +164,14 @@ router.get("/credit-card", async (req, res) => {
 router.post("/createCreditInfo", async (req, res) => {
     const cust_info = req.body.cust_info;
     const getAchInfo = await packageController.createCreditInfo(cust_info);
+});
+
+router.get("/email", async (req, res) => {
+    res.render('email');
+});
+
+router.get("/order-email", async (req, res) => {
+    res.render('order-email');
 });
 
 module.exports = router

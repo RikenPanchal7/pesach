@@ -1,5 +1,5 @@
 const { db } = require("../helpers/dbConnection");
-
+const mailService = require("../helpers/email");
 module.exports = {
     saveCustomerInfo: async function (req, res, next) {
         try {
@@ -1029,8 +1029,21 @@ module.exports = {
             const customerId = cust_info.cid;
             const ciddecodedString = atob(customerId);
             const ciddecodedData = JSON.parse(ciddecodedString);
-
+            let customerInfo;
+            const customerInfoQuery = `SELECT * FROM customer WHERE customer_id = ${ciddecodedData}`;
+            const customerInfoResult = await new Promise((resolve, reject) => {
+                db.query(customerInfoQuery, (error, results, fields) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(results);
+                    }
+                });
+            });
+            customerInfo = customerInfoResult[0]
+            console.log("customerInfo", customerInfo)
             let order_id;
+            let order_date;
             const orderQuery = `SELECT * FROM orders WHERE customer_id = ${ciddecodedData}`;
             const orderResult = await new Promise((resolve, reject) => {
                 db.query(orderQuery, (error, results, fields) => {
@@ -1042,7 +1055,10 @@ module.exports = {
                 });
             });
             order_id = orderResult[0].order_id;
-
+            order_date = orderResult[0].created_date;
+            const originalDate = order_date;
+            const options = { month: 'long', day: 'numeric' };
+            const order_Modify_date = originalDate.toLocaleDateString('en-US', options);
             db.query(
                 'INSERT INTO ach SET ?',
                 {
@@ -1067,18 +1083,759 @@ module.exports = {
                     }
                 }
             );
+            let customer_name;
+            const customerQuery = `SELECT * FROM customer WHERE customer_id = ${ciddecodedData}`;
+            const customerResult = await new Promise((resolve, reject) => {
+                db.query(customerQuery, (error, results, fields) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(results);
+                    }
+                });
+            });
+            customer_name = customerResult[0].full_name;
+            const getOrderInfoQuery = `SELECT odr.*, r.room_name, p.package_name FROM order_room odr LEFT JOIN room r ON r.room_id = odr.room_id LEFT JOIN package p ON p.package_id = odr.package_id WHERE odr.order_id = ${order_id} `;
+            const orderInfo = await new Promise((resolve, reject) => {
+                db.query(getOrderInfoQuery, (error, results, fields) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(results);
+                    }
+                });
+            });
+
+            const orderInfoByPackage = orderInfo.reduce((acc, curr) => {
+                if (!acc[curr.package_name]) {
+                    acc[curr.package_name] = [];
+                }
+                acc[curr.package_name].push(curr);
+                return acc;
+            }, {});
+            let totalRoomPrice = 0;
+            for (const packageName in orderInfoByPackage) {
+                if (orderInfoByPackage.hasOwnProperty(packageName)) {
+                    const packageRooms = orderInfoByPackage[packageName];
+                    for (const room of packageRooms) {
+                        totalRoomPrice += room.room_price;
+                    }
+                }
+            }
+
+            const obj = {};
+            let allInnerRoomTotal = 0; // Initialize allInnerRoomTotal
+
+            for (const packageKey in orderInfoByPackage) {
+                const packageData = orderInfoByPackage[packageKey];
+
+                for (const roomData of packageData) {
+                    const roomName = roomData.room_name;
+
+                    // Calculate values based on your specified conditions
+                    const adultsPrice = roomData.no_of_additional_adult * roomData.no_of_additional_adult_price;
+                    const age11to18Price = roomData.no_of_kids_age_11_18 * roomData.kids_age_11_18_price;
+                    const age6to10Price = roomData.no_of_kids_age_6_10 * roomData.kids_age_6_10_price;
+                    const age3to5Price = roomData.no_of_kids_age_3_5 * roomData.kids_age_3_5_price;
+                    const age1to2Price = roomData.no_of_kids_age_1_2 * roomData.kids_age_1_2_price;
+
+                    // Create object properties
+                    obj[`${roomName} + Age 18+ Adults`] = adultsPrice;
+                    obj[`${roomName} + Ages 11 to 18`] = age11to18Price;
+                    obj[`${roomName} + Ages 6 to 10`] = age6to10Price;
+                    obj[`${roomName} + Ages 3 to 5`] = age3to5Price;
+                    obj[`${roomName} + Ages 1 to 2`] = age1to2Price;
+                    obj[`${roomName} + crib`] = roomData.crib_price;
+                    obj[`${roomName} + cot`] = roomData.cot_price;
+                    const sumPricesForRoom = adultsPrice + age11to18Price + age6to10Price + age3to5Price + age1to2Price;
+
+                    // Accumulate the total sum across all rooms and packages
+                    allInnerRoomTotal += sumPricesForRoom;
+                }
+            }
+            const totalBill = totalRoomPrice + allInnerRoomTotal
+            // return
+            var html = `<div id="mail" trans="" style="width: 100%;
+                margin: auto;">
+                    <div>
+                        <table style="width: 100%;">
+                            <tbody>
+                                <tr>
+                                    <td align="left">
+                        <img style="max-height: 100px; max-width: 100%; margin: 0; display: inline-block"
+                            src="http://localhost:7000/images/Asset 4.png">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table style="width: 100%;">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <h1>
+                                            Here's your tickets, ${customer_name}! </h1>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <span>${order_Modify_date}</span>
+                                        </p>
+                                    </td>
+                                </tr>`;
+            let room_count = 0;
+            for (const packageName in orderInfoByPackage) {
+                if (orderInfoByPackage.hasOwnProperty(packageName)) {
+                    html += `
+                    <tr>
+                        <td>
+                            <h3>
+                     <a href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/Sx7FWR3GrcUEtrtMH_wSksVH2CGgPh-Y_1zK6HHVqqqLJPlZQuR1_y6mAWE5eTkweKWcTLIFQip3fhKrNxvjXCbRr77OxpcdI_zm3ll1cT3wCiEHHmemMNjq2pCoYES3jHPgFUPOEQuzoy1zeKwEDU0G0IxrHJJ5iHz0Or6wDlFg1VWkPoFfpT3jZP6aIuQ-X9XrXocGNTg-7dawNXyhdvvo2q3MjIy4qCEotUsomGNmF7KJ15XXswLrhjAMqIas_RdCGoi0YZnQTe1fb9DK4O9CbMzoBQkEp19L"
+                                                target="_blank" rel="noopener noreferrer">
+                                                ${packageName}</a>
+                            </h3>
+                        </td>
+                    </tr>`;
+
+                    const packageRooms = orderInfoByPackage[packageName];
+                    for (const room of packageRooms) {
+                        room_count++;
+                        html += `
+                        <tr>
+                        <td>${room_count} Ticket
+                        </td>
+                    </tr>
+                        <tr>
+                        <td style="padding: 0">
+                        <table style="width: 100%;">
+                                <tbody>
+                        <tr style="background: #2d2e33;color: white;">
+                                        <td>
+                                            <table style="width: 100%;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="color: white;padding: 10px;">
+                        <h2>
+                            ${customer_name} </h2>
+                                <div>
+                                    ${room.room_name}
+                                </div>
+                            </td>
+                            <td rowspan="2"
+                                style="text-align: center;padding: 10px;">
+                                <img
+                                    src="http://poconos.igiene.in/wp-content/uploads//qr_d3b4752cd647f5a7e8327e8559bad24e.png">
+                            </td>
+                        </tr>
+                        <tr style="color: white;">
+                            <td style="padding: 10px;">
+                                <div>
+                                    ${room.room_id}
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody >
+                        </table >
+
+                        <div style="padding: 10px;">
+                              Ticket ${room_count} of ${room_count}</div>
+                          <div>
+                              <table style="width: 100%;color: white;padding: 10px;">
+                                  <tbody>
+                                      <tr>
+                                      ${room.no_of_additional_adult == 0 ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Age 18+ Adults $${room.no_of_additional_adult_price}</div>
+                                            <div>
+                                                ${room.no_of_additional_adult}</div>
+                                          </td>`
+                            }
+                                      ${room.no_of_kids_age_11_18 == 0 ? '' :
+                                `<td style="width: 50%;">
+                                                <div>
+                                                    Ages 11 to 18 $${room.kids_age_11_18_price}</div>
+                                                <div>
+                                                    ${room.no_of_kids_age_11_18}</div>
+                                            </td>`
+                            }
+                    </tr>
+                    <tr>
+                                        ${room.no_of_kids_age_6_10 == 0 ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Ages 6 to 10 $${room.kids_age_6_10_price}</div>
+                                            <div>
+                                                ${room.no_of_kids_age_6_10}</div>
+                                          </td>`
+                            }
+                                        ${room.no_of_kids_age_3_5 == 0 ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Ages 3 to 5 Adults $${room.kids_age_3_5_price}</div>
+                                            <div>
+                                                ${room.no_of_kids_age_3_5}</div>
+                                          </td>`
+                            }
+                    </tr>
+                    <tr>
+                                        ${room.no_of_kids_age_1_2 == 0 ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Ages 1 to 2 Adults $${room.kids_age_1_2_price}</div>
+                                            <div>
+                                                ${room.no_of_kids_age_1_2}</div>
+                                          </td>`
+                            }
+                                        ${room.crib_price == '' || room.crib_price == null ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Crib $${room.crib_price}</div>
+                                          </td>`
+                            }
+                    </tr>
+                    <tr>
+                                    ${room.cot_price == '' || room.cot_price == null ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Cot $${room.cot_price}</div>
+                                          </td>`
+                            }
+                     ${room.check_in_date == '' || room.check_in_date == null ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Cot $${room.check_in_date}</div>
+                                                <div>
+                                              Friday Check-in</div>
+                                          </td>`
+                            }
+
+                            </tr>
+                        </tbody>
+                        </table>
+                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            `;
+
+                    }
+                }
+            }
+            html += `<tr>
+                                    <td>
+                                        <table style="width: 100%;">
+                                            <tbody>
+                                                <tr>
+                                                    <td align="center">
+
+                                                        <a target="_blank" rel="noopener noreferrer"
+                                                            style="margin-right: 3%;"
+                                                            href="https://poconos.igiene.in/event/shabbos/?ical=1">
+                                                            Add event to iCal</a>
+
+
+                                                        <a target="_blank" rel="noopener noreferrer"
+                                                            style="margin-left: 3%;"
+                                                            href="https://www.google.com/calendar/event?action=TEMPLATE&amp;dates=20240131T000000/20240131T235959&amp;text=Shabbos%20Package%28All%20Inclusive%29&amp;details=%3C%21--+wp%3Atribe%2Fevent-datetime+%2F--%3E%3C%21--+wp%3Atribe%2Ffeatured-image+%2F--%3E%3C%21--+wp%3Atribe%2Ftickets+--%3E%3Cdiv+class%3D%22wp-block-tribe-tickets%22%3E%3C%21--+wp%3Atribe%2Ftickets-item+%7B%22hasBeenCreated%22%3Atrue%2C%22ticketId%22%3A1627%7D+--%3E%3Cdiv+class%3D%22wp-block-tribe-tickets-item%22%3E%3C%2Fdiv%3E%3C%21--+%2Fwp%3Atribe%2Ftickets-item+--%3E%3C%21--+wp%3Atribe%2Ftickets-item+%7B%22hasBeenCreated%22%3Atrue%2C%22ticketId%22%3A1630%7D+--%3E%3Cdiv+class%3D%22wp-block-tribe-tickets-item%22%3E%3C%2Fdiv%3E%3C%21--+%2Fwp%3Atribe%2Ftickets-item+--%3E%3C%21--+wp%3Atribe%2Ftickets-item+%7B%22hasBeenCreated%22%3Atrue%2C%22ticketId%22%3A1633%7D+--%3E%3Cdiv+class%3D%22wp-block-tribe-tickets-item%22%3E%3C%2Fdiv%3E%3C%21--+%2Fwp%3Atribe%2Ftickets-item+--%3E%3C%2Fdiv%3E%3C%21--+%2Fwp%3Atribe%2Ftickets+--%3E&amp;trp=false&amp;ctz=UTC+0&amp;sprop=website:https://poconos.igiene.in">
+                                                            Add event to Google Calendar</a>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr style="background: #50b078;">
+                    <td>
+                        <table style="width: 100%;">
+                            <tbody>
+                                <tr>
+                                    <td align="right">
+                                        Powered by <a
+                                            href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/gERqG11VEljLz9Vafus_Phd8sSiZpstaoa03rdUxG0eelB3KVZmhhKDxLK8kSWUQsKn2jNBbIh3dVkYdB2oL6BRxnYJDm3FZ4M6bz7ST1IpESQVWcgBkim3w-VRf8tUT481RGH2GR6JwCEQ2i2FzUYK3C0puwHjZHK-my0hEXkG_BjdmoaqgeeB2HJvRz-3jM4zc8dnUaj_sagrjnrBN7yiO_6R3rJppBzJhVXy7j47b_q7mE4Uhp4lFPC7RI_ekRNbaXJco-04mCw7P7Fe0a9p4ldK0">Event
+                                            Tickets</a> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>`;
+            let mainOptions;
+            mainOptions = {
+                from: process.env.EMAIL_FROM,
+                to: process.env.EMAIL_FROM,
+                subject: 'Booking Information - Pesach',
+                text: 'This is a test email from pesach.',
+                html: html,
+            }
+            await mailService.sendMail(mainOptions);
+
+
+            // order-mail
+            var orderEmailhtml = `
+            <div id="mail">
+    <div>
+        <table width="100%" style="background-color: rgba(247, 247, 247, 1)" bgcolor="#f7f7f7">
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td width="600">
+                        <div dir="ltr" style="margin: 0 auto; padding: 70px 0; width: 100%; max-width: 600px"
+                            width="100%">
+                            <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
+                                <tbody>
+                                    <tr>
+                                        <td align="center" valign="top">
+                                            <div>
+                                            </div>
+                                            <table border="0" cellpadding="0" cellspacing="0" width="100%"
+                                                style="background-color: rgba(255, 255, 255, 1); border: 1px solid rgba(222, 222, 222, 1); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); border-radius: 3px"
+                                                bgcolor="#fff">
+                                                <tbody>
+                                                    <tr>
+                                                        <td align="center" valign="top">
+
+                                                            <table border="0" cellpadding="0" cellspacing="0"
+                                                                width="100%"
+                                                                style="background-color: rgba(127, 84, 179, 1); color: rgba(255, 255, 255, 1); border-bottom: 0; font-weight: bold; line-height: 100%; vertical-align: middle; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; border-radius: 3px 3px 0 0"
+                                                                bgcolor="#7f54b3">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td style="padding: 36px 48px; display: block">
+                                                                            <h1 style="font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 30px; font-weight: 300; line-height: 150%; margin: 0; text-align: left; text-shadow: 0 1px rgba(153, 118, 194, 1); color: rgba(255, 255, 255, 1); background-color: inherit"
+                                                                                bgcolor="inherit">Thank you for your
+                                                                                order</h1>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>`
+            orderEmailhtml += `
+            <tr>
+                <td align="center" valign="top">
+
+                    <table border="0" cellpadding="0" cellspacing="0"
+                        width="100%">
+                        <tbody>
+                            <tr>
+                                <td valign="top"
+                                    style="background-color: rgba(255, 255, 255, 1)"
+                                    bgcolor="#fff">
+
+                                    <table border="0" cellpadding="20"
+                                        cellspacing="0" width="100%">
+                    <tbody>
+                        <tr>
+                            <td valign="top"
+                                style="padding: 48px 48px 32px">
+                                <div style="color: rgba(99, 99, 99, 1); font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 14px; line-height: 150%; text-align: left"
+                                    align="left">
+
+                                    <p
+                                        style="margin: 0 0 16px">
+                                        ${customer_name},</p>
+                                    <p
+                                        style="margin: 0 0 16px">
+                                        Just to let you know
+                                        — we've received
+                                        your order #${order_id},
+                                        and it is now being
+                                        processed:</p>
+
+                                    <p
+                                        style="margin: 0 0 16px">
+                                        Pay with cash upon
+                                        delivery.</p>
+
+
+                                    <h2
+                                        style="color: rgba(127, 84, 179, 1); display: block; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 18px; font-weight: bold; line-height: 130%; margin: 0 0 18px; text-align: left">
+                                        [Order #${order_id}]
+                                        (${order_Modify_date})
+                                    </h2>
+
+                                    <div
+                                        style="margin-bottom: 40px">
+                                        <table
+                                            cellspacing="0"
+                                            cellpadding="6"
+                                            border="1"
+                                            style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; width: 100%; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif"
+                                            width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                                        align="left">
+                                                        Product
+                                                    </th>
+                                                    <th scope="col"
+                                                        style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                                        align="left">
+                                                        Quantity
+                                                    </th>
+                                                    <th scope="col"
+                                                        style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                                        align="left">
+                                                        Price
+                                                    </th>
+                                                </tr>
+            
+                                                </thead> `
+
+            // let room_count = 0;
+            for (const packageName in orderInfoByPackage) {
+                if (orderInfoByPackage.hasOwnProperty(packageName)) {
+                    const packageRooms = orderInfoByPackage[packageName];
+                    for (const room of packageRooms) {
+                        room_count++;
+
+                        orderEmailhtml += `
+            <tbody>
+                <tr>
+                    <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); padding: 12px; text-align: left; vertical-align: middle; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; word-wrap: break-word"
+                        align="left">
+                        ${room.room_name}
+                        <div>
+                            <a href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/Nec9vmhocM1Dc0J0uyfmRdh8ZLZLTOCL3LKBomgBe0HCPSQ2AL5F1s0QZSeW4aYROrzGC2Jk8Up9_xKphrK5QAUSQbdh6suWWF1DqUmonHAIkgykO4yRaEeBPrTTdB3lvmbVZ2fr675zcZ3yWZ8jKRkZYEcQdkoA38jnXEWqWzt8dAu4vh4fOtjxrrCQDNxavcymefdtDEkhzz5Kvh02d1ovaek77qA8Q4obJxrEc12a_83oYqBGxqTfMLYHni-SbSB-rAtfJiApkXiw3DF5kndnXXvP2ZdZThkU"
+                                style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">${room.package_name}</a><br><em><span>${order_Modify_date}</span></em><br><span>
+                            </span>
+                        </div>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td
+                                        style="padding: 12px; width:50%; ">
+                                        <strong>Ticket
+                                            ID</strong>
+                                    </td>
+                                    <td
+                                        style="padding: 12px">
+                                        <strong>${order_id}</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                ${room.no_of_additional_adult == 0 ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Age 18+ Adults $${room.no_of_additional_adult_price}</div>
+                                          </td>
+                                          <td
+                                        style="padding: 12px">
+                                        ${room.no_of_additional_adult}
+                                    </td>`
+                            }
+                                    
+                                </tr>
+                                <tr>
+                                    ${room.no_of_kids_age_11_18 == 0 ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Ages 11 to 18 $${room.kids_age_11_18_price}</div>
+                                          </td>
+                                          <td
+                                        style="padding: 12px">
+                                        ${room.no_of_kids_age_11_18}
+                                    </td>`
+                            }
+                                </tr>
+                                <tr>
+                                    ${room.no_of_kids_age_6_10 == 0 ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Ages 6 to 10 $${room.kids_age_6_10_price}</div>
+                                          </td>
+                                           <td
+                                        style="padding: 12px">
+                                        ${room.no_of_kids_age_6_10}
+                                    </td>`
+                            }
+                                </tr>
+                                <tr>
+                                    ${room.no_of_kids_age_3_5 == 0 ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Ages 3 to 5 $${room.kids_age_3_5_price}</div>
+                                          </td>
+                                          <td
+                                        style="padding: 12px">
+                                        ${room.no_of_kids_age_3_5}
+                                    </td>`
+                            }
+                                    
+                                </tr>
+                                <tr>
+                                    ${room.no_of_kids_age_1_2 == 0 ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Ages 1 to 2 $${room.kids_age_1_2_price}</div>
+                                          </td>
+                                          <td
+                                        style="padding: 12px">
+                                        ${room.no_of_kids_age_1_2}
+                                    </td>`
+                            }
+                                    
+                                </tr>
+                                <tr>
+                                    ${room.crib_price == '' || room.crib_price == null ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Crib $${room.crib_price}</div>
+                                          </td>`
+                            }
+                                    
+                                </tr>
+                                <tr>
+                                   ${room.cot_price == '' || room.cot_price == null ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Cot $${room.cot_price}</div>
+                                          </td>`
+                            }
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </td>
+                    <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); padding: 12px; text-align: left; vertical-align: middle; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif"
+                        align="left">
+                        1
+                    </td>
+                    <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); padding: 12px; text-align: left; vertical-align: middle; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif"
+                        align="left">
+                        <span><span>$</span>${room.room_price}</span>
+                    </td>
+                </tr>
+
+
+            </tbody>
+            `
+                    }
+                }
+            }
+
+            orderEmailhtml += `
+            <tfoot>
+                        <tr>
+                            <th scope="row"
+                                colspan="2"
+                                style="color: rgba(99, 99, 99, 1); border-top: 4px solid rgba(229, 229, 229, 1); border-right: 1px solid rgba(229, 229, 229, 1); border-bottom: 1px solid rgba(229, 229, 229, 1); border-left: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                Subtotal:
+                            </th>
+                            <td style="color: rgba(99, 99, 99, 1); border-top: 4px solid rgba(229, 229, 229, 1); border-right: 1px solid rgba(229, 229, 229, 1); border-bottom: 1px solid rgba(229, 229, 229, 1); border-left: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                <span><span>$</span>${totalRoomPrice.toFixed(2)}</span>
+                            </td>
+                        </tr>`
+            const categoryTotals = {};
+            for (const [key, value] of Object.entries(obj)) {
+                const category = key.split(" + ")[0];
+                if (!categoryTotals[category]) {
+                    categoryTotals[category] = 0;
+                }
+                categoryTotals[category] += value;
+            }
+
+            for (const key in obj) {
+                orderEmailhtml += `
+                    
+                        <tr>
+
+                        <th scope="row"
+                            colspan="2"
+                            style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                            align="left">
+                            ${key} ${obj[key]}
+                        </th>
+                        <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                            align="left">
+                            <span><span>$</span>${obj[key]}</span>
+                        </td>
+
+                        </tr>
+                        `
+            }
+
+            orderEmailhtml += `
+            <tr>
+                            <th scope="row"
+                                colspan="2"
+                                style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                Payment
+                                method:
+                            </th>
+                            <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                Cash
+                                on
+                                delivery
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"
+                                colspan="2"
+                                style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                Total:
+                            </th>
+                            <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                <span><span>$</span>${totalBill}</span>
+                            </td>
+                        </tr>
+                    </tfoot>`
+            orderEmailhtml += `
+                                    </table>
+                            </div>
+
+                            <br>You'll receive your
+                            tickets in another
+                            email.<table
+                                cellspacing="0"
+                                cellpadding="0"
+                                border="0"
+                                style="width: 100%; vertical-align: top; margin-bottom: 40px; padding: 0"
+                                width="100%">
+                                <tbody>
+                                    <tr>
+                                        <td valign="top"
+                                            width="50%"
+                                            style="text-align: left; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; border: 0; padding: 0"
+                                            align="left">
+                                            <h2
+                                                style="color: rgba(127, 84, 179, 1); display: block; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 18px; font-weight: bold; line-height: 130%; margin: 0 0 18px; text-align: left">
+                                                Billing
+                                                address
+                                            </h2>
+
+                                            <address
+                                                style="padding: 12px; color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1)">
+                                                ${customer_name}<br>${customerInfo.address_line_1}<br>${customerInfo.address_line_2}<br>${customerInfo.city}
+                                                ${customerInfo.zipcode}<br>${customerInfo.state}
+                                                <br><a
+                                                    href="tel:${customerInfo.phone}"
+                                                    style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">${customerInfo.phone}</a>
+                                                <br>${customerInfo.email}
+                                            </address>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p
+                                style="margin: 0 0 16px">
+                                Thanks for using
+                                poconos.igiene.in!
+                            </p>
+                        </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </td>
+        </tr>
+            `
+            orderEmailhtml += `
+             <tr>
+                                        <td align="center" valign="top">
+
+                                            <table border="0" cellpadding="10" cellspacing="0" width="100%">
+                                                <tbody>
+                                                    <tr>
+                                                        <td valign="top" style="padding: 0; border-radius: 6px">
+                                                            <table border="0" cellpadding="10" cellspacing="0"
+                                                                width="100%">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="2" valign="middle"
+                                                                            style="border-radius: 6px; border: 0; color: rgba(138, 138, 138, 1); font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 12px; line-height: 150%; text-align: center; padding: 24px 0"
+                                                                            align="center">
+                                                                            <p style="margin: 0 0 16px">Poconos — Built
+                                                                                with <a
+                                                                                    href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/l5bEVL1VzlOyGFNHfkzDLlB8-xFnY9Kg6kpkMDkqMbsQPUyMlxYP7FFZvc1EnKrYymzCviRJnYPzOwUDJ9QC0_0ob7Z-XS0XBIHwlTDVvN-KFUFdUsQ_SJFRGbU1vSKbyNfv9eFgRCAqBZ8UHznFRxoovUGVeMALDvVVMAVUY1uQkX3pl9Rb_hVQ0eMGQaCvn9kE_zFh_RYs-bus_gEXCyFcoRAHOYrpNZ3k7FTcLa1sb58ar_YK5T0cgK--ptnBnQb4Ow"
+                                                                                    style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">WooCommerce</a>
+                                                                            </p>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+            `
+
+
+            mainOptions = {
+                from: process.env.EMAIL_FROM,
+                to: process.env.EMAIL_FROM,
+                subject: 'Thank you for your Order - Pesach',
+                text: 'This is a test email from pesach.',
+                html: orderEmailhtml,
+            }
+            await mailService.sendMail(mainOptions);
+
         } catch (error) {
 
         }
 
     },
+
     createCreditInfo: async function (cust_info) {
         try {
             const customerId = cust_info.cid;
             const ciddecodedString = atob(customerId);
             const ciddecodedData = JSON.parse(ciddecodedString);
-
+            let customerInfo;
+            const customerInfoQuery = `SELECT * FROM customer WHERE customer_id = ${ciddecodedData}`;
+            const customerInfoResult = await new Promise((resolve, reject) => {
+                db.query(customerInfoQuery, (error, results, fields) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(results);
+                    }
+                });
+            });
+            customerInfo = customerInfoResult[0]
+            console.log("customerInfo", customerInfo)
             let order_id;
+            let order_date;
             const orderQuery = `SELECT * FROM orders WHERE customer_id = ${ciddecodedData}`;
             const orderResult = await new Promise((resolve, reject) => {
                 db.query(orderQuery, (error, results, fields) => {
@@ -1090,7 +1847,10 @@ module.exports = {
                 });
             });
             order_id = orderResult[0].order_id;
-
+            order_date = orderResult[0].created_date;
+            const originalDate = order_date;
+            const options = { month: 'long', day: 'numeric' };
+            const order_Modify_date = originalDate.toLocaleDateString('en-US', options);
             db.query(
                 'INSERT INTO credit_card SET ?',
                 {
@@ -1110,8 +1870,779 @@ module.exports = {
                     }
                 }
             );
+            let customer_name;
+            const customerQuery = `SELECT * FROM customer WHERE customer_id = ${ciddecodedData}`;
+            const customerResult = await new Promise((resolve, reject) => {
+                db.query(customerQuery, (error, results, fields) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(results);
+                    }
+                });
+            });
+            customer_name = customerResult[0].full_name;
+            const getOrderInfoQuery = `SELECT odr.*, r.room_name, p.package_name FROM order_room odr LEFT JOIN room r ON r.room_id = odr.room_id LEFT JOIN package p ON p.package_id = odr.package_id WHERE odr.order_id = ${order_id} `;
+            const orderInfo = await new Promise((resolve, reject) => {
+                db.query(getOrderInfoQuery, (error, results, fields) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(results);
+                    }
+                });
+            });
+
+            const orderInfoByPackage = orderInfo.reduce((acc, curr) => {
+                if (!acc[curr.package_name]) {
+                    acc[curr.package_name] = [];
+                }
+                acc[curr.package_name].push(curr);
+                return acc;
+            }, {});
+            let totalRoomPrice = 0;
+            for (const packageName in orderInfoByPackage) {
+                if (orderInfoByPackage.hasOwnProperty(packageName)) {
+                    const packageRooms = orderInfoByPackage[packageName];
+                    for (const room of packageRooms) {
+                        totalRoomPrice += room.room_price;
+                    }
+                }
+            }
+
+            const obj = {};
+            let allInnerRoomTotal = 0; // Initialize allInnerRoomTotal
+
+            for (const packageKey in orderInfoByPackage) {
+                const packageData = orderInfoByPackage[packageKey];
+
+                for (const roomData of packageData) {
+                    const roomName = roomData.room_name;
+
+                    // Calculate values based on your specified conditions
+                    const adultsPrice = roomData.no_of_additional_adult * roomData.no_of_additional_adult_price;
+                    const age11to18Price = roomData.no_of_kids_age_11_18 * roomData.kids_age_11_18_price;
+                    const age6to10Price = roomData.no_of_kids_age_6_10 * roomData.kids_age_6_10_price;
+                    const age3to5Price = roomData.no_of_kids_age_3_5 * roomData.kids_age_3_5_price;
+                    const age1to2Price = roomData.no_of_kids_age_1_2 * roomData.kids_age_1_2_price;
+
+                    // Create object properties
+                    obj[`${roomName} + Age 18+ Adults`] = adultsPrice;
+                    obj[`${roomName} + Ages 11 to 18`] = age11to18Price;
+                    obj[`${roomName} + Ages 6 to 10`] = age6to10Price;
+                    obj[`${roomName} + Ages 3 to 5`] = age3to5Price;
+                    obj[`${roomName} + Ages 1 to 2`] = age1to2Price;
+                    obj[`${roomName} + crib`] = roomData.crib_price;
+                    obj[`${roomName} + cot`] = roomData.cot_price;
+                    const sumPricesForRoom = adultsPrice + age11to18Price + age6to10Price + age3to5Price + age1to2Price;
+
+                    // Accumulate the total sum across all rooms and packages
+                    allInnerRoomTotal += sumPricesForRoom;
+                }
+            }
+            const totalBill = totalRoomPrice + allInnerRoomTotal
+            // return
+            var html = `<div id="mail" trans="" style="width: 100%;
+                margin: auto;">
+                    <div>
+                        <table style="width: 100%;">
+                            <tbody>
+                                <tr>
+                                    <td align="left">
+                        <img style="max-height: 100px; max-width: 100%; margin: 0; display: inline-block"
+                            src="http://localhost:7000/images/Asset 4.png">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table style="width: 100%;">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <h1>
+                                            Here's your tickets, ${customer_name}! </h1>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <span>${order_Modify_date}</span>
+                                        </p>
+                                    </td>
+                                </tr>`;
+            let room_count = 0;
+            for (const packageName in orderInfoByPackage) {
+                if (orderInfoByPackage.hasOwnProperty(packageName)) {
+                    html += `
+                    <tr>
+                        <td>
+                            <h3>
+                     <a href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/Sx7FWR3GrcUEtrtMH_wSksVH2CGgPh-Y_1zK6HHVqqqLJPlZQuR1_y6mAWE5eTkweKWcTLIFQip3fhKrNxvjXCbRr77OxpcdI_zm3ll1cT3wCiEHHmemMNjq2pCoYES3jHPgFUPOEQuzoy1zeKwEDU0G0IxrHJJ5iHz0Or6wDlFg1VWkPoFfpT3jZP6aIuQ-X9XrXocGNTg-7dawNXyhdvvo2q3MjIy4qCEotUsomGNmF7KJ15XXswLrhjAMqIas_RdCGoi0YZnQTe1fb9DK4O9CbMzoBQkEp19L"
+                                                target="_blank" rel="noopener noreferrer">
+                                                ${packageName}</a>
+                            </h3>
+                        </td>
+                    </tr>`;
+
+                    const packageRooms = orderInfoByPackage[packageName];
+                    for (const room of packageRooms) {
+                        room_count++;
+                        html += `
+                        <tr>
+                        <td>${room_count} Ticket
+                        </td>
+                    </tr>
+                        <tr>
+                        <td style="padding: 0">
+                        <table style="width: 100%;">
+                                <tbody>
+                        <tr style="background: #2d2e33;color: white;">
+                                        <td>
+                                            <table style="width: 100%;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="color: white;padding: 10px;">
+                        <h2>
+                            ${customer_name} </h2>
+                                <div>
+                                    ${room.room_name}
+                                </div>
+                            </td>
+                            <td rowspan="2"
+                                style="text-align: center;padding: 10px;">
+                                <img
+                                    src="http://poconos.igiene.in/wp-content/uploads//qr_d3b4752cd647f5a7e8327e8559bad24e.png">
+                            </td>
+                        </tr>
+                        <tr style="color: white;">
+                            <td style="padding: 10px;">
+                                <div>
+                                    ${room.room_id}
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody >
+                        </table >
+
+                        <div style="padding: 10px;">
+                              Ticket ${room_count} of ${room_count}</div>
+                          <div>
+                              <table style="width: 100%;color: white;padding: 10px;">
+                                  <tbody>
+                                      <tr>
+                                      ${room.no_of_additional_adult == 0 ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Age 18+ Adults $${room.no_of_additional_adult_price}</div>
+                                            <div>
+                                                ${room.no_of_additional_adult}</div>
+                                          </td>`
+                            }
+                                      ${room.no_of_kids_age_11_18 == 0 ? '' :
+                                `<td style="width: 50%;">
+                                                <div>
+                                                    Ages 11 to 18 $${room.kids_age_11_18_price}</div>
+                                                <div>
+                                                    ${room.no_of_kids_age_11_18}</div>
+                                            </td>`
+                            }
+                    </tr>
+                    <tr>
+                                        ${room.no_of_kids_age_6_10 == 0 ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Ages 6 to 10 $${room.kids_age_6_10_price}</div>
+                                            <div>
+                                                ${room.no_of_kids_age_6_10}</div>
+                                          </td>`
+                            }
+                                        ${room.no_of_kids_age_3_5 == 0 ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Ages 3 to 5 Adults $${room.kids_age_3_5_price}</div>
+                                            <div>
+                                                ${room.no_of_kids_age_3_5}</div>
+                                          </td>`
+                            }
+                    </tr>
+                    <tr>
+                                        ${room.no_of_kids_age_1_2 == 0 ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Ages 1 to 2 Adults $${room.kids_age_1_2_price}</div>
+                                            <div>
+                                                ${room.no_of_kids_age_1_2}</div>
+                                          </td>`
+                            }
+                                        ${room.crib_price == '' || room.crib_price == null ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Crib $${room.crib_price}</div>
+                                          </td>`
+                            }
+                    </tr>
+                    <tr>
+                                    ${room.cot_price == '' || room.cot_price == null ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Cot $${room.cot_price}</div>
+                                          </td>`
+                            }
+                     ${room.check_in_date == '' || room.check_in_date == null ? '' :
+                                `<td style="width: 50%;">
+                                            <div>
+                                                Cot $${room.check_in_date}</div>
+                                                <div>
+                                              Friday Check-in</div>
+                                          </td>`
+                            }
+
+                            </tr>
+                        </tbody>
+                        </table>
+                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            `;
+
+                    }
+                }
+            }
+            html += `<tr>
+                                    <td>
+                                        <table style="width: 100%;">
+                                            <tbody>
+                                                <tr>
+                                                    <td align="center">
+
+                                                        <a target="_blank" rel="noopener noreferrer"
+                                                            style="margin-right: 3%;"
+                                                            href="https://poconos.igiene.in/event/shabbos/?ical=1">
+                                                            Add event to iCal</a>
+
+
+                                                        <a target="_blank" rel="noopener noreferrer"
+                                                            style="margin-left: 3%;"
+                                                            href="https://www.google.com/calendar/event?action=TEMPLATE&amp;dates=20240131T000000/20240131T235959&amp;text=Shabbos%20Package%28All%20Inclusive%29&amp;details=%3C%21--+wp%3Atribe%2Fevent-datetime+%2F--%3E%3C%21--+wp%3Atribe%2Ffeatured-image+%2F--%3E%3C%21--+wp%3Atribe%2Ftickets+--%3E%3Cdiv+class%3D%22wp-block-tribe-tickets%22%3E%3C%21--+wp%3Atribe%2Ftickets-item+%7B%22hasBeenCreated%22%3Atrue%2C%22ticketId%22%3A1627%7D+--%3E%3Cdiv+class%3D%22wp-block-tribe-tickets-item%22%3E%3C%2Fdiv%3E%3C%21--+%2Fwp%3Atribe%2Ftickets-item+--%3E%3C%21--+wp%3Atribe%2Ftickets-item+%7B%22hasBeenCreated%22%3Atrue%2C%22ticketId%22%3A1630%7D+--%3E%3Cdiv+class%3D%22wp-block-tribe-tickets-item%22%3E%3C%2Fdiv%3E%3C%21--+%2Fwp%3Atribe%2Ftickets-item+--%3E%3C%21--+wp%3Atribe%2Ftickets-item+%7B%22hasBeenCreated%22%3Atrue%2C%22ticketId%22%3A1633%7D+--%3E%3Cdiv+class%3D%22wp-block-tribe-tickets-item%22%3E%3C%2Fdiv%3E%3C%21--+%2Fwp%3Atribe%2Ftickets-item+--%3E%3C%2Fdiv%3E%3C%21--+%2Fwp%3Atribe%2Ftickets+--%3E&amp;trp=false&amp;ctz=UTC+0&amp;sprop=website:https://poconos.igiene.in">
+                                                            Add event to Google Calendar</a>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr style="background: #50b078;">
+                    <td>
+                        <table style="width: 100%;">
+                            <tbody>
+                                <tr>
+                                    <td align="right">
+                                        Powered by <a
+                                            href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/gERqG11VEljLz9Vafus_Phd8sSiZpstaoa03rdUxG0eelB3KVZmhhKDxLK8kSWUQsKn2jNBbIh3dVkYdB2oL6BRxnYJDm3FZ4M6bz7ST1IpESQVWcgBkim3w-VRf8tUT481RGH2GR6JwCEQ2i2FzUYK3C0puwHjZHK-my0hEXkG_BjdmoaqgeeB2HJvRz-3jM4zc8dnUaj_sagrjnrBN7yiO_6R3rJppBzJhVXy7j47b_q7mE4Uhp4lFPC7RI_ekRNbaXJco-04mCw7P7Fe0a9p4ldK0">Event
+                                            Tickets</a> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>`;
+            let mainOptions;
+            mainOptions = {
+                from: process.env.EMAIL_FROM,
+                to: process.env.EMAIL_FROM,
+                subject: 'Booking Information - Pesach',
+                text: 'This is a test email from pesach.',
+                html: html,
+            }
+            await mailService.sendMail(mainOptions);
+
+
+            // order-mail
+            var orderEmailhtml = `
+            <div id="mail">
+    <div>
+        <table width="100%" style="background-color: rgba(247, 247, 247, 1)" bgcolor="#f7f7f7">
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td width="600">
+                        <div dir="ltr" style="margin: 0 auto; padding: 70px 0; width: 100%; max-width: 600px"
+                            width="100%">
+                            <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
+                                <tbody>
+                                    <tr>
+                                        <td align="center" valign="top">
+                                            <div>
+                                            </div>
+                                            <table border="0" cellpadding="0" cellspacing="0" width="100%"
+                                                style="background-color: rgba(255, 255, 255, 1); border: 1px solid rgba(222, 222, 222, 1); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); border-radius: 3px"
+                                                bgcolor="#fff">
+                                                <tbody>
+                                                    <tr>
+                                                        <td align="center" valign="top">
+
+                                                            <table border="0" cellpadding="0" cellspacing="0"
+                                                                width="100%"
+                                                                style="background-color: rgba(127, 84, 179, 1); color: rgba(255, 255, 255, 1); border-bottom: 0; font-weight: bold; line-height: 100%; vertical-align: middle; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; border-radius: 3px 3px 0 0"
+                                                                bgcolor="#7f54b3">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td style="padding: 36px 48px; display: block">
+                                                                            <h1 style="font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 30px; font-weight: 300; line-height: 150%; margin: 0; text-align: left; text-shadow: 0 1px rgba(153, 118, 194, 1); color: rgba(255, 255, 255, 1); background-color: inherit"
+                                                                                bgcolor="inherit">Thank you for your
+                                                                                order</h1>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>`
+            orderEmailhtml += `
+            <tr>
+                <td align="center" valign="top">
+
+                    <table border="0" cellpadding="0" cellspacing="0"
+                        width="100%">
+                        <tbody>
+                            <tr>
+                                <td valign="top"
+                                    style="background-color: rgba(255, 255, 255, 1)"
+                                    bgcolor="#fff">
+
+                                    <table border="0" cellpadding="20"
+                                        cellspacing="0" width="100%">
+                    <tbody>
+                        <tr>
+                            <td valign="top"
+                                style="padding: 48px 48px 32px">
+                                <div style="color: rgba(99, 99, 99, 1); font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 14px; line-height: 150%; text-align: left"
+                                    align="left">
+
+                                    <p
+                                        style="margin: 0 0 16px">
+                                        ${customer_name},</p>
+                                    <p
+                                        style="margin: 0 0 16px">
+                                        Just to let you know
+                                        — we've received
+                                        your order #${order_id},
+                                        and it is now being
+                                        processed:</p>
+
+                                    <p
+                                        style="margin: 0 0 16px">
+                                        Pay with cash upon
+                                        delivery.</p>
+
+
+                                    <h2
+                                        style="color: rgba(127, 84, 179, 1); display: block; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 18px; font-weight: bold; line-height: 130%; margin: 0 0 18px; text-align: left">
+                                        [Order #${order_id}]
+                                        (${order_Modify_date})
+                                    </h2>
+
+                                    <div
+                                        style="margin-bottom: 40px">
+                                        <table
+                                            cellspacing="0"
+                                            cellpadding="6"
+                                            border="1"
+                                            style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; width: 100%; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif"
+                                            width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                                        align="left">
+                                                        Product
+                                                    </th>
+                                                    <th scope="col"
+                                                        style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                                        align="left">
+                                                        Quantity
+                                                    </th>
+                                                    <th scope="col"
+                                                        style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                                        align="left">
+                                                        Price
+                                                    </th>
+                                                </tr>
+            
+                                                </thead> `
+
+            // let room_count = 0;
+            for (const packageName in orderInfoByPackage) {
+                if (orderInfoByPackage.hasOwnProperty(packageName)) {
+                    const packageRooms = orderInfoByPackage[packageName];
+                    for (const room of packageRooms) {
+                        room_count++;
+
+                        orderEmailhtml += `
+            <tbody>
+                <tr>
+                    <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); padding: 12px; text-align: left; vertical-align: middle; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; word-wrap: break-word"
+                        align="left">
+                        ${room.room_name}
+                        <div>
+                            <a href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/Nec9vmhocM1Dc0J0uyfmRdh8ZLZLTOCL3LKBomgBe0HCPSQ2AL5F1s0QZSeW4aYROrzGC2Jk8Up9_xKphrK5QAUSQbdh6suWWF1DqUmonHAIkgykO4yRaEeBPrTTdB3lvmbVZ2fr675zcZ3yWZ8jKRkZYEcQdkoA38jnXEWqWzt8dAu4vh4fOtjxrrCQDNxavcymefdtDEkhzz5Kvh02d1ovaek77qA8Q4obJxrEc12a_83oYqBGxqTfMLYHni-SbSB-rAtfJiApkXiw3DF5kndnXXvP2ZdZThkU"
+                                style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">${room.package_name}</a><br><em><span>${order_Modify_date}</span></em><br><span>
+                            </span>
+                        </div>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td
+                                        style="padding: 12px; width:50%; ">
+                                        <strong>Ticket
+                                            ID</strong>
+                                    </td>
+                                    <td
+                                        style="padding: 12px">
+                                        <strong>${order_id}</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                ${room.no_of_additional_adult == 0 ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Age 18+ Adults $${room.no_of_additional_adult_price}</div>
+                                          </td>
+                                          <td
+                                        style="padding: 12px">
+                                        ${room.no_of_additional_adult}
+                                    </td>`
+                            }
+                                    
+                                </tr>
+                                <tr>
+                                    ${room.no_of_kids_age_11_18 == 0 ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Ages 11 to 18 $${room.kids_age_11_18_price}</div>
+                                          </td>
+                                          <td
+                                        style="padding: 12px">
+                                        ${room.no_of_kids_age_11_18}
+                                    </td>`
+                            }
+                                </tr>
+                                <tr>
+                                    ${room.no_of_kids_age_6_10 == 0 ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Ages 6 to 10 $${room.kids_age_6_10_price}</div>
+                                          </td>
+                                           <td
+                                        style="padding: 12px">
+                                        ${room.no_of_kids_age_6_10}
+                                    </td>`
+                            }
+                                </tr>
+                                <tr>
+                                    ${room.no_of_kids_age_3_5 == 0 ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Ages 3 to 5 $${room.kids_age_3_5_price}</div>
+                                          </td>
+                                          <td
+                                        style="padding: 12px">
+                                        ${room.no_of_kids_age_3_5}
+                                    </td>`
+                            }
+                                    
+                                </tr>
+                                <tr>
+                                    ${room.no_of_kids_age_1_2 == 0 ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Ages 1 to 2 $${room.kids_age_1_2_price}</div>
+                                          </td>
+                                          <td
+                                        style="padding: 12px">
+                                        ${room.no_of_kids_age_1_2}
+                                    </td>`
+                            }
+                                    
+                                </tr>
+                                <tr>
+                                    ${room.crib_price == '' || room.crib_price == null ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Crib $${room.crib_price}</div>
+                                          </td>`
+                            }
+                                    
+                                </tr>
+                                <tr>
+                                   ${room.cot_price == '' || room.cot_price == null ? '' :
+                                `<td style="padding: 12px">
+                                            <div>
+                                                Cot $${room.cot_price}</div>
+                                          </td>`
+                            }
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </td>
+                    <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); padding: 12px; text-align: left; vertical-align: middle; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif"
+                        align="left">
+                        1
+                    </td>
+                    <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); padding: 12px; text-align: left; vertical-align: middle; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif"
+                        align="left">
+                        <span><span>$</span>${room.room_price}</span>
+                    </td>
+                </tr>
+
+
+            </tbody>
+            `
+                    }
+                }
+            }
+
+            orderEmailhtml += `
+            <tfoot>
+                        <tr>
+                            <th scope="row"
+                                colspan="2"
+                                style="color: rgba(99, 99, 99, 1); border-top: 4px solid rgba(229, 229, 229, 1); border-right: 1px solid rgba(229, 229, 229, 1); border-bottom: 1px solid rgba(229, 229, 229, 1); border-left: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                Subtotal:
+                            </th>
+                            <td style="color: rgba(99, 99, 99, 1); border-top: 4px solid rgba(229, 229, 229, 1); border-right: 1px solid rgba(229, 229, 229, 1); border-bottom: 1px solid rgba(229, 229, 229, 1); border-left: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                <span><span>$</span>${totalRoomPrice.toFixed(2)}</span>
+                            </td>
+                        </tr>`
+            const categoryTotals = {};
+            for (const [key, value] of Object.entries(obj)) {
+                const category = key.split(" + ")[0];
+                if (!categoryTotals[category]) {
+                    categoryTotals[category] = 0;
+                }
+                categoryTotals[category] += value;
+            }
+
+            for (const key in obj) {
+                orderEmailhtml += `
+                    
+                        <tr>
+
+                        <th scope="row"
+                            colspan="2"
+                            style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                            align="left">
+                            ${key} ${obj[key]}
+                        </th>
+                        <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                            align="left">
+                            <span><span>$</span>${obj[key]}</span>
+                        </td>
+
+                        </tr>
+                        `
+            }
+
+            orderEmailhtml += `
+            <tr>
+                            <th scope="row"
+                                colspan="2"
+                                style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                Payment
+                                method:
+                            </th>
+                            <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                Cash
+                                on
+                                delivery
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"
+                                colspan="2"
+                                style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                Total:
+                            </th>
+                            <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                                align="left">
+                                <span><span>$</span>${totalBill}</span>
+                            </td>
+                        </tr>
+                    </tfoot>`
+            orderEmailhtml += `
+                                    </table>
+                            </div>
+
+                            <br>You'll receive your
+                            tickets in another
+                            email.<table
+                                cellspacing="0"
+                                cellpadding="0"
+                                border="0"
+                                style="width: 100%; vertical-align: top; margin-bottom: 40px; padding: 0"
+                                width="100%">
+                                <tbody>
+                                    <tr>
+                                        <td valign="top"
+                                            width="50%"
+                                            style="text-align: left; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; border: 0; padding: 0"
+                                            align="left">
+                                            <h2
+                                                style="color: rgba(127, 84, 179, 1); display: block; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 18px; font-weight: bold; line-height: 130%; margin: 0 0 18px; text-align: left">
+                                                Billing
+                                                address
+                                            </h2>
+
+                                            <address
+                                                style="padding: 12px; color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1)">
+                                                ${customer_name}<br>${customerInfo.address_line_1}<br>${customerInfo.address_line_2}<br>${customerInfo.city}
+                                                ${customerInfo.zipcode}<br>${customerInfo.state}
+                                                <br><a
+                                                    href="tel:${customerInfo.phone}"
+                                                    style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">${customerInfo.phone}</a>
+                                                <br>${customerInfo.email}
+                                            </address>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p
+                                style="margin: 0 0 16px">
+                                Thanks for using
+                                poconos.igiene.in!
+                            </p>
+                        </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </td>
+        </tr>
+            `
+            orderEmailhtml += `
+             <tr>
+                                        <td align="center" valign="top">
+
+                                            <table border="0" cellpadding="10" cellspacing="0" width="100%">
+                                                <tbody>
+                                                    <tr>
+                                                        <td valign="top" style="padding: 0; border-radius: 6px">
+                                                            <table border="0" cellpadding="10" cellspacing="0"
+                                                                width="100%">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="2" valign="middle"
+                                                                            style="border-radius: 6px; border: 0; color: rgba(138, 138, 138, 1); font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 12px; line-height: 150%; text-align: center; padding: 24px 0"
+                                                                            align="center">
+                                                                            <p style="margin: 0 0 16px">Poconos — Built
+                                                                                with <a
+                                                                                    href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/l5bEVL1VzlOyGFNHfkzDLlB8-xFnY9Kg6kpkMDkqMbsQPUyMlxYP7FFZvc1EnKrYymzCviRJnYPzOwUDJ9QC0_0ob7Z-XS0XBIHwlTDVvN-KFUFdUsQ_SJFRGbU1vSKbyNfv9eFgRCAqBZ8UHznFRxoovUGVeMALDvVVMAVUY1uQkX3pl9Rb_hVQ0eMGQaCvn9kE_zFh_RYs-bus_gEXCyFcoRAHOYrpNZ3k7FTcLa1sb58ar_YK5T0cgK--ptnBnQb4Ow"
+                                                                                    style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">WooCommerce</a>
+                                                                            </p>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+            `
+
+
+            mainOptions = {
+                from: process.env.EMAIL_FROM,
+                to: process.env.EMAIL_FROM,
+                subject: 'Thank you for your Order - Pesach',
+                text: 'This is a test email from pesach.',
+                html: orderEmailhtml,
+            }
+            await mailService.sendMail(mainOptions);
+
         } catch (error) {
 
         }
-    }
+
+    },
+
+    // createCreditInfo: async function (cust_info) {
+    //     try {
+    //         const customerId = cust_info.cid;
+    //         const ciddecodedString = atob(customerId);
+    //         const ciddecodedData = JSON.parse(ciddecodedString);
+
+    //         let order_id;
+    //         const orderQuery = `SELECT * FROM orders WHERE customer_id = ${ciddecodedData}`;
+    //         const orderResult = await new Promise((resolve, reject) => {
+    //             db.query(orderQuery, (error, results, fields) => {
+    //                 if (error) {
+    //                     reject(error);
+    //                 } else {
+    //                     resolve(results);
+    //                 }
+    //             });
+    //         });
+    //         order_id = orderResult[0].order_id;
+
+    //         db.query(
+    //             'INSERT INTO credit_card SET ?',
+    //             {
+    //                 card_number: cust_info.card_number,
+    //                 card_holder_name: cust_info.card_holder_name,
+    //                 card_expiry_date: cust_info.card_expiry_date,
+    //                 cvv: cust_info.cvv,
+    //                 amount: cust_info.amount,
+    //                 order_id: order_id,
+    //                 customer_id: ciddecodedData,
+    //             },
+    //             (err, result) => {
+    //                 if (err) {
+    //                     console.log(err);
+    //                 } else {
+
+    //                 }
+    //             }
+    //         );
+    //     } catch (error) {
+
+    //     }
+    // }
 }
