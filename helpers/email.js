@@ -3,9 +3,9 @@ module.exports = {
 
     sendMail: async function (mainOptions) {
         var transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
+            host: 'smtp-relay.brevo.com',
+            port: 587,
+            // secure: true,
             app: 'mail',
             auth:
             {
@@ -13,16 +13,6 @@ module.exports = {
                 pass: process.env.EMAIL_PASS
             },
             tls: { rejectUnauthorized: false }
-            // host: 'smtp.mailgun.org',
-            // port: 587,
-            // secure: false,
-            // // app: 'mail',
-            // auth:
-            // {
-            //     user: process.env.EMAIL_USER,
-            //     pass: process.env.EMAIL_PASS
-            // },
-            // tls: { rejectUnauthorized: false }
         });
         transporter.sendMail(mainOptions, function (err, info) {
             if (err) {

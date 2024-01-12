@@ -1127,6 +1127,8 @@ module.exports = {
                     const age6to10Price = roomData.no_of_kids_age_6_10 * roomData.kids_age_6_10_price;
                     const age3to5Price = roomData.no_of_kids_age_3_5 * roomData.kids_age_3_5_price;
                     const age1to2Price = roomData.no_of_kids_age_1_2 * roomData.kids_age_1_2_price;
+                    const crib_price = roomData.crib_price;
+                    const cot_price = roomData.cot_price;
 
                     // Create object properties
                     obj[`${roomName} + Age 18+ Adults`] = adultsPrice;
@@ -1136,16 +1138,30 @@ module.exports = {
                     obj[`${roomName} + Ages 1 to 2`] = age1to2Price;
                     obj[`${roomName} + crib`] = roomData.crib_price;
                     obj[`${roomName} + cot`] = roomData.cot_price;
-                    const sumPricesForRoom = adultsPrice + age11to18Price + age6to10Price + age3to5Price + age1to2Price;
+                    const sumPricesForRoom = adultsPrice + age11to18Price + age6to10Price + age3to5Price + age1to2Price + crib_price + cot_price;
 
                     // Accumulate the total sum across all rooms and packages
                     allInnerRoomTotal += sumPricesForRoom;
                 }
             }
+            console.log("totalRoomPrice", totalRoomPrice)
+            console.log("allInnerRoomTotal", allInnerRoomTotal)
             const totalBill = totalRoomPrice + allInnerRoomTotal
-
-            // const logoImagePath = path.join(__dirname, 'images/Asset 4.png');
-            // const logoImageBuffer = fs.readFileSync(logoImagePath);
+            console.log("totalBill", totalBill)
+            console.log("order_id", order_id)
+            console.log("ciddecodedData", ciddecodedData)
+            // return
+            const getDiningInfoQuery = `SELECT * FROM order_dining_table WHERE order_id = ${order_id} AND customer_id = ${ciddecodedData}`;
+            const diningInfo = await new Promise((resolve, reject) => {
+                pool.query(getDiningInfoQuery, (error, results, fields) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(results);
+                    }
+                });
+            });
+            console.log("diningInfo", diningInfo)
 
             var html = `<div id="mail" trans="" style="width: 100%;
                 margin: auto;">
@@ -1155,7 +1171,7 @@ module.exports = {
                                 <tr>
                                     <td align="left">
                        <img style="max-height: 100px; max-width: 100%; margin: 0; display: inline-block"
-                src="cid:unique_logo_cid">
+                src="https://pesach-f1e07e08d4c1.herokuapp.com/images/Asset%204.png" alt="logo">
                     </td>
                 </tr>
                 <tr>
@@ -1202,14 +1218,8 @@ module.exports = {
                             content: imageBuffer,
                             encoding: 'base64',
                             cid: 'unique_image_cid'
-                        },
-                            // {
-                            //     filename: 'logo.png',
-                            //     content: logoImageBuffer,
-                            //     encoding: 'base64',
-                            //     cid: 'unique_logo_cid'
-                            // }
-                        ];
+                        }];
+
                         room_count++;
                         html += `
                         <tr>
