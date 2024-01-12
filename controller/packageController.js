@@ -1762,7 +1762,7 @@ module.exports = {
                             <p
                                 style="margin: 0 0 16px">
                                 Thanks for using
-                                poconos.igiene.in!
+                                Pesach
                             </p>
                         </div>
                                             </td>
@@ -2548,7 +2548,7 @@ module.exports = {
                             <p
                                 style="margin: 0 0 16px">
                                 Thanks for using
-                                poconos.igiene.in!
+                                Pesach
                             </p>
                         </div>
                                             </td>
