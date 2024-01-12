@@ -1958,7 +1958,7 @@ module.exports = {
                                 <tr>
                                     <td align="left">
                         <img style="max-height: 100px; max-width: 100%; margin: 0; display: inline-block"
-                            src="http://localhost:7000/images/Asset 4.png">
+                            src="https://pesach-f1e07e08d4c1.herokuapp.com/images/Asset%204.png" alt="logo">
                     </td>
                 </tr>
                 <tr>
