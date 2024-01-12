@@ -1125,8 +1125,6 @@
             var guestInfo = localStorage.getItem('guestInfo');
             if (!guestInfo) {
                 for (let i = 1; i <= guestCount; i++) {
-                    console.log("arr", arr);
-                    console.log("i", i);
 
                     if (arr.includes(i.toString())) {
                         addguest(1, i, 'guest');
@@ -1218,7 +1216,6 @@
                 }
             }
         } else {
-            console.log('No data found in localStorage');
         }
     </script>
 
@@ -1273,7 +1270,6 @@
                     '</div>');
             }
         } else {
-            console.log('No data found in localStorage');
         }
     </script>
 

@@ -826,7 +826,6 @@
                     // Update total price
                     updatedTotalPrice = parseFloat(updatedTotalPrice);
                 } else {
-                    console.log("Quantity input element not found for room ID:", roomId);
                 }
             }
             // Update the total quantity and total price elements
@@ -837,10 +836,7 @@
             if (totalPriceElement) {
                 totalPriceElement.textContent = '$ ' + updatedTotalPrice.toFixed(2);
             }
-
-            console.log("retrievedData", parsedData);
         } else {
-            console.log('No data found in localStorage');
         }
     </script>
 
@@ -848,7 +844,6 @@
         var retrievedData = localStorage.getItem('selectedRoomsData');
         if (retrievedData) {
             var parsedData = JSON.parse(retrievedData);
-            console.log("retrievedData", retrievedData)
         } else { }
     </script>
 

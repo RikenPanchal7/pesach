@@ -16,8 +16,8 @@ const ejs = require('ejs');
 //     }
 // });
 
-router.get("/booking-info", (req, res) => {
-    res.render("booking-info")
+router.get("/index", (req, res) => {
+    res.render("index")
 });
 
 router.post("/booking-info", packageController.saveCustomerInfo);
@@ -153,7 +153,6 @@ router.get("/ach", async (req, res) => {
 
 router.post("/createAchInfo", async (req, res) => {
     const cust_info = req.body.cust_info;
-    console.log("cust_info", cust_info)
     const getAchInfo = await packageController.createAchInfo(cust_info);
 });
 

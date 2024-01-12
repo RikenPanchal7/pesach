@@ -713,7 +713,6 @@
                 e.preventDefault();
                 var quantityInput = $(this).siblings(".quantity__input");
                 var quantityInputValue = quantityInput.val();
-                console.log("quantityInputValue", quantityInputValue)
                 if (quantityInputValue == '') {
                     quantityInputValue = 0;
                 }
@@ -827,7 +826,6 @@
         var retrievedData = localStorage.getItem('diningTableData');
         if (retrievedData) {
             var parsedData = JSON.parse(retrievedData);
-            console.log("parsedData", parsedData["0"]["above_12_count"])
 
             var updatedAbove_12_count = parseFloat(parsedData["0"]["above_12_count"]) || '';
             var above_12_countElement = document.getElementById('above_12_count_0');
@@ -860,7 +858,6 @@
                 total_seat_Element.value = updatedTotal_seat_;
             }
         } else {
-            console.log('No data found in localStorage');
         }
     </script>
     <script>
