@@ -9,7 +9,7 @@ const app = express();
 const server = http.createServer(app);
 
 // DB connection
-global.clientConnection = initDbConnection();
+// global.clientConnection = initDbConnection();
 
 app.use(express.static('public'));
 

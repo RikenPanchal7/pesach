@@ -45,10 +45,49 @@ module.exports = {
             next(error);
         }
     },
+    // saveCustomerInfo: async function (req, res, next) {
+    //     try {
+    //         // Insert the new customer information
+
+    //         db.query(
+    //             'INSERT INTO customer SET ?',
+    //             {
+    //                 full_name: req.body.full_name,
+    //                 email: req.body.email,
+    //                 address_line_1: req.body.address_line_1,
+    //                 address_line_2: req.body.address_line_2,
+    //                 city: req.body.city,
+    //                 state: req.body.state,
+    //                 zipcode: req.body.zipcode,
+    //                 phone: req.body.phone,
+    //             },
+    //             (err, result) => {
+    //                 if (err) {
+    //                     console.log(err);
+    //                     return res.status(500).json({ error: 'Internal Server Error' });
+    //                 } else {
+    //                     // Retrieve the inserted customer information
+    //                     db.query('SELECT * FROM customer WHERE customer_id = ?', [result.insertId], (selectErr, selectResult) => {
+    //                         if (selectErr) {
+    //                             return res.status(500).json({ error: 'Internal Server Error' });
+    //                         };
+    //                         const jsonString = JSON.stringify(selectResult[0].customer_id);
+    //                         const base64EncodedCustomerId = btoa(jsonString);
+    //                         const queryString = `?cid=${base64EncodedCustomerId}`;
+    //                         // const queryString = '?id=' + encodeURIComponent(JSON.stringify(selectResult[0].customer_id));
+    //                         return res.redirect("/select-event" + queryString);
+    //                     });
+    //                 }
+    //             }
+    //         );
+    //     } catch (error) {
+    //         next(error);
+    //     }
+    // },
     getEventDetail: async function (req, res, next) {
         try {
             return new Promise((resolve, reject) => {
-                pool.query('SELECT * FROM event WHERE event_id = ?', [1], (error, result) => {
+                db.query('SELECT * FROM event WHERE event_id = ?', [1], (error, result) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -60,7 +99,7 @@ module.exports = {
                         };
                         const getDiningQuery = `SELECT d.*, dd.dining_date FROM dining d LEFT JOIN dining_date dd ON d.dining_id = dd.dining_id`;
                         const diningPromise = new Promise((innerResolve, innerReject) => {
-                            pool.query(getDiningQuery, (innerError, innerResult) => {
+                            db.query(getDiningQuery, (innerError, innerResult) => {
                                 if (innerError) {
                                     innerReject(innerError);
                                 } else {
@@ -73,7 +112,7 @@ module.exports = {
                         let package_data = [];
                         const getPackageQuery = `SELECT * FROM package WHERE event_id = ${1}`;
                         const packagePromise = new Promise((innerResolve, innerReject) => {
-                            pool.query(getPackageQuery, (innerError, innerResult) => {
+                            db.query(getPackageQuery, (innerError, innerResult) => {
                                 if (innerError) {
                                     innerReject(innerError);
                                 } else {
@@ -105,7 +144,7 @@ module.exports = {
                 const placeholders = ids.map(() => '?').join(',');
                 const query = `SELECT * FROM package WHERE package_id IN (${placeholders})`;
 
-                pool.query(query, ids, (error, results) => {
+                db.query(query, ids, (error, results) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -120,7 +159,7 @@ module.exports = {
                             `;
 
                             return new Promise((innerResolve, innerReject) => {
-                                pool.query(roomQuery, [packageElement.package_id], (innerError, innerResult) => {
+                                db.query(roomQuery, [packageElement.package_id], (innerError, innerResult) => {
                                     if (innerError) {
                                         innerReject(innerError);
                                     } else {
@@ -176,7 +215,7 @@ module.exports = {
             const query = `SELECT pr.*, p.package_name FROM package_rooms pr LEFT JOIN package p ON p.package_id = pr.package_id WHERE room_id = ${room_id} AND pr.package_id = ${package_id}`;
             // `SELECT r.*,pr.room_price FROM room r LEFT JOIN package_rooms pr ON r.room_id = pr.room_id  WHERE r.room_id = ${room_id}`;
             const promise = new Promise((resolve, reject) => {
-                pool.query(query, (error, result) => {
+                db.query(query, (error, result) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -206,7 +245,7 @@ module.exports = {
                 const query = `SELECT r.*,pr.room_price FROM room r LEFT JOIN package_rooms pr ON r.room_id = pr.room_id  WHERE r.room_id = ${room_id}`;
 
                 return new Promise((resolve, reject) => {
-                    pool.query(query, (error, result) => {
+                    db.query(query, (error, result) => {
                         if (error) {
                             reject(error);
                         } else {
@@ -232,7 +271,7 @@ module.exports = {
 
         return new Promise((resolve, reject) => {
             // Check if the order already exists for the customer
-            pool.query(
+            db.query(
                 'SELECT * FROM orders WHERE customer_id = ?',
                 [customer_id],
                 (selectErr, selectResult) => {
@@ -241,7 +280,7 @@ module.exports = {
                     } else if (selectResult.length > 0) {
                         // Order already exists, perform an update
                         const orderId = selectResult[0].order_id;
-                        pool.query(
+                        db.query(
                             'UPDATE orders SET payment_type=?, payment_status=?, total_amount=?, order_date=? WHERE order_id = ?',
                             ["ACH", "PENDING", '00', currentDate, orderId],
                             (updateErr, updateResult) => {
@@ -255,7 +294,7 @@ module.exports = {
                         );
                     } else {
                         // Order doesn't exist, perform an insert
-                        pool.query(
+                        db.query(
                             'INSERT INTO orders SET ?',
                             {
                                 customer_id: customer_id,
@@ -285,7 +324,7 @@ module.exports = {
             let order_id;
             const queryString = `SELECT * FROM orders WHERE customer_id = ${customer_id}`;
             const results = await new Promise((resolve, reject) => {
-                pool.query(queryString, (error, results, fields) => {
+                db.query(queryString, (error, results, fields) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -359,7 +398,7 @@ module.exports = {
                 let order_room_id;
                 const queryString = `SELECT * FROM order_room WHERE order_id = ${order_id}`;
                 const results = await new Promise((resolve, reject) => {
-                    pool.query(queryString, (error, results, fields) => {
+                    db.query(queryString, (error, results, fields) => {
                         if (error) {
                             reject(error);
                         } else {
@@ -378,7 +417,7 @@ module.exports = {
                         const deleteQuery = `DELETE FROM order_room_guest WHERE order_room_id IN (${placeholders})`;
 
                         // Execute the delete query with the array of IDs
-                        pool.query(deleteQuery, order_room_id, (error, results) => {
+                        db.query(deleteQuery, order_room_id, (error, results) => {
                             if (error) {
                                 console.error('Error deleting rows:', error);
                             } else {
@@ -388,7 +427,7 @@ module.exports = {
                     const deleteQuery = `DELETE FROM order_room WHERE order_id = ${order_id}`;
 
                     // Connect to the database and execute the delete query
-                    pool.query(deleteQuery, (error, results) => {
+                    db.query(deleteQuery, (error, results) => {
                         if (error) {
                             console.error('Error deleting rows:', error);
                         } else {
@@ -396,7 +435,7 @@ module.exports = {
                     });
 
                     for (let i = 0; i < resultArray.length; i++) {
-                        pool.query(
+                        db.query(
                             'INSERT INTO order_room SET ?',
                             {
                                 order_id: order_id,
@@ -432,7 +471,7 @@ module.exports = {
                             let order_room_id;
                             const queryString = `SELECT * FROM order_room WHERE room_unique_id = ${value.room_unique_id}`;
                             const results = await new Promise((resolve, reject) => {
-                                pool.query(queryString, (error, results, fields) => {
+                                db.query(queryString, (error, results, fields) => {
                                     if (error) {
                                         reject(error);
                                     } else {
@@ -441,7 +480,7 @@ module.exports = {
                                 });
                             });
                             order_room_id = results[0].order_room_id;
-                            pool.query(
+                            db.query(
                                 'INSERT INTO order_room_guest SET ?',
                                 {
                                     order_room_id: order_room_id,
@@ -456,7 +495,7 @@ module.exports = {
 
                 } else {
                     for (let i = 0; i < resultArray.length; i++) {
-                        pool.query(
+                        db.query(
                             'INSERT INTO order_room SET ?',
                             {
                                 order_id: order_id,
@@ -492,7 +531,7 @@ module.exports = {
                             let order_room_id;
                             const queryString = `SELECT * FROM order_room WHERE room_unique_id = ${value.room_unique_id}`;
                             const results = await new Promise((resolve, reject) => {
-                                pool.query(queryString, (error, results, fields) => {
+                                db.query(queryString, (error, results, fields) => {
                                     if (error) {
                                         reject(error);
                                     } else {
@@ -501,7 +540,7 @@ module.exports = {
                                 });
                             });
                             order_room_id = results[0].order_room_id;
-                            pool.query(
+                            db.query(
                                 'INSERT INTO order_room_guest SET ?',
                                 {
                                     order_room_id: order_room_id,
@@ -523,7 +562,7 @@ module.exports = {
     getDiningInfo: async function () {
         const query = "SELECT d.*, dd.dining_date FROM dining d LEFT JOIN dining_date dd ON d.dining_id = dd.dining_id WHERE d.dining_id = 1;"
         return new Promise((resolve, reject) => {
-            pool.query(query, (error, result) => {
+            db.query(query, (error, result) => {
                 if (error) {
                     reject(error);
                 } else {
@@ -539,7 +578,7 @@ module.exports = {
 
             // Use a promise to get results from the first query
             const results = await new Promise((resolve, reject) => {
-                pool.query(`SELECT * FROM orders WHERE customer_id = ${customer_id}`, (error, results, fields) => {
+                db.query(`SELECT * FROM orders WHERE customer_id = ${customer_id}`, (error, results, fields) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -554,7 +593,7 @@ module.exports = {
             if (results.length === 0) {
                 // Use another promise to perform the insert into the 'orders' table
                 const addOrder = await new Promise((resolve, reject) => {
-                    pool.query(
+                    db.query(
                         'INSERT INTO orders SET ?',
                         {
                             customer_id: customer_id,
@@ -574,7 +613,7 @@ module.exports = {
                                     const values = selectedValues[key];
                                     // Use another promise to perform the insert into the 'order_dining_table' table
                                     await new Promise((resolve, reject) => {
-                                        pool.query(
+                                        db.query(
                                             'INSERT INTO order_dining_table SET ?',
                                             {
                                                 dining_id: 1, // Set your dining_id value
@@ -610,7 +649,7 @@ module.exports = {
                 const currentDate = new Date();
                 const checkOrderDining = `SELECT * FROM order_dining_table WHERE order_id = ${order_id}`;
                 const orderDiningResult = new Promise((resolve, reject) => {
-                    pool.query(checkOrderDining, (error, results, fields) => {
+                    db.query(checkOrderDining, (error, results, fields) => {
                         if (error) {
                             reject(error);
                         } else {
@@ -622,7 +661,7 @@ module.exports = {
                     const deleteQuery = `DELETE FROM order_dining_table WHERE order_id = ${order_id}`;
 
                     // Connect to the database and execute the delete query
-                    pool.query(deleteQuery, (error, results) => {
+                    db.query(deleteQuery, (error, results) => {
                         if (error) {
                             console.error('Error deleting rows:', error);
                         } else {
@@ -630,7 +669,7 @@ module.exports = {
                     });
                     Object.keys(selectedValues).forEach(async (key) => {
                         const values = selectedValues[key];
-                        pool.query(
+                        db.query(
                             'INSERT INTO order_dining_table SET ?',
                             {
                                 dining_id: 1, // Set your dining_id value
@@ -652,7 +691,7 @@ module.exports = {
                 } else {
                     Object.keys(selectedValues).forEach(async (key) => {
                         const values = selectedValues[key];
-                        pool.query(
+                        db.query(
                             'INSERT INTO order_dining_table SET ?',
                             {
                                 dining_id: 1, // Set your dining_id value
@@ -681,7 +720,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             const getOrderQuery = `SELECT * FROM orders WHERE customer_id = ${customer_id}`;
             const orderPromise = new Promise((innerResolve, innerReject) => {
-                pool.query(getOrderQuery, (error, result) => {
+                db.query(getOrderQuery, (error, result) => {
                     if (error) {
                         innerReject(error);
                     } else {
@@ -690,13 +729,13 @@ module.exports = {
                         // Execute another query using the orderId
                         const orderRoomQuery = `SELECT * FROM order_room WHERE order_id = ${orderId}`;
 
-                        pool.query(orderRoomQuery, (anotherError, orderResult) => {
+                        db.query(orderRoomQuery, (anotherError, orderResult) => {
                             if (anotherError) {
                                 innerReject(anotherError);
                             } else {
                                 if (orderResult == '') {
                                     const results = new Promise((diningresolve, reject) => {
-                                        pool.query(`SELECT od.*, d.dining_name FROM order_dining_table od LEFT JOIN dining d ON od.dining_id = d.dining_id WHERE customer_id = ${customer_id} AND order_id=${orderId}`
+                                        db.query(`SELECT od.*, d.dining_name FROM order_dining_table od LEFT JOIN dining d ON od.dining_id = d.dining_id WHERE customer_id = ${customer_id} AND order_id=${orderId}`
                                             , (error, results, fields) => {
                                                 if (error) {
                                                     reject(error);
@@ -753,18 +792,18 @@ module.exports = {
 
                                     const packageRoomQuery = `SELECT pr.*, p.package_name FROM package_rooms pr LEFT JOIN package p ON p.package_id = pr.package_id WHERE pr.room_id IN (${roomIds.join(',')}) AND pr.package_id IN (${packageIds.join(',')})`;
 
-                                    pool.query(packageRoomQuery, (packageRoomError, packageRoomResult) => {
+                                    db.query(packageRoomQuery, (packageRoomError, packageRoomResult) => {
                                         if (packageRoomError) {
                                             innerReject(packageRoomError);
                                         } else {
                                             const getDiningQuery = `SELECT * FROM dining`;
                                             const diningPromise = new Promise((diningResolve, diningReject) => {
-                                                pool.query(getDiningQuery, (diningError, diningResult) => {
+                                                db.query(getDiningQuery, (diningError, diningResult) => {
                                                     if (diningError) {
                                                         diningReject(diningError);
                                                     } else {
                                                         const dininOrderQuery = `SELECT odt.*, d.dining_name FROM order_dining_table odt LEFT JOIN dining d ON d.dining_id = odt.dining_id WHERE odt.dining_id = ${diningResult[0].dining_id} AND odt.customer_id = ${customer_id}`;
-                                                        pool.query(dininOrderQuery, (diningOrderError, diningOrderResult) => {
+                                                        db.query(dininOrderQuery, (diningOrderError, diningOrderResult) => {
                                                             if (diningOrderError) {
                                                                 reject(diningOrderError);
                                                             } else {
@@ -814,7 +853,7 @@ module.exports = {
                                                                 // Execute another query (room) using packageRoomRoomIds
                                                                 const roomQuery = `SELECT * FROM room WHERE room_id IN (${packageRoomRoomIds.join(',')})`;
 
-                                                                pool.query(roomQuery, (roomError, roomResult) => {
+                                                                db.query(roomQuery, (roomError, roomResult) => {
                                                                     if (roomError) {
                                                                         innerReject(roomError);
                                                                     } else {
@@ -1013,7 +1052,7 @@ module.exports = {
             order_date = '${date}'  WHERE customer_id  = ${customer_id}`;
 
             // Execute the update query
-            pool.query(updateQuery, (error, results, fields) => {
+            db.query(updateQuery, (error, results, fields) => {
                 if (error) {
                     console.error('Error executing update query:', error);
                     throw error;
@@ -1033,7 +1072,7 @@ module.exports = {
             let customer_name;
             const customerInfoQuery = `SELECT * FROM customer WHERE customer_id = ${ciddecodedData}`;
             const customerInfoResult = await new Promise((resolve, reject) => {
-                pool.query(customerInfoQuery, (error, results, fields) => {
+                db.query(customerInfoQuery, (error, results, fields) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -1047,7 +1086,7 @@ module.exports = {
             let order_date;
             const orderQuery = `SELECT * FROM orders WHERE customer_id = ${ciddecodedData}`;
             const orderResult = await new Promise((resolve, reject) => {
-                pool.query(orderQuery, (error, results, fields) => {
+                db.query(orderQuery, (error, results, fields) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -1060,7 +1099,7 @@ module.exports = {
             const originalDate = order_date;
             const options = { month: 'long', day: 'numeric' };
             const order_Modify_date = originalDate.toLocaleDateString('en-US', options);
-            pool.query(
+            db.query(
                 'INSERT INTO ach SET ?',
                 {
                     name: cust_info.name,
@@ -1086,7 +1125,7 @@ module.exports = {
             );
             const getOrderInfoQuery = `SELECT odr.*, r.room_name, p.package_name FROM order_room odr LEFT JOIN room r ON r.room_id = odr.room_id LEFT JOIN package p ON p.package_id = odr.package_id WHERE odr.order_id = ${order_id} `;
             const orderInfo = await new Promise((resolve, reject) => {
-                pool.query(getOrderInfoQuery, (error, results, fields) => {
+                db.query(getOrderInfoQuery, (error, results, fields) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -1835,7 +1874,7 @@ module.exports = {
             let customer_name;
             const customerInfoQuery = `SELECT * FROM customer WHERE customer_id = ${ciddecodedData}`;
             const customerInfoResult = await new Promise((resolve, reject) => {
-                pool.query(customerInfoQuery, (error, results, fields) => {
+                db.query(customerInfoQuery, (error, results, fields) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -1849,7 +1888,7 @@ module.exports = {
             let order_date;
             const orderQuery = `SELECT * FROM orders WHERE customer_id = ${ciddecodedData}`;
             const orderResult = await new Promise((resolve, reject) => {
-                pool.query(orderQuery, (error, results, fields) => {
+                db.query(orderQuery, (error, results, fields) => {
                     if (error) {
                         reject(error);
                     } else {
@@ -1862,7 +1901,7 @@ module.exports = {
             const originalDate = order_date;
             const options = { month: 'long', day: 'numeric' };
             const order_Modify_date = originalDate.toLocaleDateString('en-US', options);
-            pool.query(
+            db.query(
                 'INSERT INTO credit_card SET ?',
                 {
                     card_number: cust_info.card_number,
@@ -1882,7 +1921,7 @@ module.exports = {
             );
             const getOrderInfoQuery = `SELECT odr.*, r.room_name, p.package_name FROM order_room odr LEFT JOIN room r ON r.room_id = odr.room_id LEFT JOIN package p ON p.package_id = odr.package_id WHERE odr.order_id = ${order_id} `;
             const orderInfo = await new Promise((resolve, reject) => {
-                pool.query(getOrderInfoQuery, (error, results, fields) => {
+                db.query(getOrderInfoQuery, (error, results, fields) => {
                     if (error) {
                         reject(error);
                     } else {
