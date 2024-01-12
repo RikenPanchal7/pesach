@@ -1371,10 +1371,11 @@ module.exports = {
         </table>
     </div>
 </div>`;
+
             let mainOptions;
             mainOptions = {
                 from: process.env.EMAIL_FROM,
-                to: process.env.EMAIL_FROM,
+                to: customerInfo.email,
                 subject: 'Booking Information - Pesach',
                 text: 'This is a test email from pesach.',
                 html: html,
@@ -1653,24 +1654,25 @@ module.exports = {
             }
 
             for (const key in obj) {
-                orderEmailhtml += `
-                    
-                        <tr>
-
-                        <th scope="row"
-                            colspan="2"
-                            style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
-                            align="left">
-                            ${key} ${obj[key]}
-                        </th>
-                        <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
-                            align="left">
-                            <span><span>$</span>${obj[key]}</span>
-                        </td>
-
-                        </tr>
-                        `
+                // Check if obj[key] is 0, an empty string, or null before adding to HTML
+                if (obj[key] !== 0 && obj[key] !== '' && obj[key] !== null) {
+                    orderEmailhtml += `
+            <tr>
+                <th scope="row"
+                    colspan="2"
+                    style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                    align="left">
+                    ${key} ${obj[key]}
+                </th>
+                <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                    align="left">
+                    <span><span>$</span>${obj[key]}</span>
+                </td>
+            </tr>
+        `;
+                }
             }
+
 
             orderEmailhtml += `
             <tr>
@@ -1803,7 +1805,7 @@ module.exports = {
 
             mainOptions = {
                 from: process.env.EMAIL_FROM,
-                to: process.env.EMAIL_FROM,
+                to: customerInfo.email,
                 subject: 'Thank you for your Order - Pesach',
                 text: 'This is a test email from pesach.',
                 html: orderEmailhtml,
@@ -1833,7 +1835,6 @@ module.exports = {
                 });
             });
             customerInfo = customerInfoResult[0]
-            console.log("customerInfo", customerInfo)
             let order_id;
             let order_date;
             const orderQuery = `SELECT * FROM orders WHERE customer_id = ${ciddecodedData}`;
@@ -2158,10 +2159,12 @@ module.exports = {
         </table>
     </div>
 </div>`;
+
+
             let mainOptions;
             mainOptions = {
                 from: process.env.EMAIL_FROM,
-                to: process.env.EMAIL_FROM,
+                to: customerInfo.email,
                 subject: 'Booking Information - Pesach',
                 text: 'This is a test email from pesach.',
                 html: html,
@@ -2418,18 +2421,18 @@ module.exports = {
 
             orderEmailhtml += `
             <tfoot>
-                        <tr>
-                            <th scope="row"
-                                colspan="2"
-                                style="color: rgba(99, 99, 99, 1); border-top: 4px solid rgba(229, 229, 229, 1); border-right: 1px solid rgba(229, 229, 229, 1); border-bottom: 1px solid rgba(229, 229, 229, 1); border-left: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
-                                align="left">
-                                Subtotal:
-                            </th>
-                            <td style="color: rgba(99, 99, 99, 1); border-top: 4px solid rgba(229, 229, 229, 1); border-right: 1px solid rgba(229, 229, 229, 1); border-bottom: 1px solid rgba(229, 229, 229, 1); border-left: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
-                                align="left">
-                                <span><span>$</span>${totalRoomPrice.toFixed(2)}</span>
-                            </td>
-                        </tr>`
+                <tr>
+                    <th scope="row"
+                        colspan="2"
+                        style="color: rgba(99, 99, 99, 1); border-top: 4px solid rgba(229, 229, 229, 1); border-right: 1px solid rgba(229, 229, 229, 1); border-bottom: 1px solid rgba(229, 229, 229, 1); border-left: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                        align="left">
+                        Subtotal:
+                    </th>
+                    <td style="color: rgba(99, 99, 99, 1); border-top: 4px solid rgba(229, 229, 229, 1); border-right: 1px solid rgba(229, 229, 229, 1); border-bottom: 1px solid rgba(229, 229, 229, 1); border-left: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                        align="left">
+                        <span><span>$</span>${totalRoomPrice.toFixed(2)}</span>
+                    </td>
+                </tr>`
             const categoryTotals = {};
             for (const [key, value] of Object.entries(obj)) {
                 const category = key.split(" + ")[0];
@@ -2440,105 +2443,103 @@ module.exports = {
             }
 
             for (const key in obj) {
-                orderEmailhtml += `
-                    
-                        <tr>
-
-                        <th scope="row"
-                            colspan="2"
-                            style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
-                            align="left">
-                            ${key} ${obj[key]}
-                        </th>
-                        <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
-                            align="left">
-                            <span><span>$</span>${obj[key]}</span>
-                        </td>
-
-                        </tr>
-                        `
+                // Check if obj[key] is 0, an empty string, or null before adding to HTML
+                if (obj[key] !== 0 && obj[key] !== '' && obj[key] !== null) {
+                    orderEmailhtml += `
+            <tr>
+                <th scope="row"
+                    colspan="2"
+                    style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                    align="left">
+                    ${key} ${obj[key]}
+                </th>
+                <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                    align="left">
+                    <span><span>$</span>${obj[key]}</span>
+                </td>
+            </tr>`;
+                }
             }
 
             orderEmailhtml += `
             <tr>
-                            <th scope="row"
-                                colspan="2"
-                                style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
-                                align="left">
-                                Payment
-                                method:
-                            </th>
-                            <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
-                                align="left">
-                                Cash
-                                on
-                                delivery
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"
-                                colspan="2"
-                                style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
-                                align="left">
-                                Total:
-                            </th>
-                            <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
-                                align="left">
-                                <span><span>$</span>${totalBill}</span>
-                            </td>
-                        </tr>
-                    </tfoot>`
+                <th scope="row"
+                    colspan="2"
+                    style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                    align="left">
+                    Payment
+                    method:
+                </th>
+                <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                    align="left">
+                    Cash
+                    on
+                    delivery
+                </td>
+                </tr>
+                <tr>
+                    <th scope="row"
+                        colspan="2"
+                        style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                        align="left">
+                        Total:
+                    </th>
+                    <td style="color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1); vertical-align: middle; padding: 12px; text-align: left"
+                        align="left">
+                        <span><span>$</span>${totalBill}</span>
+                    </td>
+                </tr>
+            </tfoot>`
             orderEmailhtml += `
-                                    </table>
-                            </div>
+                </table>
+                </div>
 
-                            <br>You'll receive your
-                            tickets in another
-                            email.<table
-                                cellspacing="0"
-                                cellpadding="0"
-                                border="0"
-                                style="width: 100%; vertical-align: top; margin-bottom: 40px; padding: 0"
-                                width="100%">
-                                <tbody>
-                                    <tr>
-                                        <td valign="top"
-                                            width="50%"
-                                            style="text-align: left; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; border: 0; padding: 0"
-                                            align="left">
-                                            <h2
-                                                style="color: rgba(127, 84, 179, 1); display: block; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 18px; font-weight: bold; line-height: 130%; margin: 0 0 18px; text-align: left">
-                                                Billing
-                                                address
-                                            </h2>
+                <br>You'll receive your
+                tickets in another
+                email.<table
+                    cellspacing="0"
+                    cellpadding="0"
+                    border="0"
+                    style="width: 100%; vertical-align: top; margin-bottom: 40px; padding: 0"
+                    width="100%">
+                    <tbody>
+                        <tr>
+                            <td valign="top"
+                                width="50%"
+                                style="text-align: left; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; border: 0; padding: 0"
+                                align="left">
+                                <h2
+                                    style="color: rgba(127, 84, 179, 1); display: block; font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 18px; font-weight: bold; line-height: 130%; margin: 0 0 18px; text-align: left">
+                                    Billing
+                                    address
+                                </h2>
 
-                                            <address
-                                                style="padding: 12px; color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1)">
-                                                ${customer_name}<br>${customerInfo.address_line_1}<br>${customerInfo.address_line_2}<br>${customerInfo.city}
-                                                ${customerInfo.zipcode}<br>${customerInfo.state}
-                                                <br><a
-                                                    href="tel:${customerInfo.phone}"
-                                                    style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">${customerInfo.phone}</a>
-                                                <br>${customerInfo.email}
-                                            </address>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <p
-                                style="margin: 0 0 16px">
-                                Thanks for using
-                                poconos.igiene.in!
-                            </p>
-                        </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
+                                <address
+                                    style="padding: 12px; color: rgba(99, 99, 99, 1); border: 1px solid rgba(229, 229, 229, 1)">
+                                    ${customer_name}<br>${customerInfo.address_line_1}<br>${customerInfo.address_line_2}<br>${customerInfo.city}
+                                    ${customerInfo.zipcode}<br>${customerInfo.state}
+                                    <br><a
+                                        href="tel:${customerInfo.phone}"
+                                        style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">${customerInfo.phone}</a>
+                                    <br>${customerInfo.email}
+                                </address>
                             </td>
                         </tr>
                     </tbody>
+                </table>
+                    <p
+                        style="margin: 0 0 16px">
+                        Thanks for using
+                        poconos.igiene.in!
+                    </p>
+                </div>
+                </td>
+                </tr>
+                </tbody>
+                </table>
+                </td>
+                </tr>
+                </tbody>
                 </table>
 
             </td>
@@ -2546,40 +2547,40 @@ module.exports = {
             `
             orderEmailhtml += `
              <tr>
-                                        <td align="center" valign="top">
+                <td align="center" valign="top">
 
-                                            <table border="0" cellpadding="10" cellspacing="0" width="100%">
-                                                <tbody>
-                                                    <tr>
-                                                        <td valign="top" style="padding: 0; border-radius: 6px">
-                                                            <table border="0" cellpadding="10" cellspacing="0"
-                                                                width="100%">
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td colspan="2" valign="middle"
-                                                                            style="border-radius: 6px; border: 0; color: rgba(138, 138, 138, 1); font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 12px; line-height: 150%; text-align: center; padding: 24px 0"
-                                                                            align="center">
-                                                                            <p style="margin: 0 0 16px">Poconos — Built
-                                                                                with <a
-                                                                                    href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/l5bEVL1VzlOyGFNHfkzDLlB8-xFnY9Kg6kpkMDkqMbsQPUyMlxYP7FFZvc1EnKrYymzCviRJnYPzOwUDJ9QC0_0ob7Z-XS0XBIHwlTDVvN-KFUFdUsQ_SJFRGbU1vSKbyNfv9eFgRCAqBZ8UHznFRxoovUGVeMALDvVVMAVUY1uQkX3pl9Rb_hVQ0eMGQaCvn9kE_zFh_RYs-bus_gEXCyFcoRAHOYrpNZ3k7FTcLa1sb58ar_YK5T0cgK--ptnBnQb4Ow"
-                                                                                    style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">WooCommerce</a>
-                                                                            </p>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                    <table border="0" cellpadding="10" cellspacing="0" width="100%">
+                        <tbody>
+                            <tr>
+                                <td valign="top" style="padding: 0; border-radius: 6px">
+                                    <table border="0" cellpadding="10" cellspacing="0"
+                                        width="100%">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="2" valign="middle"
+                                                    style="border-radius: 6px; border: 0; color: rgba(138, 138, 138, 1); font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 12px; line-height: 150%; text-align: center; padding: 24px 0"
+                                                    align="center">
+                                                    <p style="margin: 0 0 16px">Poconos — Built
+                                                        with <a
+                                                            href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/l5bEVL1VzlOyGFNHfkzDLlB8-xFnY9Kg6kpkMDkqMbsQPUyMlxYP7FFZvc1EnKrYymzCviRJnYPzOwUDJ9QC0_0ob7Z-XS0XBIHwlTDVvN-KFUFdUsQ_SJFRGbU1vSKbyNfv9eFgRCAqBZ8UHznFRxoovUGVeMALDvVVMAVUY1uQkX3pl9Rb_hVQ0eMGQaCvn9kE_zFh_RYs-bus_gEXCyFcoRAHOYrpNZ3k7FTcLa1sb58ar_YK5T0cgK--ptnBnQb4Ow"
+                                                            style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">WooCommerce</a>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </td>
-                    <td></td>
+                </td>
+                </tr>
+                </tbody>
+                </table>
+                </div>
+                </td>
+                <td></td>
                 </tr>
             </tbody>
         </table>
@@ -2590,7 +2591,7 @@ module.exports = {
 
             mainOptions = {
                 from: process.env.EMAIL_FROM,
-                to: process.env.EMAIL_FROM,
+                to: customerInfo.email,
                 subject: 'Thank you for your Order - Pesach',
                 text: 'This is a test email from pesach.',
                 html: orderEmailhtml,
@@ -2600,49 +2601,5 @@ module.exports = {
         } catch (error) {
 
         }
-
     },
-
-    // createCreditInfo: async function (cust_info) {
-    //     try {
-    //         const customerId = cust_info.cid;
-    //         const ciddecodedString = atob(customerId);
-    //         const ciddecodedData = JSON.parse(ciddecodedString);
-
-    //         let order_id;
-    //         const orderQuery = `SELECT * FROM orders WHERE customer_id = ${ciddecodedData}`;
-    //         const orderResult = await new Promise((resolve, reject) => {
-    //             db.query(orderQuery, (error, results, fields) => {
-    //                 if (error) {
-    //                     reject(error);
-    //                 } else {
-    //                     resolve(results);
-    //                 }
-    //             });
-    //         });
-    //         order_id = orderResult[0].order_id;
-
-    //         db.query(
-    //             'INSERT INTO credit_card SET ?',
-    //             {
-    //                 card_number: cust_info.card_number,
-    //                 card_holder_name: cust_info.card_holder_name,
-    //                 card_expiry_date: cust_info.card_expiry_date,
-    //                 cvv: cust_info.cvv,
-    //                 amount: cust_info.amount,
-    //                 order_id: order_id,
-    //                 customer_id: ciddecodedData,
-    //             },
-    //             (err, result) => {
-    //                 if (err) {
-    //                     console.log(err);
-    //                 } else {
-
-    //                 }
-    //             }
-    //         );
-    //     } catch (error) {
-
-    //     }
-    // }
 }
