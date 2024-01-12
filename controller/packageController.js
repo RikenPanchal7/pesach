@@ -1784,26 +1784,6 @@ module.exports = {
 
                                             <table border="0" cellpadding="10" cellspacing="0" width="100%">
                                                 <tbody>
-                                                    <tr>
-                                                        <td valign="top" style="padding: 0; border-radius: 6px">
-                                                            <table border="0" cellpadding="10" cellspacing="0"
-                                                                width="100%">
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td colspan="2" valign="middle"
-                                                                            style="border-radius: 6px; border: 0; color: rgba(138, 138, 138, 1); font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 12px; line-height: 150%; text-align: center; padding: 24px 0"
-                                                                            align="center">
-                                                                            <p style="margin: 0 0 16px">Poconos — Built
-                                                                                with <a
-                                                                                    href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/l5bEVL1VzlOyGFNHfkzDLlB8-xFnY9Kg6kpkMDkqMbsQPUyMlxYP7FFZvc1EnKrYymzCviRJnYPzOwUDJ9QC0_0ob7Z-XS0XBIHwlTDVvN-KFUFdUsQ_SJFRGbU1vSKbyNfv9eFgRCAqBZ8UHznFRxoovUGVeMALDvVVMAVUY1uQkX3pl9Rb_hVQ0eMGQaCvn9kE_zFh_RYs-bus_gEXCyFcoRAHOYrpNZ3k7FTcLa1sb58ar_YK5T0cgK--ptnBnQb4Ow"
-                                                                                    style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">WooCommerce</a>
-                                                                            </p>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </td>
-                                                    </tr>
                                                 </tbody>
                                             </table>
 
@@ -2570,26 +2550,6 @@ module.exports = {
 
                                             <table border="0" cellpadding="10" cellspacing="0" width="100%">
                                                 <tbody>
-                                                    <tr>
-                                                        <td valign="top" style="padding: 0; border-radius: 6px">
-                                                            <table border="0" cellpadding="10" cellspacing="0"
-                                                                width="100%">
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td colspan="2" valign="middle"
-                                                                            style="border-radius: 6px; border: 0; color: rgba(138, 138, 138, 1); font-family: &quot;Helvetica Neue&quot;, Helvetica, Roboto, Arial, sans-serif; font-size: 12px; line-height: 150%; text-align: center; padding: 24px 0"
-                                                                            align="center">
-                                                                            <p style="margin: 0 0 16px">Poconos — Built
-                                                                                with <a
-                                                                                    href="https://efegdcg.r.af.d.sendibt2.com/tr/cl/l5bEVL1VzlOyGFNHfkzDLlB8-xFnY9Kg6kpkMDkqMbsQPUyMlxYP7FFZvc1EnKrYymzCviRJnYPzOwUDJ9QC0_0ob7Z-XS0XBIHwlTDVvN-KFUFdUsQ_SJFRGbU1vSKbyNfv9eFgRCAqBZ8UHznFRxoovUGVeMALDvVVMAVUY1uQkX3pl9Rb_hVQ0eMGQaCvn9kE_zFh_RYs-bus_gEXCyFcoRAHOYrpNZ3k7FTcLa1sb58ar_YK5T0cgK--ptnBnQb4Ow"
-                                                                                    style="color: rgba(127, 84, 179, 1); font-weight: normal; text-decoration: underline">WooCommerce</a>
-                                                                            </p>
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </td>
-                                                    </tr>
                                                 </tbody>
                                             </table>
 
