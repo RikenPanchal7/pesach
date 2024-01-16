@@ -462,15 +462,15 @@
                                             <div class="col-12 col-md-6 mb-3">
                                                 <div class="d-flex">
                                                     <div class="form-check me-4">
-                                                        <input class="form-check-input" type="checkbox" value="checking"
-                                                            id="flexCheckDefault">
+                                                        <input class="form-check-input radio" type="radio"
+                                                            value="checking" id="flexCheckDefault" name="account_type">
                                                         <label class="form-check-label" for="flexCheckDefault">
                                                             Checking
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="saving"
-                                                            id="flexCheckDefault">
+                                                        <input class="form-check-input radio" type="radio"
+                                                            value="saving" id="flexCheckDefault" name="account_type">
                                                         <label class="form-check-label" for="flexCheckDefault">
                                                             Saving
                                                         </label>
@@ -552,7 +552,8 @@
 
         var dateValue = document.getElementById('date').value;
 
-        var flexCheckDefaultValue = document.getElementById('flexCheckDefault').value;
+        // var flexCheckDefaultValue = document.getElementById('flexCheckDefault').value;
+        const flexCheckDefaultValue = $("input[name='account_type']:checked").val();
         const totalBillAmount = '<%= amount %>';
         const cid = '<%= cid %>';
         const cust_info = {
