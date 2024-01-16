@@ -580,7 +580,7 @@
                                                                         data-package-id="<%= room.combinedResults.package_id %>"
                                                                         data-name="no_of_additional_adult"
                                                                         data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
-                                                                        data-room-price="<%= room.roomInfos.room_price %>"
+                                                                        data-room-price="<%= room.combinedResults.room_price %>"
                                                                         data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
                                                                         onchange="addguest(this.value, <%= guest_count %>, 'adult')"
                                                                         data-price="<%= room.combinedResults.additional_adult_price %>"
@@ -622,7 +622,7 @@
                                                                         data-room-unique-id="<%= guest_count %>"
                                                                         data-package-id="<%= room.combinedResults.package_id %>"
                                                                         data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
-                                                                        data-room-price="<%= room.roomInfos.room_price %>"
+                                                                        data-room-price="<%= room.combinedResults.room_price %>"
                                                                         data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
                                                                         data-price="<%= room.combinedResults.kids_age_11_18_price %>"
                                                                         onchange="addguest(this.value, <%= guest_count %>, '11_18')">
@@ -655,7 +655,7 @@
                                                                         data-room-unique-id="<%= guest_count %>"
                                                                         data-package-id="<%= room.combinedResults.package_id %>"
                                                                         data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
-                                                                        data-room-price="<%= room.roomInfos.room_price %>"
+                                                                        data-room-price="<%= room.combinedResults.room_price %>"
                                                                         data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
                                                                         data-price="<%= room.combinedResults.kids_age_6_10_price %>"
                                                                         onchange="addguest(this.value, <%= guest_count %>, '6_10')">
@@ -688,7 +688,7 @@
                                                                         data-room-unique-id="<%= guest_count %>"
                                                                         data-package-id="<%= room.combinedResults.package_id %>"
                                                                         data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
-                                                                        data-room-price="<%= room.roomInfos.room_price %>"
+                                                                        data-room-price="<%= room.combinedResults.room_price %>"
                                                                         data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
                                                                         data-price="<%= room.combinedResults.kids_age_3_5_price %>"
                                                                         onchange="addguest(this.value, <%= guest_count %>, '3_5')">
@@ -721,7 +721,7 @@
                                                                         data-room-unique-id="<%= guest_count %>"
                                                                         data-package-id="<%= room.combinedResults.package_id %>"
                                                                         data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
-                                                                        data-room-price="<%= room.roomInfos.room_price %>"
+                                                                        data-room-price="<%= room.combinedResults.room_price %>"
                                                                         data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
                                                                         data-price="<%= room.combinedResults.kids_age_1_2_price %>"
                                                                         onchange="addguest(this.value, <%= guest_count %>, '1_2')">
@@ -745,7 +745,7 @@
                                                                     data-room-id="<%= room.roomInfos.room_id %>"
                                                                     data-room-unique-id="<%= guest_count %>"
                                                                     data-package-id="<%= room.combinedResults.package_id %>"
-                                                                    data-room-price="<%= room.roomInfos.room_price %>"
+                                                                    data-room-price="<%= room.combinedResults.room_price %>"
                                                                     data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
                                                                     data-room-name="<%= room.roomInfos.room_name %> #<%= i %>">
                                                                     <option value="0">0</option>
@@ -788,7 +788,7 @@
                                                                                 data-package-id="<%= room.combinedResults.package_id %>"
                                                                                 data-name="cribCheckbox"
                                                                                 data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
-                                                                                data-room-price="<%= room.roomInfos.room_price %>"
+                                                                                data-room-price="<%= room.combinedResults.room_price %>"
                                                                                 data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
                                                                                 data-price="<%= room.combinedResults.cribs_price %>">
                                                                             <label class="form-check-label"
@@ -809,7 +809,7 @@
                                                                                 data-room-unique-id="<%= guest_count %>"
                                                                                 data-package-id="<%= room.combinedResults.package_id %>"
                                                                                 data-name="cotCheckbox"
-                                                                                data-room-price="<%= room.roomInfos.room_price %>"
+                                                                                data-room-price="<%= room.combinedResults.room_price %>"
                                                                                 data-early-room-price="<%= room.combinedResults.early_bird_special_price %>"
                                                                                 data-room-name="<%= room.roomInfos.room_name %> #<%= i %>"
                                                                                 data-price="<%= room.combinedResults.cot_price %>">
@@ -1075,7 +1075,10 @@
                 }
                 else {
                     nextEnable = true;
-                    window.location.href = '/dining-info' + queryString;
+                    // window.location.href = '/dining-info' + queryString;
+                    setTimeout(() => {
+                        window.location.href = '/bill-summary' + queryString;
+                    }, 1000)
 
                     const cidString = atob(customer_id);
                     const cidData = JSON.parse(cidString);

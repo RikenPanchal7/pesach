@@ -686,11 +686,11 @@
                                 <label class="form-check-label" for="ach">
                                     ACH
                                 </label>
-                                <p class="text-disable mb-0 fs-12">
+                                <!-- <p class="text-disable mb-0 fs-12">
                                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores molestias placeat
                                     deleniti eaque quis ipsum nostrum sint cumque porro facere! Aliquid rerum quod
                                     libero fugiat animi nisi odit, ad blanditiis.
-                                </p>
+                                </p> -->
                             </div>
                             <div class="form-check mb-3">
                                 <input class="form-check-input radio" type="radio" name="payment_mode" id="credit-card"
@@ -698,11 +698,11 @@
                                 <label class="form-check-label" for="credit-card">
                                     Credit Card
                                 </label>
-                                <p class="text-disable mb-0 fs-12">
+                                <!-- <p class="text-disable mb-0 fs-12">
                                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores molestias placeat
                                     deleniti eaque quis ipsum nostrum sint cumque porro facere! Aliquid rerum quod
                                     libero fugiat animi nisi odit, ad blanditiis.
-                                </p>
+                                </p> -->
                             </div>
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" value="" name="flexCheckDefault8"
@@ -823,7 +823,8 @@
                 const pids = '<%= pids %>';
                 const data = '<%= data %>';
                 const queryString = `?cid=${cid}&pids=${pids}&data=${data}`;
-                window.location.href = '/dining-info' + queryString;
+                // window.location.href = '/dining-info' + queryString;
+                window.location.href = '/package-tickets' + queryString;
 
             });
         });

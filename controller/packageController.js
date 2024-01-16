@@ -25,17 +25,14 @@ module.exports = {
                         console.log(err);
                         return res.status(500).json({ error: 'Internal Server Error' });
                     } else {
-                        console.log("result", result)
                         // Retrieve the inserted customer information
                         pool.query('SELECT * FROM customer WHERE customer_id = ?', [result.insertId], (selectErr, selectResult) => {
                             if (selectErr) {
                                 return res.status(500).json({ error: 'Internal Server Error' });
                             };
-                            console.log("selectResult[0].customer_id", selectResult[0].customer_id)
                             const jsonString = JSON.stringify(selectResult[0].customer_id);
                             const base64EncodedCustomerId = btoa(jsonString);
                             const queryString = `?cid=${base64EncodedCustomerId}`;
-
                             return res.redirect("/select-event" + queryString);
                         });
                     }
@@ -58,17 +55,17 @@ module.exports = {
                             event_name: initialResult.event_name,
                             event_date: initialResult.event_start_date,
                         };
-                        const getDiningQuery = `SELECT d.*, dd.dining_date FROM dining d LEFT JOIN dining_date dd ON d.dining_id = dd.dining_id`;
-                        const diningPromise = new Promise((innerResolve, innerReject) => {
-                            pool.query(getDiningQuery, (innerError, innerResult) => {
-                                if (innerError) {
-                                    innerReject(innerError);
-                                } else {
-                                    event_data.dining_data = innerResult;
-                                    innerResolve(innerResult);
-                                }
-                            });
-                        });
+                        // const getDiningQuery = `SELECT d.*, dd.dining_date FROM dining d LEFT JOIN dining_date dd ON d.dining_id = dd.dining_id`;
+                        // const diningPromise = new Promise((innerResolve, innerReject) => {
+                        //     pool.query(getDiningQuery, (innerError, innerResult) => {
+                        //         if (innerError) {
+                        //             innerReject(innerError);
+                        //         } else {
+                        //             event_data.dining_data = innerResult;
+                        //             innerResolve(innerResult);
+                        //         }
+                        //     });
+                        // });
 
                         let package_data = [];
                         const getPackageQuery = `SELECT * FROM package WHERE event_id = ${1}`;
@@ -84,7 +81,8 @@ module.exports = {
                         });
 
                         // Wait for all promises to be resolved
-                        Promise.all([diningPromise, packagePromise])
+                        // Promise.all([diningPromise, packagePromise])
+                        Promise.all([packagePromise])
                             .then(() => {
                                 event_data.package_data = package_data;
                                 resolve(event_data);
@@ -374,20 +372,24 @@ module.exports = {
                         order_room_id.push(value.order_room_id)
                     });
                     if (order_room_id != '') {
-                        const placeholders = order_room_id.map(() => '?').join(',');
-                        const deleteQuery = `DELETE FROM order_room_guest WHERE order_room_id IN (${placeholders})`;
+                        let placeholders;
+
+                        if (order_room_id.length === 1) {
+                            placeholders = order_room_id[0];
+                        } else {
+                            placeholders = order_room_id.join(', ');
+                        }
+                        const guestDeleteQuery = `DELETE FROM order_room_guest WHERE order_room_id IN (${placeholders})`;
 
                         // Execute the delete query with the array of IDs
-                        pool.query(deleteQuery, order_room_id, (error, results) => {
+                        pool.query(guestDeleteQuery, (error, results) => {
                             if (error) {
                                 console.error('Error deleting rows:', error);
                             } else {
                             }
                         });
                     }
-                    const deleteQuery = `DELETE FROM order_room WHERE order_id = ${order_id}`;
-
-                    // Connect to the database and execute the delete query
+                    const deleteQuery = `DELETE FROM order_room WHERE order_id IN (${order_id})`;
                     pool.query(deleteQuery, (error, results) => {
                         if (error) {
                             console.error('Error deleting rows:', error);
@@ -395,64 +397,69 @@ module.exports = {
                         }
                     });
 
-                    for (let i = 0; i < resultArray.length; i++) {
-                        pool.query(
-                            'INSERT INTO order_room SET ?',
-                            {
-                                order_id: order_id,
-                                room_id: resultArray[i].room_id,
-                                room_unique_id: resultArray[i].room_unique_id,
-                                room_price: resultArray[i].room_price,
-                                package_id: resultArray[i].package_id,
-                                age_group: resultArray[i].additional_data.age_group,
-                                no_of_additional_adult: resultArray[i].additional_data.no_of_additional_adult,
-                                no_of_additional_adult_price: resultArray[i].additional_data.no_of_additional_adult_price,
-                                no_of_kids_age_11_18: resultArray[i].additional_data.no_of_kids_age_11_18,
-                                kids_age_11_18_price: resultArray[i].additional_data.no_of_kids_age_11_18_price,
-                                no_of_kids_age_6_10: resultArray[i].additional_data.no_of_kids_age_6_10,
-                                kids_age_6_10_price: resultArray[i].additional_data.no_of_kids_age_6_10_price,
-                                no_of_kids_age_3_5: resultArray[i].additional_data.no_of_kids_age_3_5,
-                                kids_age_3_5_price: resultArray[i].additional_data.no_of_kids_age_3_5_price,
-                                no_of_kids_age_1_2: resultArray[i].additional_data.no_of_kids_age_1_2,
-                                kids_age_1_2_price: resultArray[i].additional_data.no_of_kids_age_1_2_price,
-                                cot_price: resultArray[i].additional_data.cotCheckbox_price,
-                                crib_price: resultArray[i].additional_data.cribCheckbox_price,
-                                additional_beds: resultArray[i].additional_data.additional_beds,
-                                early_check_in_price_status: resultArray[i].additional_data.early_check_in_price_status,
-                                early_check_in_price: resultArray[i].additional_data.early_check_in_price,
-                                check_in: resultArray[i].additional_data.check_in,
-                                created_date: currentDate,
-                            }
-                        );
-                    }
-                    // add guestInfo
-                    if (guestObj != '') {
-                        let filteredData = guestObj.filter(item => item.fname !== '' || item.lname !== '' || item.age !== '');
-                        filteredData.forEach(async (value) => {
-                            let order_room_id;
-                            const queryString = `SELECT * FROM order_room WHERE room_unique_id = ${value.room_unique_id}`;
-                            const results = await new Promise((resolve, reject) => {
-                                pool.query(queryString, (error, results, fields) => {
-                                    if (error) {
-                                        reject(error);
-                                    } else {
-                                        resolve(results);
-                                    }
-                                });
-                            });
-                            order_room_id = results[0].order_room_id;
+                    setTimeout(async () => {
+                        for (let i = 0; i < resultArray.length; i++) {
                             pool.query(
-                                'INSERT INTO order_room_guest SET ?',
+                                'INSERT INTO order_room SET ?',
                                 {
-                                    order_room_id: order_room_id,
-                                    guest_first_name: value.fname,
-                                    guest_last_name: value.lname,
-                                    guest_age: value.age,
+                                    order_id: order_id,
+                                    room_id: resultArray[i].room_id,
+                                    room_unique_id: resultArray[i].room_unique_id,
+                                    room_price: resultArray[i].room_price,
+                                    package_id: resultArray[i].package_id,
+                                    age_group: resultArray[i].additional_data.age_group,
+                                    no_of_additional_adult: resultArray[i].additional_data.no_of_additional_adult,
+                                    no_of_additional_adult_price: resultArray[i].additional_data.no_of_additional_adult_price,
+                                    no_of_kids_age_11_18: resultArray[i].additional_data.no_of_kids_age_11_18,
+                                    kids_age_11_18_price: resultArray[i].additional_data.no_of_kids_age_11_18_price,
+                                    no_of_kids_age_6_10: resultArray[i].additional_data.no_of_kids_age_6_10,
+                                    kids_age_6_10_price: resultArray[i].additional_data.no_of_kids_age_6_10_price,
+                                    no_of_kids_age_3_5: resultArray[i].additional_data.no_of_kids_age_3_5,
+                                    kids_age_3_5_price: resultArray[i].additional_data.no_of_kids_age_3_5_price,
+                                    no_of_kids_age_1_2: resultArray[i].additional_data.no_of_kids_age_1_2,
+                                    kids_age_1_2_price: resultArray[i].additional_data.no_of_kids_age_1_2_price,
+                                    cot_price: resultArray[i].additional_data.cotCheckbox_price,
+                                    crib_price: resultArray[i].additional_data.cribCheckbox_price,
+                                    additional_beds: resultArray[i].additional_data.additional_beds,
+                                    early_check_in_price_status: resultArray[i].additional_data.early_check_in_price_status,
+                                    early_check_in_price: resultArray[i].additional_data.early_check_in_price,
+                                    check_in: resultArray[i].additional_data.check_in,
+                                    created_date: currentDate,
                                 }
                             );
-                        })
-                    } else {
-                    }
+                        }
+                    }, 500)
+                    // return
+                    // add guestInfo
+                    setTimeout(async () => {
+                        if (guestObj != '') {
+                            let filteredData = guestObj.filter(item => item.fname !== '' || item.lname !== '' || item.age !== '');
+                            filteredData.forEach(async (value) => {
+                                let orderRoom_id;
+                                const queryString = `SELECT * FROM order_room WHERE room_unique_id = ${value.room_unique_id}`;
+                                const results = await new Promise((resolve, reject) => {
+                                    pool.query(queryString, (error, results, fields) => {
+                                        if (error) {
+                                            reject(error);
+                                        } else {
+                                            resolve(results);
+                                        }
+                                    });
+                                });
+                                orderRoom_id = results[0].order_room_id;
+                                pool.query(
+                                    'INSERT INTO order_room_guest SET ?',
+                                    {
+                                        order_room_id: orderRoom_id,
+                                        guest_first_name: value.fname,
+                                        guest_last_name: value.lname,
+                                        guest_age: value.age,
+                                    }
+                                );
+                            })
+                        } else {
+                        }
+                    }, 1000)
 
                 } else {
                     for (let i = 0; i < resultArray.length; i++) {
@@ -488,29 +495,31 @@ module.exports = {
                     // add guestInfo
                     if (guestObj != '') {
                         let filteredData = guestObj.filter(item => item.fname !== '' || item.lname !== '' || item.age !== '');
-                        filteredData.forEach(async (value) => {
-                            let order_room_id;
-                            const queryString = `SELECT * FROM order_room WHERE room_unique_id = ${value.room_unique_id}`;
-                            const results = await new Promise((resolve, reject) => {
-                                pool.query(queryString, (error, results, fields) => {
-                                    if (error) {
-                                        reject(error);
-                                    } else {
-                                        resolve(results);
-                                    }
+                        setTimeout(async () => {
+                            filteredData.forEach(async (value) => {
+                                let order_room_id;
+                                const queryString = `SELECT * FROM order_room WHERE room_unique_id = ${value.room_unique_id}`;
+                                const results = await new Promise(async (resolve, reject) => {
+                                    await pool.query(queryString, (error, results, fields) => {
+                                        if (error) {
+                                            reject(error);
+                                        } else {
+                                            resolve(results);
+                                        }
+                                    });
                                 });
-                            });
-                            order_room_id = results[0].order_room_id;
-                            pool.query(
-                                'INSERT INTO order_room_guest SET ?',
-                                {
-                                    order_room_id: order_room_id,
-                                    guest_first_name: value.fname,
-                                    guest_last_name: value.lname,
-                                    guest_age: value.age,
-                                }
-                            );
-                        })
+                                order_room_id = results[0].order_room_id;
+                                await pool.query(
+                                    'INSERT INTO order_room_guest SET ?',
+                                    {
+                                        order_room_id: order_room_id,
+                                        guest_first_name: value.fname,
+                                        guest_last_name: value.lname,
+                                        guest_age: value.age,
+                                    }
+                                );
+                            })
+                        }, 1000)
                     } else {
                     }
                 }
@@ -520,6 +529,247 @@ module.exports = {
             console.error('Error executing SELECT query:', error);
         }
     },
+    // createOrderRooms: async function (customer_id, selectedValues, package_idArr, guestObj, selectedRoomInfo) {
+    //     try {
+    //         const currentDate = new Date();
+    //         let order_id;
+    //         const queryString = `SELECT * FROM orders WHERE customer_id = ${customer_id}`;
+    //         const results = await new Promise((resolve, reject) => {
+    //             pool.query(queryString, (error, results, fields) => {
+    //                 if (error) {
+    //                     reject(error);
+    //                 } else {
+    //                     resolve(results);
+    //                 }
+    //             });
+    //         });
+    //         order_id = results[0].order_id;
+    //         if (selectedValues.length != 0) {
+    //             const uniquePackageIds = new Set();
+    //             const separatedData = package_idArr.flatMap(packageId => {
+    //                 if (uniquePackageIds.has(packageId)) {
+    //                     return [];
+    //                 }
+    //                 uniquePackageIds.add(packageId);
+    //                 const filteredData = selectedValues.filter(item => item.package_id === packageId);
+    //                 const separatedByRoomName = {};
+    //                 filteredData.forEach(item => {
+    //                     const { room_name } = item;
+    //                     if (!separatedByRoomName[room_name]) {
+    //                         separatedByRoomName[room_name] = [];
+    //                     }
+    //                     separatedByRoomName[room_name].push(item);
+    //                 });
+    //                 const separatedDataForPackage = {
+    //                     package_id: packageId,
+    //                     data: separatedByRoomName,
+    //                 };
+    //                 return [separatedDataForPackage];
+    //             });
+    //             const response = separatedData.map(packageData => {
+    //                 const { package_id, data } = packageData;
+    //                 const roomData = Object.keys(data).map(roomName => {
+    //                     const roomEntries = data[roomName];
+    //                     return {
+    //                         package_id: package_id,
+    //                         room_price: (new Date() < new Date('2024-01-15')) ?
+    //                             (roomEntries[0].early_room_price === 0 ? roomEntries[0].room_price : roomEntries[0].early_room_price) :
+    //                             roomEntries[0].room_price,
+    //                         room_id: roomEntries[0].room_id,
+    //                         room_unique_id: roomEntries[0].room_unique_id,
+    //                         room_name: roomName,
+    //                         additional_data: roomEntries.reduce((acc, entry) => {
+    //                             if (entry.name == 'cribCheckbox' || entry.name == 'cotCheckbox') {
+    //                                 acc[entry.name] = entry.selected_value;
+    //                                 if (entry.is_checked) {
+    //                                     acc[`${entry.name}_price`] = entry.price;
+    //                                 } else {
+    //                                     acc[`${entry.name}_price`] = null;
+    //                                 }
+    //                                 return acc;
+    //                             } else {
+    //                                 acc[entry.name] = entry.selected_value;
+    //                                 acc[`${entry.name}_price`] = entry.price;
+    //                                 return acc;
+    //                             }
+    //                         }, {}),
+    //                     };
+    //                 });
+    //                 return {
+    //                     data: {
+    //                         room: roomData,
+    //                     },
+    //                 };
+    //             });
+    //             const resultArray = [];
+    //             response.forEach(item => {
+    //                 const dataArray = item.data.room;
+    //                 resultArray.push(...dataArray);
+    //             });
+    //             let order_room_id;
+    //             const queryString = `SELECT * FROM order_room WHERE order_id = ${order_id}`;
+    //             const results = await new Promise((resolve, reject) => {
+    //                 pool.query(queryString, (error, results, fields) => {
+    //                     if (error) {
+    //                         reject(error);
+    //                     } else {
+    //                         resolve(results);
+    //                     }
+    //                 });
+    //             });
+    //             if (results != '') {
+    //                 order_id = results[0].order_id;
+    //                 const order_room_id = [];
+    //                 results.forEach((value) => {
+    //                     order_room_id.push(value.order_room_id)
+    //                 });
+    //                 if (order_room_id != '') {
+    //                     const placeholders = order_room_id.map(() => '?').join(',');
+    //                     const deleteQuery = `DELETE FROM order_room_guest WHERE order_room_id IN (${placeholders})`;
+
+    //                     // Execute the delete query with the array of IDs
+    //                     pool.query(deleteQuery, order_room_id, (error, results) => {
+    //                         if (error) {
+    //                             console.error('Error deleting rows:', error);
+    //                         } else {
+    //                         }
+    //                     });
+    //                 }
+    //                 const deleteQuery = `DELETE FROM order_room WHERE order_id = ${order_id}`;
+
+    //                 // Connect to the database and execute the delete query
+    //                 pool.query(deleteQuery, (error, results) => {
+    //                     if (error) {
+    //                         console.error('Error deleting rows:', error);
+    //                     } else {
+    //                     }
+    //                 });
+
+    //                 for (let i = 0; i < resultArray.length; i++) {
+    //                     pool.query(
+    //                         'INSERT INTO order_room SET ?',
+    //                         {
+    //                             order_id: order_id,
+    //                             room_id: resultArray[i].room_id,
+    //                             room_unique_id: resultArray[i].room_unique_id,
+    //                             room_price: resultArray[i].room_price,
+    //                             package_id: resultArray[i].package_id,
+    //                             age_group: resultArray[i].additional_data.age_group,
+    //                             no_of_additional_adult: resultArray[i].additional_data.no_of_additional_adult,
+    //                             no_of_additional_adult_price: resultArray[i].additional_data.no_of_additional_adult_price,
+    //                             no_of_kids_age_11_18: resultArray[i].additional_data.no_of_kids_age_11_18,
+    //                             kids_age_11_18_price: resultArray[i].additional_data.no_of_kids_age_11_18_price,
+    //                             no_of_kids_age_6_10: resultArray[i].additional_data.no_of_kids_age_6_10,
+    //                             kids_age_6_10_price: resultArray[i].additional_data.no_of_kids_age_6_10_price,
+    //                             no_of_kids_age_3_5: resultArray[i].additional_data.no_of_kids_age_3_5,
+    //                             kids_age_3_5_price: resultArray[i].additional_data.no_of_kids_age_3_5_price,
+    //                             no_of_kids_age_1_2: resultArray[i].additional_data.no_of_kids_age_1_2,
+    //                             kids_age_1_2_price: resultArray[i].additional_data.no_of_kids_age_1_2_price,
+    //                             cot_price: resultArray[i].additional_data.cotCheckbox_price,
+    //                             crib_price: resultArray[i].additional_data.cribCheckbox_price,
+    //                             additional_beds: resultArray[i].additional_data.additional_beds,
+    //                             early_check_in_price_status: resultArray[i].additional_data.early_check_in_price_status,
+    //                             early_check_in_price: resultArray[i].additional_data.early_check_in_price,
+    //                             check_in: resultArray[i].additional_data.check_in,
+    //                             created_date: currentDate,
+    //                         }
+    //                     );
+    //                 }
+    //                 // add guestInfo
+    //                 if (guestObj != '') {
+    //                     let filteredData = guestObj.filter(item => item.fname !== '' || item.lname !== '' || item.age !== '');
+    //                     filteredData.forEach(async (value) => {
+    //                         let order_room_id;
+    //                         const queryString = `SELECT * FROM order_room WHERE room_unique_id = ${value.room_unique_id}`;
+    //                         const results = await new Promise((resolve, reject) => {
+    //                             pool.query(queryString, (error, results, fields) => {
+    //                                 if (error) {
+    //                                     reject(error);
+    //                                 } else {
+    //                                     resolve(results);
+    //                                 }
+    //                             });
+    //                         });
+    //                         order_room_id = results[0].order_room_id;
+    //                         pool.query(
+    //                             'INSERT INTO order_room_guest SET ?',
+    //                             {
+    //                                 order_room_id: order_room_id,
+    //                                 guest_first_name: value.fname,
+    //                                 guest_last_name: value.lname,
+    //                                 guest_age: value.age,
+    //                             }
+    //                         );
+    //                     })
+    //                 } else {
+    //                 }
+
+    //             } else {
+    //                 for (let i = 0; i < resultArray.length; i++) {
+    //                     pool.query(
+    //                         'INSERT INTO order_room SET ?',
+    //                         {
+    //                             order_id: order_id,
+    //                             room_id: resultArray[i].room_id,
+    //                             room_unique_id: resultArray[i].room_unique_id,
+    //                             room_price: resultArray[i].room_price,
+    //                             package_id: resultArray[i].package_id,
+    //                             age_group: resultArray[i].additional_data.age_group,
+    //                             no_of_additional_adult: resultArray[i].additional_data.no_of_additional_adult,
+    //                             no_of_additional_adult_price: resultArray[i].additional_data.no_of_additional_adult_price,
+    //                             no_of_kids_age_11_18: resultArray[i].additional_data.no_of_kids_age_11_18,
+    //                             kids_age_11_18_price: resultArray[i].additional_data.no_of_kids_age_11_18_price,
+    //                             no_of_kids_age_6_10: resultArray[i].additional_data.no_of_kids_age_6_10,
+    //                             kids_age_6_10_price: resultArray[i].additional_data.no_of_kids_age_6_10_price,
+    //                             no_of_kids_age_3_5: resultArray[i].additional_data.no_of_kids_age_3_5,
+    //                             kids_age_3_5_price: resultArray[i].additional_data.no_of_kids_age_3_5_price,
+    //                             no_of_kids_age_1_2: resultArray[i].additional_data.no_of_kids_age_1_2,
+    //                             kids_age_1_2_price: resultArray[i].additional_data.no_of_kids_age_1_2_price,
+    //                             cot_price: resultArray[i].additional_data.cotCheckbox_price,
+    //                             crib_price: resultArray[i].additional_data.cribCheckbox_price,
+    //                             additional_beds: resultArray[i].additional_data.additional_beds,
+    //                             early_check_in_price_status: resultArray[i].additional_data.early_check_in_price_status,
+    //                             early_check_in_price: resultArray[i].additional_data.early_check_in_price,
+    //                             check_in: resultArray[i].additional_data.check_in,
+    //                             created_date: currentDate,
+    //                         }
+    //                     );
+    //                 }
+    //                 // add guestInfo
+    //                 if (guestObj != '') {
+    //                     let filteredData = guestObj.filter(item => item.fname !== '' || item.lname !== '' || item.age !== '');
+    //                     filteredData.forEach(async (value) => {
+    //                         let order_room_id;
+    //                         const queryString = `SELECT * FROM order_room WHERE room_unique_id = ${value.room_unique_id}`;
+    //                         const results = await new Promise((resolve, reject) => {
+    //                             pool.query(queryString, (error, results, fields) => {
+    //                                 if (error) {
+    //                                     reject(error);
+    //                                 } else {
+    //                                     resolve(results);
+    //                                 }
+    //                             });
+    //                         });
+    //                         order_room_id = results[0].order_room_id;
+    //                         pool.query(
+    //                             'INSERT INTO order_room_guest SET ?',
+    //                             {
+    //                                 order_room_id: orderRoom_id,
+    //                                 guest_first_name: value.fname,
+    //                                 guest_last_name: value.lname,
+    //                                 guest_age: value.age,
+    //                             }
+    //                         );
+    //                     })
+    //                 } else {
+    //                 }
+    //             }
+    //         } else {
+    //         }
+    //     } catch (error) {
+    //         console.error('Error executing SELECT query:', error);
+    //     }
+    // },
     getDiningInfo: async function () {
         const query = "SELECT d.*, dd.dining_date FROM dining d LEFT JOIN dining_date dd ON d.dining_id = dd.dining_id WHERE d.dining_id = 1;"
         return new Promise((resolve, reject) => {
@@ -1144,13 +1394,7 @@ module.exports = {
                     allInnerRoomTotal += sumPricesForRoom;
                 }
             }
-            console.log("totalRoomPrice", totalRoomPrice)
-            console.log("allInnerRoomTotal", allInnerRoomTotal)
             const totalBill = totalRoomPrice + allInnerRoomTotal
-            console.log("totalBill", totalBill)
-            console.log("order_id", order_id)
-            console.log("ciddecodedData", ciddecodedData)
-            // return
             const getDiningInfoQuery = `SELECT * FROM order_dining_table WHERE order_id = ${order_id} AND customer_id = ${ciddecodedData}`;
             const diningInfo = await new Promise((resolve, reject) => {
                 pool.query(getDiningInfoQuery, (error, results, fields) => {
@@ -1161,7 +1405,6 @@ module.exports = {
                     }
                 });
             });
-            console.log("diningInfo", diningInfo)
 
             var html = `<div id="mail" trans="" style="width: 100%;
                 margin: auto;">

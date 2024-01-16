@@ -30,7 +30,6 @@ router.get("/select-event", async (req, res) => {
     const originalDate = eventData.event_date;
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const event_date = originalDate.toLocaleDateString('en-US', options);
-    // let cust_id = customer_id.replace(/"/g, '');
     res.render('select-event', { data: eventData, event_date: event_date, customer_id: customer_id });
 });
 
@@ -85,15 +84,15 @@ router.post("/createOrderRooms", async (req, res) => {
     }
 });
 
-router.get("/dining-info", async (req, res) => {
-    try {
-        const diningInfo = await packageController.getDiningInfo();
-        const diningData = diningInfo[0];
-        res.render('dining-info', { diningData: diningInfo, cid: req.query.cid, pids: req.query.pids, data: req.query.data });
-    } catch (error) {
-        console.error(error);
-    }
-});
+// router.get("/dining-info", async (req, res) => {
+//     try {
+//         const diningInfo = await packageController.getDiningInfo();
+//         const diningData = diningInfo[0];
+//         res.render('dining-info', { diningData: diningInfo, cid: req.query.cid, pids: req.query.pids, data: req.query.data });
+//     } catch (error) {
+//         console.error(error);
+//     }
+// });
 
 router.post("/createOrderDining", async (req, res) => {
     try {

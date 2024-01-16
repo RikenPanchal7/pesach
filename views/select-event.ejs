@@ -493,21 +493,7 @@
                                                     </div>
                                                 </div>
                                                 <% } %>
-                                                    <div class="col">
-                                                        <div class="card text-center h-100 py-5 shadow-sm" id="dining">
-                                                            <div class="card-body px-0">
-                                                                <h5 class="card-title title-binding">
-                                                                    <%= data.dining_data[0].dining_name %>
-                                                                </h5>
-                                                                <p class="card-text">
-                                                                    <% const date_1=new
-                                                                        Date(data.dining_data[0].dining_date); %>
-                                                                        <%= date_1.toLocaleDateString('en-US', {
-                                                                            month: 'short' , day: 'numeric' }) %>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+
                             </div>
                             <!-- /cards -->
                             <!-- NEXT BUTTON-->
@@ -576,19 +562,26 @@
                 const c_idBase64Encodedp = btoa(c_idJsonString);
 
                 const queryString = `?cid=${c_idBase64Encodedp}&pids=${pidsBase64Encodedp}`;
-                const diningString = `?cid=${c_idBase64Encodedp}&pids=${pidsBase64Encodedp}`;
+                // const diningString = `?cid=${c_idBase64Encodedp}&pids=${pidsBase64Encodedp}`;
 
                 // data store in lcoalstorage
                 localStorage.setItem('selectEventData', JSON.stringify(pids));
 
-                if (pids.length == 1 && pids[0] == 'dining') {
-                    window.location.href = '/dining-info' + diningString;
-                } else if (pids.length != [] || pids.length != '') {
+                if (pids.length != [] || pids.length != '') {
                     window.location.href = '/select-room' + queryString;
                 } else {
                     alert('Please select Event');
                     location.reload();
                 }
+
+                // if (pids.length == 1 && pids[0] == 'dining') {
+                //     window.location.href = '/dining-info' + diningString;
+                // } else if (pids.length != [] || pids.length != '') {
+                //     window.location.href = '/select-room' + queryString;
+                // } else {
+                //     alert('Please select Event');
+                //     location.reload();
+                // }
             });
         });
     </script>

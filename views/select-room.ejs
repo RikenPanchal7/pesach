@@ -497,69 +497,29 @@
                                                     </p>
                                                 </div>
                                                 <div class="ms-auto">
-                                                    <% if (new Date() < new Date('2024-01-15')) { %>
-                                                        <!-- Before January 15, 2024 -->
-                                                        <p class="discount-price fw-bold mb-0">
-                                                            <span>$</span>
-                                                            <span class="room-price">
-                                                                <%= data.package_data[i].room_data[j].early_bird_special_price===0
-                                                                    ? data.package_data[i].room_data[j].room_price :
-                                                                    data.package_data[i].room_data[j].early_bird_special_price
-                                                                    %>
-                                                            </span>
-                                                        </p>
-                                                        <% } else { %>
-                                                            <!-- On or after January 15, 2024 -->
-                                                            <p class="discount-price fw-bold mb-0">
-                                                                <span>$</span>
-                                                                <span class="room-price">
-                                                                    <%= data.package_data[i].room_data[j].room_price %>
-                                                                </span>
-                                                            </p>
-                                                            <% } %>
+                                                    <p class="discount-price fw-bold mb-0">
+                                                        <span>$</span>
+                                                        <span class="room-price">
+                                                            <%= data.package_data[i].room_data[j].room_price %>
+                                                        </span>
+                                                    </p>
 
-                                                                <p class="fw-semibold early-bid-text mb-1">
-                                                                    Early bird special offer before January 15th
-                                                                </p>
-
-                                                                <% if (new Date() < new Date('2024-01-15')) { %>
-                                                                    <!-- Before January 15, 2024 -->
-                                                                    <p class="original-price fw-bold">
-                                                                        <span>$</span>
-                                                                        <span class="early-bird-price">
-                                                                            <%= data.package_data[i].room_data[j].room_price
-                                                                                %>
-                                                                        </span>
-                                                                    </p>
-                                                                    <% } else { %>
-                                                                        <!-- On or after January 15, 2024 -->
-                                                                        <p class="original-price fw-bold">
-                                                                            <span>$</span>
-                                                                            <span class="early-bird-price">
-                                                                                <%= data.package_data[i].room_data[j].early_bird_special_price
-                                                                                    %>
-                                                                            </span>
-                                                                        </p>
-                                                                        <% } %>
-                                                                            <div>
-                                                                                <div class="row">
-                                                                                    <div class="quantity col-sm"
-                                                                                        data-room-id="<%= data.package_data[i].room_data[j].room_id %>"
-                                                                                        data-package-id="<%= data.package_data[i].package_info.package_id %>">
-                                                                                        <a href="#"
-                                                                                            class="quantity__minus disable"><span>-</span></a>
-                                                                                        <input name="quantity"
-                                                                                            type="text"
-                                                                                            class="quantity__input intLimitTextBox"
-                                                                                            value="0">
-                                                                                        <a href="#"
-                                                                                            class="quantity__plus"><span>+</span></a>
-                                                                                    </div>
-                                                                                    <div class="col-sm mt-3">
-                                                                                        <p>Select Room</p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                    <div>
+                                                        <div class="row">
+                                                            <div class="quantity col-sm"
+                                                                data-room-id="<%= data.package_data[i].room_data[j].room_id %>"
+                                                                data-package-id="<%= data.package_data[i].package_info.package_id %>">
+                                                                <a href="#"
+                                                                    class="quantity__minus disable"><span>-</span></a>
+                                                                <input name="quantity" type="text"
+                                                                    class="quantity__input intLimitTextBox" value="0">
+                                                                <a href="#" class="quantity__plus"><span>+</span></a>
+                                                            </div>
+                                                            <div class="col-sm mt-3">
+                                                                <p>Select Room</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

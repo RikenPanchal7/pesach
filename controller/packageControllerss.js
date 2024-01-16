@@ -25,7 +25,6 @@ module.exports = {
                         console.log(err);
                         return res.status(500).json({ error: 'Internal Server Error' });
                     } else {
-                        console.log("result", result)
                         // Retrieve the inserted customer information
                         pool.query('SELECT * FROM customer WHERE customer_id = ?', [result.insertId], (selectErr, selectResult) => {
                             if (selectErr) {
